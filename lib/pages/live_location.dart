@@ -25,7 +25,9 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
   final Location _locationService = Location();
-  var wf = new readWritecsv();
+  //var wf = new readWritecsv();
+  var wf;
+  LocationAccuracy acc = LocationAccuracy.high;
 
   @override
   void initState() {
@@ -33,12 +35,26 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     _mapController = MapController();
     var permission = new permissions();
     permission.requestAllPermissions();
+    wf = new writefile();
+    if (acc == LocationAccuracy.navigation) {
+      wf.fileName = 'l.navigation.txt';
+    } else if (acc == LocationAccuracy.high) {
+      wf.fileName = 'l.high.txt';
+    } else if (acc == LocationAccuracy.balanced) {
+      wf.fileName = 'l.balanced.txt';
+    } else if (acc == LocationAccuracy.low) {
+      wf.fileName = 'l.low.txt';
+    } else if (acc == LocationAccuracy.powerSave) {
+      wf.fileName = 'l.powerSave.txt';
+    } else {
+      wf.fileName = 'l.notset.txt';
+    }
     initLocationService();
   }
 
   void initLocationService() async {
     await _locationService.changeSettings(
-      accuracy: LocationAccuracy.powerSave,
+      accuracy: acc,
       interval: 1000,
     );
 

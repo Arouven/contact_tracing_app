@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class readWritecsv {
-  String _fileName;
+class writefile {
+  String fileName;
   //= 'location_powerSave.txt';
   // String get get_FileName {
   //   return _fileName;
@@ -27,7 +27,7 @@ class readWritecsv {
 
   Future get _localFile async {
     final path = await _localPath;
-    var fn = this._fileName;
+    var fn = this.fileName;
     var f = '$path/$fn';
     print('the path is: $f');
     /*

@@ -1,5 +1,5 @@
-import 'package:contact_tracing_app/pages/Write.dart';
 import 'package:contact_tracing_app/pages/permissions.dart';
+import 'package:contact_tracing_app/pages/write.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -22,7 +22,8 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  readWritecsv wf;
+  var wf;
+  LocationAccuracy acc = LocationAccuracy.best;
   // final
   //
   @override
@@ -31,8 +32,22 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     _mapController = MapController();
     var permission = new permissions();
     permission.requestAllPermissions();
-    wf = new readWritecsv();
-    wf._fileName = 'kghj.txt';
+    wf = new writefile();
+    if (acc == LocationAccuracy.bestForNavigation) {
+      wf.fileName = 'g.bestForNavigation.txt';
+    } else if (acc == LocationAccuracy.best) {
+      wf.fileName = 'g.best.txt';
+    } else if (acc == LocationAccuracy.high) {
+      wf.fileName = 'g.high.txt';
+    } else if (acc == LocationAccuracy.medium) {
+      wf.fileName = 'g.medium.txt';
+    } else if (acc == LocationAccuracy.low) {
+      wf.fileName = 'g.low.txt';
+    } else if (acc == LocationAccuracy.lowest) {
+      wf.fileName = 'g.lowest.txt';
+    } else {
+      wf.fileName = 'g.notset.txt';
+    }
     initLocationService();
   }
 
@@ -53,7 +68,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           _currentLocation = location;
 
           Geolocator.getPositionStream(
-            desiredAccuracy: LocationAccuracy.high,
+            desiredAccuracy: acc,
             intervalDuration: Duration(milliseconds: 1000),
           ).listen(
             (Position position) async {
