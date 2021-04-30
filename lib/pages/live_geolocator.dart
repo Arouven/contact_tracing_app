@@ -22,7 +22,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  var wf;
+  readWritecsv wf;
   // final
   //
   @override
@@ -32,7 +32,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     var permission = new permissions();
     permission.requestAllPermissions();
     wf = new readWritecsv();
-    wf.set_FileName("g.high.txt");
+    wf._fileName = 'kghj.txt';
     initLocationService();
   }
 

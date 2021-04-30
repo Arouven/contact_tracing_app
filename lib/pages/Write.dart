@@ -5,13 +5,13 @@ import 'package:path_provider/path_provider.dart';
 class readWritecsv {
   String _fileName;
   //= 'location_powerSave.txt';
-  String get get_FileName {
-    return _fileName;
-  }
+  // String get get_FileName {
+  //   return _fileName;
+  // }
 
-  set set_FileName(String value) {
-    this._fileName = value;
-  }
+  // set set_FileName(String value) {
+  //   this._fileName = value;
+  // }
 
   //bool _allowWriteFile = false;
 
@@ -27,7 +27,7 @@ class readWritecsv {
 
   Future get _localFile async {
     final path = await _localPath;
-    var fn = this.get_FileName;
+    var fn = this._fileName;
     var f = '$path/$fn';
     print('the path is: $f');
     /*
