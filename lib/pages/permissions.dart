@@ -7,6 +7,7 @@ class permissions {
       Permission.storage,
       Permission.manageExternalStorage,
     ].request();
+    //await Geolocator.isLocationServiceEnabled();
     print(statuses);
   }
 }

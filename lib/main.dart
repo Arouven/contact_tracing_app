@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import './pages/custom_crs/custom_crs.dart';
 import './pages/live_location.dart';
+import './pages/home.dart';
+import './pages/live_geolocator.dart';
 import './pages/wms_tile_layer.dart';
 
 void main() => runApp(MyApp());
@@ -15,11 +17,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: LiveLocationPage(),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         WMSLayerPage.route: (context) => WMSLayerPage(),
         CustomCrsPage.route: (context) => CustomCrsPage(),
         LiveLocationPage.route: (context) => LiveLocationPage(),
+        LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
       },
     );
   }

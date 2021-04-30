@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../pages/custom_crs/custom_crs.dart';
 import '../pages/live_location.dart';
+import '../pages/live_geolocator.dart';
 import '../pages/home.dart';
 import '../pages/wms_tile_layer.dart';
 
@@ -32,8 +33,20 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         ),
         _buildMenuItem(
           context,
-          const Text('OpenStreetMap'),
+          const Text('Home'),
           HomePage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('geolocator'),
+          LiveGeolocatorPage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('location'),
+          LiveLocationPage.route,
           currentRoute,
         ),
         _buildMenuItem(

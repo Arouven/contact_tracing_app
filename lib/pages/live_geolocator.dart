@@ -1,66 +1,66 @@
+import 'package:contact_tracing_app/pages/Write.dart';
 import 'package:contact_tracing_app/pages/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:location/location.dart';
-
-import '../pages/permissions.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../widgets/drawer.dart';
-import 'write.dart';
 
-class LiveLocationPage extends StatefulWidget {
-  static const String route = '/live_location';
+class LiveGeolocatorPage extends StatefulWidget {
+  static const String route = '/live_geolocator';
 
   @override
-  _LiveLocationPageState createState() => _LiveLocationPageState();
+  _LiveGeolocatorPageState createState() => _LiveGeolocatorPageState();
 }
 
-class _LiveLocationPageState extends State<LiveLocationPage> {
-  LocationData _currentLocation;
+class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
+  Position _currentLocation;
   MapController _mapController;
   bool _permission = false;
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  final Location _locationService = Location();
-  var wf = new readWritecsv();
-
+  var wf;
+  // final
+  //
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     var permission = new permissions();
     permission.requestAllPermissions();
+    wf = new readWritecsv();
+    wf.set_FileName("g.high.txt");
     initLocationService();
   }
 
   void initLocationService() async {
-    await _locationService.changeSettings(
-      accuracy: LocationAccuracy.powerSave,
-      interval: 1000,
-    );
-
     bool serviceEnabled;
     bool serviceRequestResult;
-    LocationData location;
+    Position location;
     try {
-      serviceEnabled = await _locationService.serviceEnabled();
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
-        var permission = await _locationService.requestPermission();
-        _permission = permission == PermissionStatus.granted;
+        var permission = await Geolocator.requestPermission();
+        // ignore: unrelated_type_equality_checks
+        _permission = permission == Geolocator.checkPermission();
 
         if (_permission) {
-          location = await _locationService.getLocation();
+          location = await Geolocator.getCurrentPosition();
           _currentLocation = location;
-          _locationService.onLocationChanged.listen(
-            (LocationData result) async {
+
+          Geolocator.getPositionStream(
+            desiredAccuracy: LocationAccuracy.high,
+            intervalDuration: Duration(milliseconds: 1000),
+          ).listen(
+            (Position position) async {
               if (mounted) {
                 setState(
                   () {
-                    _currentLocation = result;
+                    _currentLocation = position;
 
                     // If Live Update is enabled, move map center
                     if (_liveUpdate) {
@@ -76,7 +76,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
           );
         }
       } else {
-        serviceRequestResult = await _locationService.requestService();
+        serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
           initLocationService();
           return;
@@ -136,7 +136,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
         title: Text('GPS Live Location'),
         centerTitle: true,
       ),
-      drawer: buildDrawer(context, LiveLocationPage.route),
+      drawer: buildDrawer(context, LiveGeolocatorPage.route),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
