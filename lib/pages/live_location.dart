@@ -26,8 +26,9 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   var interActiveFlags = InteractiveFlag.all;
   final Location _locationService = Location();
   //var wf = new readWritecsv();
-  var wf;
-  LocationAccuracy acc = LocationAccuracy.high;
+  var wf = new writefile();
+  LocationAccuracy acc;
+  String typeAccuracy;
 
   @override
   void initState() {
@@ -35,24 +36,14 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     _mapController = MapController();
     var permission = new permissions();
     permission.requestAllPermissions();
-    wf = new writefile();
-    if (acc == LocationAccuracy.navigation) {
-      wf.fileName = 'l.navigation.txt';
-    } else if (acc == LocationAccuracy.high) {
-      wf.fileName = 'l.high.txt';
-    } else if (acc == LocationAccuracy.balanced) {
-      wf.fileName = 'l.balanced.txt';
-    } else if (acc == LocationAccuracy.low) {
-      wf.fileName = 'l.low.txt';
-    } else if (acc == LocationAccuracy.powerSave) {
-      wf.fileName = 'l.powerSave.txt';
-    } else {
-      wf.fileName = 'l.notset.txt';
-    }
+
     initLocationService();
   }
 
   void initLocationService() async {
+    acc = LocationAccuracy.high;
+    typeAccuracy = 'high';
+
     await _locationService.changeSettings(
       accuracy: acc,
       interval: 1000,
@@ -125,8 +116,9 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       locationAccuracy = 0;
     }
 
+    wf.fileName = 'l.$typeAccuracy.txt';
     wf.writeToFile(
-        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()}");
+        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
 
     var markers = <Marker>[
       Marker(
@@ -192,6 +184,87 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
           ],
         ),
       ),
+
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom: 10.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.navigation;
+                    typeAccuracy = 'bestForNavigation';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 80.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.high;
+                    typeAccuracy = 'high';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.balanced;
+                    typeAccuracy = 'balanced';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 220.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.low;
+                    typeAccuracy = 'low';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 290.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.powerSave;
+                    typeAccuracy = 'powerSave';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+        ],
+      ),
+
       //   floatingActionButton: Builder(builder: (BuildContext context) {
       //     return FloatingActionButton(
       //       onPressed: () {

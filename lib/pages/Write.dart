@@ -40,7 +40,7 @@ class writefile {
     final file = await _localFile;
     // Write the file
     bool isExisted = file.existsSync();
-    String headerFile = 'DateTime,Latitude,Longitude,Accuracy\n';
+    String headerFile = 'DateTime,Latitude,Longitude,Accuracy,Type\n';
     // ignore: unrelated_type_equality_checks
     if (isExisted) {
       print('file already exists adding data');

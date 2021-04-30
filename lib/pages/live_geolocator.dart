@@ -22,8 +22,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  var wf;
-  LocationAccuracy acc = LocationAccuracy.best;
+  var wf = new writefile();
+  LocationAccuracy acc;
+  String typeAccuracy;
   // final
   //
   @override
@@ -32,26 +33,14 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     _mapController = MapController();
     var permission = new permissions();
     permission.requestAllPermissions();
-    wf = new writefile();
-    if (acc == LocationAccuracy.bestForNavigation) {
-      wf.fileName = 'g.bestForNavigation.txt';
-    } else if (acc == LocationAccuracy.best) {
-      wf.fileName = 'g.best.txt';
-    } else if (acc == LocationAccuracy.high) {
-      wf.fileName = 'g.high.txt';
-    } else if (acc == LocationAccuracy.medium) {
-      wf.fileName = 'g.medium.txt';
-    } else if (acc == LocationAccuracy.low) {
-      wf.fileName = 'g.low.txt';
-    } else if (acc == LocationAccuracy.lowest) {
-      wf.fileName = 'g.lowest.txt';
-    } else {
-      wf.fileName = 'g.notset.txt';
-    }
+
     initLocationService();
   }
 
   void initLocationService() async {
+    acc = LocationAccuracy.high;
+    typeAccuracy = 'high';
+
     bool serviceEnabled;
     bool serviceRequestResult;
     Position location;
@@ -124,8 +113,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       locationAccuracy = 0;
     }
 
+    wf.fileName = 'g.$typeAccuracy.txt';
     wf.writeToFile(
-        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()}");
+        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
 
     var markers = <Marker>[
       Marker(
@@ -191,6 +181,102 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           ],
         ),
       ),
+
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom: 10.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.bestForNavigation;
+                    typeAccuracy = 'bestForNavigation';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 80.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.best;
+                    typeAccuracy = 'best';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.high;
+                    typeAccuracy = 'high';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 220.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.medium;
+                    typeAccuracy = 'medium';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 290.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.low;
+                    typeAccuracy = 'low';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+          Positioned(
+            bottom: 360.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                setState(
+                  () {
+                    acc = LocationAccuracy.lowest;
+                    typeAccuracy = 'lowest';
+                  },
+                );
+              },
+              label: Text('$typeAccuracy'),
+            ),
+          ),
+        ],
+      ),
+
       //   floatingActionButton: Builder(builder: (BuildContext context) {
       //     return FloatingActionButton(
       //       onPressed: () {
