@@ -1,10 +1,14 @@
+import 'package:contact_tracing_app/pages/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 
+import '../pages/permissions.dart';
+
 import '../widgets/drawer.dart';
+import '../pages/test.dart';
 
 class LiveLocationPage extends StatefulWidget {
   static const String route = '/live_location';
@@ -16,20 +20,19 @@ class LiveLocationPage extends StatefulWidget {
 class _LiveLocationPageState extends State<LiveLocationPage> {
   LocationData _currentLocation;
   MapController _mapController;
-
   bool _permission = false;
   final bool _liveUpdate = true;
-
   String _serviceError = '';
-
   var interActiveFlags = InteractiveFlag.all;
-
   final Location _locationService = Location();
+  var wf = new readWritecsv();
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+    var permission = new permissions();
+    permission.requestAllPermissions();
     initLocationService();
   }
 
@@ -105,6 +108,10 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       currentLatLng = LatLng(0, 0);
       locationAccuracy = 0;
     }
+
+    wf.writeToFile(
+        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()}");
+
     var markers = <Marker>[
       Marker(
         width: 35,
