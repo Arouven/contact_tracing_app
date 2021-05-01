@@ -8,6 +8,8 @@ import 'package:geolocator/geolocator.dart';
 
 import '../widgets/drawer.dart';
 
+import 'dart:async';
+
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
 
@@ -16,6 +18,9 @@ class LiveGeolocatorPage extends StatefulWidget {
 }
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
+  // final List<_PositionItem> _positionItems = <_PositionItem>[];
+  // StreamSubscription<Position>? _positionStreamSubscription;
+
   Position _currentLocation;
   MapController _mapController;
   bool _permission = false;
@@ -56,26 +61,30 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           location = await Geolocator.getCurrentPosition();
           _currentLocation = location;
 
-          Geolocator.getPositionStream(
-            desiredAccuracy: acc,
-            intervalDuration: Duration(milliseconds: 1000),
-          ).listen(
-            (Position position) async {
-              if (mounted) {
-                setState(
-                  () {
-                    _currentLocation = position;
+          Geolocator.getPositionStream().listen(
+            (position)
+            //{
+            // wf.fileName = 'g.$typeAccuracy.txt';
+            // wf.writeToFile(
+            //     "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
+            // _mapController.move(LatLng(position.latitude, position.longitude),
+            //     _mapController.zoom);
+            async {
+              //if (mounted) {
+              setState(
+                () {
+                  _currentLocation = position;
 
-                    // If Live Update is enabled, move map center
-                    if (_liveUpdate) {
-                      _mapController.move(
-                          LatLng(_currentLocation.latitude,
-                              _currentLocation.longitude),
-                          _mapController.zoom);
-                    }
-                  },
-                );
-              }
+                  // If Live Update is enabled, move map center
+                  if (_liveUpdate) {
+                    _mapController.move(
+                        LatLng(_currentLocation.latitude,
+                            _currentLocation.longitude),
+                        _mapController.zoom);
+                  }
+                },
+              );
+              //}
             },
           );
         }
@@ -113,9 +122,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       locationAccuracy = 0;
     }
 
-    wf.fileName = 'g.$typeAccuracy.txt';
-    wf.writeToFile(
-        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
+    // wf.fileName = 'g.$typeAccuracy.txt';
+    // wf.writeToFile(
+    //     "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
 
     var markers = <Marker>[
       Marker(
@@ -189,6 +198,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.bestForNavigation;
@@ -196,7 +206,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('bestForNavigation'),
             ),
           ),
           Positioned(
@@ -204,6 +214,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.best;
@@ -211,7 +222,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('best'),
             ),
           ),
           Positioned(
@@ -219,6 +230,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.high;
@@ -226,7 +238,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('high'),
             ),
           ),
           Positioned(
@@ -234,6 +246,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.medium;
@@ -241,7 +254,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('medium'),
             ),
           ),
           Positioned(
@@ -249,6 +262,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.low;
@@ -256,7 +270,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('low'),
             ),
           ),
           Positioned(
@@ -264,6 +278,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.lowest;
@@ -271,7 +286,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('lowest'),
             ),
           ),
         ],
@@ -306,4 +321,47 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       //
     );
   }
+
+  // bool _isListening() => !(_positionStreamSubscription == null ||
+  //     _positionStreamSubscription!.isPaused);
+
+  void _toggleListening() {
+    //if (_positionStreamSubscription == null) {
+    final positionStream = Geolocator.getPositionStream(
+      desiredAccuracy: acc,
+      intervalDuration: Duration(milliseconds: 1000),
+    );
+    positionStream.
+
+        // handleError(
+        //   (error) {
+        //       _positionStreamSubscription?.cancel();
+        //       _positionStreamSubscription = null;
+        //   },
+        // ).
+
+        listen(
+      (position) {
+        setState(
+          () {
+            _currentLocation = position;
+            wf.fileName = 'g.$typeAccuracy.txt';
+            wf.writeToFile(
+                "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
+            _mapController.move(
+                LatLng(_currentLocation.latitude, _currentLocation.longitude),
+                _mapController.zoom);
+            //position.toString();
+          },
+        );
+      },
+    );
+    //   _positionStreamSubscription?.pause();
+    // }
+  }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
 }

@@ -199,7 +199,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('bestForNavigation'),
             ),
           ),
           Positioned(
@@ -214,7 +214,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('high'),
             ),
           ),
           Positioned(
@@ -229,7 +229,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('balanced'),
             ),
           ),
           Positioned(
@@ -244,7 +244,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('low'),
             ),
           ),
           Positioned(
@@ -259,7 +259,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
                   },
                 );
               },
-              label: Text('$typeAccuracy'),
+              label: Text('powerSave'),
             ),
           ),
         ],
