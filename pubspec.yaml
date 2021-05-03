@@ -1,4 +1,4 @@
-name: contact_tracing_app
+name: contact_tracing
 description: A contact tracing app to help find contaminated people with a virus.
 
 # The following line prevents the package from being accidentally published to

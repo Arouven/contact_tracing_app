@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="Com.ArouvenPoolian.contact_tracing_app">
+    package="com.example.contact_tracing">
    <application
-        android:label="contact_tracing_app"
+        android:label="contact_tracing"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

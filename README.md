@@ -1,6 +1,6 @@
-# contact_tracing_app
+# contact_tracing
 
-A contact tracing app to help find contaminated people with a virus.
+A new Flutter project.
 
 ## Getting Started
 

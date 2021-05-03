@@ -1,5 +1,5 @@
-import 'package:contact_tracing_app/pages/permissions.dart';
-import 'package:contact_tracing_app/pages/write.dart';
+import '../pages/permissions.dart';
+import '../pages/write.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
