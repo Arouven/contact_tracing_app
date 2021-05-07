@@ -24,7 +24,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   var interActiveFlags = InteractiveFlag.all;
   final Location _locationService = Location();
   //var wf = new readWritecsv();
-  var wf = new writefile();
+  var wf = new Writefile();
   LocationAccuracy acc;
   String typeAccuracy;
 
@@ -32,7 +32,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    var permission = new permissions();
+    var permission = new Permissions();
     permission.requestAllPermissions();
 
     initLocationService();

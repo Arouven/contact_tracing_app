@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:ftpconnect/ftpconnect.dart';
 import '../credentials/credentials.dart';
 
-class uploadFile {
-  var fileToUpload;
-  var directoryToUpload;
+class UploadFile {
+  String fileToUpload;
+  String directoryToUpload;
 
-  uploadFile() {
+  UploadFile() {
     //Point(double x, double y)
-    this.fileToUpload = 'fileToUpload.txt';
+    this.fileToUpload = 'csvfile.txt';
     this.directoryToUpload = '/htdocs/csv/csvFiles';
   }
 

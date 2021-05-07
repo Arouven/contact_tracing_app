@@ -134,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.15.2"
+  cron:
+    dependency: "direct main"
+    description:
+      name: cron
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   crypto:
     dependency: transitive
     description:
@@ -373,6 +380,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.4"
+  move_to_background:
+    dependency: "direct main"
+    description:
+      name: move_to_background
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   node_preamble:
     dependency: transitive
     description:

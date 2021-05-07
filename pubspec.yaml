@@ -42,6 +42,8 @@ dependencies:
   location: ^4.1.1
   geolocator: ^7.0.3
   ftpconnect: ^1.0.0
+  cron: ^0.3.0
+  move_to_background: ^1.0.2
 
 dev_dependencies:
   flutter_test:

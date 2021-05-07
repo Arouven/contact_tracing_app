@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class writefile {
+class Writefile {
   String fileName;
   Future get _localPath async {
     // Application documents directory: /data/user/0/{package_name}/{app_name}

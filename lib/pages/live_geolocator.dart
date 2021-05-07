@@ -1,5 +1,8 @@
-import '../pages/permissions.dart';
+import '../classes/globals.dart';
+
 import '../classes/write.dart';
+
+import '../pages/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,8 +10,6 @@ import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../widgets/drawer.dart';
-
-import 'dart:async';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -27,17 +28,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  var wf = new writefile();
+  var wf = new Writefile();
   LocationAccuracy acc;
   String typeAccuracy;
-  String fileToUpload;
-  // final
+
   //
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-    var permission = new permissions();
+    var permission = new Permissions();
     permission.requestAllPermissions();
 
     initLocationService();
@@ -347,7 +347,8 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           () {
             _currentLocation = position;
             wf.fileName = 'g.$typeAccuracy.txt';
-            fileToUpload = wf.localFileName().toString();
+
+            Globals.localPathToUpload = wf.localFileName().toString();
 
             wf.writeToFile(
                 "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
