@@ -4,17 +4,6 @@ import 'package:path_provider/path_provider.dart';
 
 class writefile {
   String fileName;
-  //= 'location_powerSave.txt';
-  // String get get_FileName {
-  //   return _fileName;
-  // }
-
-  // set set_FileName(String value) {
-  //   this._fileName = value;
-  // }
-
-  //bool _allowWriteFile = false;
-
   Future get _localPath async {
     // Application documents directory: /data/user/0/{package_name}/{app_name}
     //final applicationDirectory = await getApplicationDocumentsDirectory();
@@ -26,14 +15,19 @@ class writefile {
   }
 
   Future get _localFile async {
-    final path = await _localPath;
-    var fn = this.fileName;
-    var f = '$path/$fn';
+    var f = await localFileName();
     print('the path is: $f');
     /*
     /storage/emulated/0/Android/data/com.example.readwrite/files/xxx.txt
     */
     return File(f);
+  }
+
+  Future localFileName() async {
+    final path = await _localPath;
+    var fn = this.fileName;
+    var f = '$path/$fn';
+    return f;
   }
 
   Future writeToFile(String text) async {

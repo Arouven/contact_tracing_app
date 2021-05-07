@@ -1,5 +1,5 @@
 import '../pages/permissions.dart';
-import '../pages/write.dart';
+import '../classes/write.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -30,6 +30,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   var wf = new writefile();
   LocationAccuracy acc;
   String typeAccuracy;
+  String fileToUpload;
   // final
   //
   @override
@@ -346,22 +347,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           () {
             _currentLocation = position;
             wf.fileName = 'g.$typeAccuracy.txt';
+            fileToUpload = wf.localFileName().toString();
+
             wf.writeToFile(
                 "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
             _mapController.move(
                 LatLng(_currentLocation.latitude, _currentLocation.longitude),
                 _mapController.zoom);
-            //position.toString();
           },
         );
       },
     );
-    //   _positionStreamSubscription?.pause();
-    // }
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
 }
