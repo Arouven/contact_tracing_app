@@ -35,7 +35,7 @@ foreach($files as $file) {
             $accuracy = mysqli_real_escape_string($conn, $column[4]);
         }
         
-        $sqlInsert = "INSERT into coordinates (userId,dateTime,latitude,longitude,accuracy)
+        $sqlInsert = "INSERT into Coordinates (userId,dateTime,latitude,longitude,accuracy)
                 values (?,?,?,?,?)";
         $paramType = "issss";
         $paramArray = array(
