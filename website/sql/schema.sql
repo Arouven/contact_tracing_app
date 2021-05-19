@@ -1,16 +1,23 @@
-CREATE TABLE `Coordinates` (
-  `coordinatesId` int(11) NOT NULL,
-  `userId` int(8) NOT NULL,
-  `dateTime` varchar(55) NOT NULL,
-  `latitude` varchar(55) NOT NULL,
-  `longitude` varchar(255) NOT NULL,
-  `accuracy` varchar(255) NOT NULL
+CREATE TABLE `User` (
+  `userId` BIGINT NOT NULL AUTO_INCREMENT,
+  `firstName` VARCHAR(255) NOT NULL,
+  `lastName` VARCHAR(255) NOT NULL,
+  `country` VARCHAR(255) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `telephone` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `dateOfBirth` DATE NOT NULL,
+  `nationalIdNumber` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`userId`)
 );
 
-
-ALTER TABLE `Coordinates`
-  ADD PRIMARY KEY (`coordinatesId`);
-
-
-ALTER TABLE `Coordinates`
-  MODIFY `coordinatesId` int(11) NOT NULL AUTO_INCREMENT;
+CREATE TABLE `Coordinates` (
+  `coordinatesId` BIGINT NOT NULL AUTO_INCREMENT,
+  `userId` BIGINT NOT NULL,
+  `dateTime` DATETIME NOT NULL,
+  `latitude` VARCHAR(255) NOT NULL,
+  `longitude` VARCHAR(255) NOT NULL,
+  `accuracy` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`coordinatesId`),
+  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
+);

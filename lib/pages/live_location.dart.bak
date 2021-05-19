@@ -1,33 +1,38 @@
-import '../pages/permissions.dart';
+import '../classes/globals.dart';
+
+import '../classes/write.dart';
+
+import '../permissions/permissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../widgets/drawer.dart';
-import '../classes/write.dart';
 
-class LiveLocationPage extends StatefulWidget {
-  static const String route = '/live_location';
+class LiveGeolocatorPage extends StatefulWidget {
+  static const String route = '/live_geolocator';
 
   @override
-  _LiveLocationPageState createState() => _LiveLocationPageState();
+  _LiveGeolocatorPageState createState() => _LiveGeolocatorPageState();
 }
 
-class _LiveLocationPageState extends State<LiveLocationPage> {
-  LocationData _currentLocation;
+class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
+  // final List<_PositionItem> _positionItems = <_PositionItem>[];
+  // StreamSubscription<Position>? _positionStreamSubscription;
+
+  Position _currentLocation;
   MapController _mapController;
   bool _permission = false;
   final bool _liveUpdate = true;
   String _serviceError = '';
   var interActiveFlags = InteractiveFlag.all;
-  final Location _locationService = Location();
-  //var wf = new readWritecsv();
   var wf = new Writefile();
   LocationAccuracy acc;
   String typeAccuracy;
 
+  //
   @override
   void initState() {
     super.initState();
@@ -42,46 +47,50 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
     acc = LocationAccuracy.high;
     typeAccuracy = 'high';
 
-    await _locationService.changeSettings(
-      accuracy: acc,
-      interval: 1000,
-    );
-
     bool serviceEnabled;
     bool serviceRequestResult;
-    LocationData location;
+    Position location;
     try {
-      serviceEnabled = await _locationService.serviceEnabled();
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
-        var permission = await _locationService.requestPermission();
-        _permission = permission == PermissionStatus.granted;
+        var permission = await Geolocator.requestPermission();
+        // ignore: unrelated_type_equality_checks
+        _permission = permission == Geolocator.checkPermission();
 
         if (_permission) {
-          location = await _locationService.getLocation();
+          location = await Geolocator.getCurrentPosition();
           _currentLocation = location;
-          _locationService.onLocationChanged.listen(
-            (LocationData result) async {
-              if (mounted) {
-                setState(
-                  () {
-                    _currentLocation = result;
 
-                    // If Live Update is enabled, move map center
-                    if (_liveUpdate) {
-                      _mapController.move(
-                          LatLng(_currentLocation.latitude,
-                              _currentLocation.longitude),
-                          _mapController.zoom);
-                    }
-                  },
-                );
-              }
+          Geolocator.getPositionStream().listen(
+            (position)
+            //{
+            // wf.fileName = 'g.$typeAccuracy.txt';
+            // wf.writeToFile(
+            //     "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
+            // _mapController.move(LatLng(position.latitude, position.longitude),
+            //     _mapController.zoom);
+            async {
+              //if (mounted) {
+              setState(
+                () {
+                  _currentLocation = position;
+
+                  // If Live Update is enabled, move map center
+                  if (_liveUpdate) {
+                    _mapController.move(
+                        LatLng(_currentLocation.latitude,
+                            _currentLocation.longitude),
+                        _mapController.zoom);
+                  }
+                },
+              );
+              //}
             },
           );
         }
       } else {
-        serviceRequestResult = await _locationService.requestService();
+        serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
           initLocationService();
           return;
@@ -114,9 +123,9 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       locationAccuracy = 0;
     }
 
-    wf.fileName = 'l.$typeAccuracy.txt';
-    wf.writeToFile(
-        "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
+    // wf.fileName = 'g.$typeAccuracy.txt';
+    // wf.writeToFile(
+    //     "${DateTime.now().toString()},${currentLatLng.latitude.toString()},${currentLatLng.longitude.toString()},${locationAccuracy.toString()},$typeAccuracy");
 
     var markers = <Marker>[
       Marker(
@@ -142,7 +151,7 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
         title: Text('GPS Live Location'),
         centerTitle: true,
       ),
-      drawer: buildDrawer(context, LiveLocationPage.route),
+      drawer: buildDrawer(context, LiveGeolocatorPage.route),
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -190,9 +199,10 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
-                    acc = LocationAccuracy.navigation;
+                    acc = LocationAccuracy.bestForNavigation;
                     typeAccuracy = 'bestForNavigation';
                   },
                 );
@@ -205,6 +215,23 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
+                setState(
+                  () {
+                    acc = LocationAccuracy.best;
+                    typeAccuracy = 'best';
+                  },
+                );
+              },
+              label: Text('best'),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.high;
@@ -216,25 +243,27 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
             ),
           ),
           Positioned(
-            bottom: 150.0,
-            right: 10.0,
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                setState(
-                  () {
-                    acc = LocationAccuracy.balanced;
-                    typeAccuracy = 'balanced';
-                  },
-                );
-              },
-              label: Text('balanced'),
-            ),
-          ),
-          Positioned(
             bottom: 220.0,
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
+                setState(
+                  () {
+                    acc = LocationAccuracy.medium;
+                    typeAccuracy = 'medium';
+                  },
+                );
+              },
+              label: Text('medium'),
+            ),
+          ),
+          Positioned(
+            bottom: 290.0,
+            right: 10.0,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                _toggleListening();
                 setState(
                   () {
                     acc = LocationAccuracy.low;
@@ -246,18 +275,19 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
             ),
           ),
           Positioned(
-            bottom: 290.0,
+            bottom: 360.0,
             right: 10.0,
             child: FloatingActionButton.extended(
               onPressed: () {
+                _toggleListening();
                 setState(
                   () {
-                    acc = LocationAccuracy.powerSave;
-                    typeAccuracy = 'powerSave';
+                    acc = LocationAccuracy.lowest;
+                    typeAccuracy = 'lowest';
                   },
                 );
               },
-              label: Text('powerSave'),
+              label: Text('lowest'),
             ),
           ),
         ],
@@ -290,6 +320,44 @@ class _LiveLocationPageState extends State<LiveLocationPage> {
       //     );
       //   }),
       //
+    );
+  }
+
+  // bool _isListening() => !(_positionStreamSubscription == null ||
+  //     _positionStreamSubscription!.isPaused);
+
+  void _toggleListening() {
+    //if (_positionStreamSubscription == null) {
+    final positionStream = Geolocator.getPositionStream(
+      desiredAccuracy: acc,
+      intervalDuration: Duration(milliseconds: 1000),
+    );
+    positionStream.
+
+        // handleError(
+        //   (error) {
+        //       _positionStreamSubscription?.cancel();
+        //       _positionStreamSubscription = null;
+        //   },
+        // ).
+
+        listen(
+      (position) {
+        setState(
+          () {
+            _currentLocation = position;
+            wf.fileName = 'g.$typeAccuracy.txt';
+
+            Globals.localPathToUpload = wf.localFileName().toString();
+
+            wf.writeToFile(
+                "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
+            _mapController.move(
+                LatLng(_currentLocation.latitude, _currentLocation.longitude),
+                _mapController.zoom);
+          },
+        );
+      },
     );
   }
 }
