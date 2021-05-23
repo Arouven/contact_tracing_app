@@ -1,62 +1,56 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Writefile {
   String fileName;
-  Future get _localPath async {
+  //String localFileName;
+
+  Writefile(this.fileName) {
+    _localFile;
+  }
+
+  Future get _localFile async {
     // Application documents directory: /data/user/0/{package_name}/{app_name}
     //final applicationDirectory = await getApplicationDocumentsDirectory();
 
     // External storage directory: /storage/emulated/0
     final externalDirectory = await getExternalStorageDirectory();
 
-    return externalDirectory.path;
-  }
+    final fullPath = externalDirectory.path;
+    var fullFilePath = '$fullPath/${this.fileName}';
 
-  Future get _localFile async {
-    var f = await localFileName();
-    print('the path is: $f');
+    //saved in global var
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("fullFilePath", fullFilePath);
+
+//Retrive different types of data
+
+    print('the path is saved as "fullFilePath"');
     /*
     /storage/emulated/0/Android/data/com.example.readwrite/files/xxx.txt
     */
-    return File(f);
-  }
-
-  Future localFileName() async {
-    final path = await _localPath;
-    var fn = this.fileName;
-    var f = '$path/$fn';
-    return f;
+    return File(fullFilePath);
   }
 
   Future writeToFile(String text) async {
     final file = await _localFile;
     // Write the file
-    bool isExisted = file.existsSync();
-    String headerFile = 'DateTime,Latitude,Longitude,Accuracy,Type\n';
-    // ignore: unrelated_type_equality_checks
-    if (isExisted) {
+
+    File result;
+    if (file.existsSync()) {
       print('file already exists adding data');
-      File result = await file.writeAsString('$text\n', mode: FileMode.append);
-      if (result == null) {
-        print("Writing to file failed");
-      } else {
-        print("Successfully writing to file");
-      }
+      result = await file.writeAsString('$text\n', mode: FileMode.append);
     } else {
       print('no file, creating it');
-      File result = await file.writeAsString('$headerFile$text\n');
-      if (result == null) {
-        print("Writing to file failed");
-      } else {
-        print("Successfully writing to file");
-      }
+      String headerFile = 'DateTime,Latitude,Longitude,Accuracy,Type\n';
+      result = await file.writeAsString('$headerFile$text\n');
+    }
+    if (result == null) {
+      print("Writing to file failed");
+    } else {
+      print("Successfully writing to file");
     }
   }
 }
-
-// class ReadWriteFile extends StatefulWidget {
-//   @override
-//   _ReadWriteFileAppState createState() => new _ReadWriteFileAppState();
-// }

@@ -5,23 +5,21 @@ import '../credentials/credentials.dart';
 
 class UploadFile {
   String fileToUpload;
-  String directoryToUpload;
+  String directoryToUpload = '/htdocs/csv/csvFiles/';
 
-  UploadFile() {
-    //Point(double x, double y)
-    this.fileToUpload = 'csvfile.txt';
-    this.directoryToUpload = '/htdocs/csv/csvFiles';
-  }
-
-  uploadToServer() async {
+  void uploadToServer() async {
     FTPConnect ftpConnect =
         FTPConnect(ftpServer, user: ftpUser, pass: ftpPassword);
     try {
-      File fileToUpload = File(this.fileToUpload);
+      String time = (new DateTime.now().microsecondsSinceEpoch).toString();
+      File fileToUpload = File('${time}_${this.fileToUpload}');
       await ftpConnect.connect();
       await ftpConnect.changeDirectory(this.directoryToUpload);
       await ftpConnect.uploadFile(fileToUpload);
-      print('file uploaded');
+      File fileToDelete = File(this.fileToUpload);
+      await fileToDelete.delete();
+
+      print('file uploaded and deleted locally');
     } catch (e) {
       print('Error: ${e.toString()}');
     } finally {

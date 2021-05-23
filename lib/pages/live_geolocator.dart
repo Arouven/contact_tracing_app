@@ -1,4 +1,6 @@
-import '../classes/globals.dart';
+import 'package:contact_tracing/classes/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../classes/write.dart';
 import '../permissions/permissions.dart';
 import 'package:flutter/material.dart';
@@ -21,20 +23,29 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position _currentLocation;
   MapController _mapController;
   bool _permission = false;
-  final bool _liveUpdate = true;
   String _serviceError = '';
-  var interActiveFlags = InteractiveFlag.all;
-  var wf = new Writefile();
-  LocationAccuracy acc = LocationAccuracy.best;
-  String typeAccuracy = 'best';
+  Writefile _wf;
 
   @override
   void initState() {
     super.initState();
+    ss();
     _mapController = MapController();
-    // var permission = new Permissions();
-    // permission.requestAllPermissions();
     initLocationService();
+  }
+
+  void ss() async {
+    Scheduler scheduler = new Scheduler();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("UserName", "monsieur moi");
+    await prefs.setString("mobileID", "mo portab so ID");
+
+    _wf = new Writefile(
+        '${prefs.getString("UserName")}_${prefs.getString("mobileID")}_geolocatorbest.csv');
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var ffp = prefs.getString("fullFilePath");
+    //print('ssssssssssssssssssss $ffp');
+    scheduler.cronFileUpload(ffp);
   }
 
   void initLocationService() async {
@@ -45,10 +56,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
-        //var permission =
         await Geolocator.requestPermission();
-        // ignore: unrelated_type_equality_checks
-        //_permission = permission == Geolocator.checkPermission();
         await Geolocator.checkPermission().then(
           (value) {
             return {
@@ -59,10 +67,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         );
 
         if (_permission) {
-          print(_permission);
           location = await Geolocator.getCurrentPosition();
           _currentLocation = location;
-          _toggleListening();
+          _toggleListening(LocationAccuracy.best, Duration(minutes: 1));
         }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
@@ -85,7 +92,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   @override
   Widget build(BuildContext context) {
     LatLng currentLatLng;
-    // ignore: prefer_typing_uninitialized_variables
     var locationAccuracy;
     // Until currentLocation is initially updated, Widget can locate to 0, 0
     // by default or store previous location value to show.
@@ -124,7 +130,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   center:
                       LatLng(currentLatLng.latitude, currentLatLng.longitude),
                   zoom: 15.0,
-                  interactiveFlags: interActiveFlags,
+                  interactiveFlags: InteractiveFlag.all,
                 ),
                 layers: [
                   TileLayerOptions(
@@ -145,9 +151,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                               icon: Icon(Icons.location_on),
                               color: Colors.red,
                               iconSize: 35.0,
-                              onPressed: () {
-                                print('hello');
-                              },
+                              onPressed: () {},
                             ),
                           );
                         },
@@ -160,44 +164,22 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           ],
         ),
       ),
-      // floatingActionButton: Stack(
-      //   children: <Widget>[
-      //     Positioned(
-      //       bottom: 80.0,
-      //       right: 10.0,
-      //       child: FloatingActionButton.extended(
-      //         onPressed: () {
-      //           _toggleListening();
-      //           setState(
-      //             () {
-      //               //initLocationService();
-      //             },
-      //           );
-      //         },
-      //         label: Text('best'),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 
-  void _toggleListening() {
+  void _toggleListening(
+      LocationAccuracy desiredAccuracy, Duration intervalDuration) {
     final positionStream = Geolocator.getPositionStream(
-      desiredAccuracy: acc,
-      intervalDuration: Duration(milliseconds: 1000),
+      desiredAccuracy: desiredAccuracy,
+      intervalDuration: intervalDuration,
     );
     positionStream.listen(
       (position) {
         setState(
           () {
             _currentLocation = position;
-            wf.fileName = 'g.$typeAccuracy.txt';
-
-            Globals.localPathToUpload = wf.localFileName().toString();
-
-            wf.writeToFile(
-                "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},$typeAccuracy");
+            _wf.writeToFile(
+                "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},best");
 
             _mapController.move(
                 LatLng(_currentLocation.latitude, _currentLocation.longitude),
