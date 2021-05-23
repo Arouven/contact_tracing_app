@@ -11,13 +11,21 @@ CREATE TABLE `User` (
   PRIMARY KEY (`userId`)
 );
 
+CREATE TABLE `Mobile` (
+  `mobileId` BIGINT NOT NULL AUTO_INCREMENT,
+  `userId` BIGINT NOT NULL,
+  `mobileName` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`mobileId`),
+  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
+);
+
 CREATE TABLE `Coordinates` (
   `coordinatesId` BIGINT NOT NULL AUTO_INCREMENT,
-  `userId` BIGINT NOT NULL,
+  `mobileId` BIGINT NOT NULL,
   `dateTime` DATETIME NOT NULL,
   `latitude` VARCHAR(255) NOT NULL,
   `longitude` VARCHAR(255) NOT NULL,
   `accuracy` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`coordinatesId`),
-  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
+  FOREIGN KEY (`mobileId`) REFERENCES `Mobile`(`mobileId`)
 );

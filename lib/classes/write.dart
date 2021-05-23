@@ -34,18 +34,18 @@ class Writefile {
     return File(fullFilePath);
   }
 
-  Future writeToFile(String text) async {
+  Future writeToFile(String latitude, String longitude, String accuracy) async {
     final file = await _localFile;
-    // Write the file
-
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String text =
+        '${prefs.getString("mobileID")},${DateTime.now().toString()},$latitude,$longitude,$accuracy\n';
     File result;
     if (file.existsSync()) {
       print('file already exists adding data');
       result = await file.writeAsString('$text\n', mode: FileMode.append);
     } else {
       print('no file, creating it');
-      String headerFile = 'DateTime,Latitude,Longitude,Accuracy,Type\n';
-      result = await file.writeAsString('$headerFile$text\n');
+      result = await file.writeAsString('$text\n');
     }
     if (result == null) {
       print("Writing to file failed");

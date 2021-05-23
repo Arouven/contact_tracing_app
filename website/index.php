@@ -14,9 +14,9 @@ foreach($files as $file) {
     
     while (($column = fgetcsv($f, 10000, ",")) !== FALSE) {
         
-        $userId = "";
+        $mobileId = "";
         if (isset($column[0])) {
-            $userId = mysqli_real_escape_string($conn, $column[0]);
+            $mobileId = mysqli_real_escape_string($conn, $column[0]);
         }
         $dateTime = "";
         if (isset($column[1])) {
@@ -35,11 +35,11 @@ foreach($files as $file) {
             $accuracy = mysqli_real_escape_string($conn, $column[4]);
         }
         
-        $sqlInsert = "INSERT into Coordinates (userId,dateTime,latitude,longitude,accuracy)
+        $sqlInsert = "INSERT into Coordinates (mobileId,dateTime,latitude,longitude,accuracy)
                 values (?,?,?,?,?)";
         $paramType = "issss";
         $paramArray = array(
-            $userId,
+            $mobileId,
             $dateTime,
             $latitude,
             $longitude,
@@ -64,5 +64,3 @@ foreach($files as $file) {
         unlink($file);
     }
 }
-
-?>

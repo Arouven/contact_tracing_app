@@ -29,23 +29,21 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   @override
   void initState() {
     super.initState();
-    ss();
-    _mapController = MapController();
+    initialiser();
+
     initLocationService();
   }
 
-  void ss() async {
+  void initialiser() async {
     Scheduler scheduler = new Scheduler();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("UserName", "monsieur moi");
-    await prefs.setString("mobileID", "mo portab so ID");
-
+    await prefs.setString("mobileID", "100");
     _wf = new Writefile(
         '${prefs.getString("UserName")}_${prefs.getString("mobileID")}_geolocatorbest.csv');
-    //final SharedPreferences prefs = await SharedPreferences.getInstance();
     var ffp = prefs.getString("fullFilePath");
-    //print('ssssssssssssssssssss $ffp');
     scheduler.cronFileUpload(ffp);
+    _mapController = MapController();
   }
 
   void initLocationService() async {
@@ -179,7 +177,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           () {
             _currentLocation = position;
             _wf.writeToFile(
-                "${DateTime.now().toString()},${position.latitude.toString()},${position.longitude.toString()},${position.accuracy.toString()},best");
+                '${position.latitude.toString()}',
+                '${position.longitude.toString()}',
+                '${position.accuracy.toString()}');
 
             _mapController.move(
                 LatLng(_currentLocation.latitude, _currentLocation.longitude),
