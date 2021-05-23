@@ -31,19 +31,19 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     super.initState();
     initialiser();
 
+    _mapController = MapController();
     initLocationService();
   }
 
   void initialiser() async {
     Scheduler scheduler = new Scheduler();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("UserName", "monsieur moi");
+    await prefs.setString("nationalIdNumber", "P61548465161654816");
     await prefs.setString("mobileID", "100");
     _wf = new Writefile(
-        '${prefs.getString("UserName")}_${prefs.getString("mobileID")}_geolocatorbest.csv');
+        '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv');
     var ffp = prefs.getString("fullFilePath");
     scheduler.cronFileUpload(ffp);
-    _mapController = MapController();
   }
 
   void initLocationService() async {

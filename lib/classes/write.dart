@@ -39,6 +39,7 @@ class Writefile {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String text =
         '${prefs.getString("mobileID")},${DateTime.now().toString()},$latitude,$longitude,$accuracy\n';
+
     File result;
     if (file.existsSync()) {
       print('file already exists adding data');
