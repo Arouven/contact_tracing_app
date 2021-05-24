@@ -4,10 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Writefile {
-  String fileName;
+  //String fileName;
   //String localFileName;
 
-  Writefile(this.fileName) {
+  Writefile() {
     _localFile;
   }
 
@@ -19,15 +19,12 @@ class Writefile {
     final externalDirectory = await getExternalStorageDirectory();
 
     final fullPath = externalDirectory.path;
-    var fullFilePath = '$fullPath/${this.fileName}';
 
-    //saved in global var
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("fullFilePath", fullFilePath);
-
+    var fullFilePath = '$fullPath/${prefs.getString("fileName")}';
+    await prefs.setString("fileDirectory", '$fullPath/');
 //Retrive different types of data
 
-    print('the path is saved as "fullFilePath"');
     /*
     /storage/emulated/0/Android/data/com.example.readwrite/files/xxx.txt
     */
