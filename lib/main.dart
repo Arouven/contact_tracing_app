@@ -1,8 +1,72 @@
+import 'package:contact_tracing/classes/background.dart';
 import 'package:flutter/material.dart';
-import './pages/home.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import './pages/live_geolocator.dart';
+import 'dart:async';
 
-void main() {
+const taskPushFtpServer = 'taskPushFtpServer';
+void callbackDispatcher() {
+  Workmanager().executeTask(
+    (task, inputData) async {
+      // await ;
+      switch (task) {
+        case taskPushFtpServer:
+          Background().taskPushFtpServer();
+          break;
+      }
+      return Future.value(true);
+    },
+  );
+}
+
+void onStart() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final service = FlutterBackgroundService();
+  service.onDataReceived.listen((event) {
+    if (event["action"] == "setAsBackground") {
+      service.setForegroundMode(false);
+    }
+
+    if (event["action"] == "stopService") {
+      service.stopBackgroundService();
+    }
+  });
+
+  // bring to foreground
+  service.setForegroundMode(true);
+  Timer.periodic(Duration(seconds: 1), (timer) async {
+    if (!(await service.isServiceRunning())) timer.cancel();
+    service.setNotificationInfo(
+      title: "Contact tracing",
+      content: "Updated at ${DateTime.now()} \n L",
+    );
+
+    service.sendData(
+      {"current_date": DateTime.now().toIso8601String()},
+    );
+  });
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("nationalIdNumber", "P61548465161654816");
+  await prefs.setString("mobileID", "100");
+  var fn =
+      '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
+  await prefs.setString("fileName", fn);
+  _wf = new Writefile();
+  FlutterBackgroundService.initialize(onStart);
+  Workmanager().initialize(
+    callbackDispatcher,
+  );
+  Workmanager().registerPeriodicTask(
+    '1',
+    taskPushFtpServer,
+    frequency: Duration(hours: 6),
+  );
   runApp(MyApp());
 }
 
@@ -23,9 +87,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Generated using Material Design Palette/Theme Generator
-// http://mcg.mbitson.com/
-// https://github.com/mbitson/mcg
 const int _bluePrimary = 0xFF395afa;
 const MaterialColor mapBoxBlue = MaterialColor(
   _bluePrimary,

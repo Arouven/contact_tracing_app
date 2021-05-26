@@ -1,3 +1,4 @@
+import 'package:contact_tracing/classes/background.dart';
 import 'package:contact_tracing/classes/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,12 +7,14 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:workmanager/workmanager.dart';
 import '../classes/write.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../widgets/drawer.dart';
+import '../classes/notification.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -39,15 +42,11 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   void initialiser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("nationalIdNumber", "P61548465161654816");
-    await prefs.setString("mobileID", "100");
-    var fn =
-        '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
-    await prefs.setString("fileName", fn);
-    _wf = new Writefile();
-    Scheduler scheduler = new Scheduler();
-    scheduler.cronFileUpload();
+    // Background background = new Background();
+    // background.startBackground('1', taskPushNotification1Minute);
+
+    // Scheduler scheduler = new Scheduler();
+    // scheduler.cronFileUpload();
   }
 
   void initLocationService() async {

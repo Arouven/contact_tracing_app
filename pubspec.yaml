@@ -19,7 +19,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=2.0.0"
+ # flutter: ">=2.0.0"
 
 dependencies:
   flutter:
@@ -45,11 +45,14 @@ dependencies:
   cron: ^0.3.0
   move_to_background: ^1.0.2
   shared_preferences: ^2.0.5
+  workmanager: ^0.4.0
   flutter_local_notifications: ^5.0.0+4
-  http:
-  flutter_native_timezone:
-  device_info:
-  rxdart:
+  flutter_background_service: ^0.1.4
+  #services: ^0.0.1
+  http: ^0.13.3
+  flutter_native_timezone: ^1.0.10
+  device_info: ^2.0.1
+  rxdart: ^0.27.0
 
 dev_dependencies:
   flutter_test:
