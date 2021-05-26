@@ -1,10 +1,17 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SP {
+String fileName;
+String mobileID;
+String nationalIdNumber;
+const geolocatorAccuracy = LocationAccuracy.best;
+const taskPushFtpServer = 'taskPushFtpServer';
+
+class Globals {
   main() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.getString("fullFilePath");
-    prefs.getString("nationalIdNumber");
-    prefs.getString("mobileID");
+    fileName = prefs.getString("fileName");
+    nationalIdNumber = prefs.getString("nationalIdNumber");
+    mobileID = prefs.getString("mobileID");
   }
 }

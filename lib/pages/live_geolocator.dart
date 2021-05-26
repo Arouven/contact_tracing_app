@@ -1,4 +1,5 @@
 import 'package:contact_tracing/classes/background.dart';
+import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/classes/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   MapController _mapController;
   bool _permission = false;
   String _serviceError = '';
-  Writefile _wf;
 
   @override
   void initState() {
@@ -57,7 +57,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
-        await Geolocator.requestPermission();
         await Geolocator.checkPermission().then(
           (value) {
             return {
@@ -70,7 +69,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         if (_permission) {
           location = await Geolocator.getCurrentPosition();
           _currentLocation = location;
-          _toggleListening(LocationAccuracy.best, Duration(minutes: 1));
+          _toggleListening(geolocatorAccuracy, Duration(minutes: 1));
         }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
@@ -179,10 +178,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         setState(
           () {
             _currentLocation = position;
-            _wf.writeToFile(
-                '${position.latitude.toString()}',
-                '${position.longitude.toString()}',
-                '${position.accuracy.toString()}');
 
             _mapController.move(
                 LatLng(_currentLocation.latitude, _currentLocation.longitude),
