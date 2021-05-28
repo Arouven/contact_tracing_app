@@ -5,6 +5,7 @@ String fileName;
 String mobileID;
 String nationalIdNumber;
 const geolocatorAccuracy = LocationAccuracy.best;
+const int timeToUploadPerMinute = 6 * 60;
 const taskPushFtpServer = 'taskPushFtpServer';
 
 class Globals {

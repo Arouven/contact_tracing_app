@@ -12,5 +12,6 @@ class Background {
   void taskPushFtpServer() {
     UploadFile uploadFile = new UploadFile();
     uploadFile.uploadToServer();
+    print('in backkground class');
   }
 }

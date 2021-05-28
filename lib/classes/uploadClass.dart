@@ -31,6 +31,7 @@ class UploadFile {
       await ftpConnect.changeDirectory(this.directoryToUpload);
       await ftpConnect.uploadFile(renamedFile);
       await renamedFile.delete();
+      print('file deleted');
 
       await Notif().showNotification('File Uploaded',
           '${time}_${prefs.getString("fileName")} was uploaded');

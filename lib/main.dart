@@ -11,23 +11,26 @@ import 'classes/globals.dart';
 import 'classes/write.dart';
 
 Writefile _wf = new Writefile();
-
-void callbackDispatcher() {
-  Workmanager().executeTask(
-    (task, inputData) async {
-      // await ;
-      switch (task) {
-        case taskPushFtpServer:
-          Background().taskPushFtpServer();
-          break;
-      }
-      return Future.value(true);
-    },
-  );
-}
+// const taskPushFtpServer = 'taskPushFtpServer';
+// void callbackDispatcher() {
+//   Workmanager().executeTask(
+//     (task, inputData) async {
+//       // await ;
+//       switch (task) {
+//         case taskPushFtpServer:
+//           //Background background = new Background();
+//           // Background().taskPushFtpServer();
+//           //print('pushed to ftp server');
+//           break;
+//       }
+//       return Future.value(true);
+//     },
+//   );
+// }
 
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
+  int counter = 0;
   final service = FlutterBackgroundService();
   service.onDataReceived.listen((event) {
     if (event["action"] == "setAsBackground") {
@@ -47,7 +50,10 @@ void onStart() {
         desiredAccuracy: geolocatorAccuracy);
     _wf.writeToFile('${position.latitude.toString()}',
         '${position.longitude.toString()}', '${position.accuracy.toString()}');
-
+    if (counter > timeToUploadPerMinute) {
+      Background().taskPushFtpServer();
+      counter = 0;
+    }
     service.setNotificationInfo(
       title: "Contact tracing",
       content:
@@ -57,6 +63,7 @@ void onStart() {
     service.sendData(
       {"current_date": DateTime.now().toIso8601String()},
     );
+    counter = counter + 1;
   });
 }
 
@@ -65,20 +72,20 @@ void main() async {
   await Geolocator.requestPermission();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString("nationalIdNumber", "P61548465161654816");
-  await prefs.setString("mobileID", "100");
+  await prefs.setString("mobileID", "200");
   var fn =
       '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
   await prefs.setString("fileName", fn);
 
   FlutterBackgroundService.initialize(onStart);
-  Workmanager().initialize(
-    callbackDispatcher,
-  );
-  Workmanager().registerPeriodicTask(
-    '1',
-    taskPushFtpServer,
-    frequency: Duration(hours: 6),
-  );
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  // );
+  // Workmanager().registerPeriodicTask(
+  //   '1',
+  //   taskPushFtpServer,
+  //   frequency: Duration(minutes: 15),
+  // );
   runApp(MyApp());
 }
 

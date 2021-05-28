@@ -24,5 +24,7 @@ class Notif {
 
     await flutterLocalNotificationsPlugin.show(
         0, notificationTitle, notificationBody, platformChannelSpecifics);
+
+    print('notified');
   }
 }
