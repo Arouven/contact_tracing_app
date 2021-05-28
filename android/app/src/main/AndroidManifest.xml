@@ -15,12 +15,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 
-
+ <!-- android:usesCleartextTraffic="true" -->
 
     
     <application
         android:label="contact_tracing"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+       
+        >
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

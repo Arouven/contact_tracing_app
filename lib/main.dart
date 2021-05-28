@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:contact_tracing/classes/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:http/http.dart' as http;
 import './pages/live_geolocator.dart';
 import 'dart:async';
 
@@ -67,25 +71,41 @@ void onStart() {
   });
 }
 
+Future getData() async {
+  var url = 'https://contacttracing.infinityfreeapp.com/connectOnline/get.php';
+  http.Response response = await http.get(Uri.parse(url));
+  var data = jsonDecode(response.body);
+  print(data.toString());
+}
+
+Future xx() async {
+  final ioc = new HttpClient();
+  ioc.badCertificateCallback =
+      (X509Certificate cert, String host, int port) => true;
+  final https = new IOClient(ioc);
+  var url = 'https://contact-tracing-utm.000webhostapp.com/get.php';
+
+  https.post(Uri.parse(url)).then(
+    (response) {
+      // print("Reponse status : ${response.statusCode}");
+      // print("Response body : ${response.body}");
+      print(jsonDecode(response.body));
+    },
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Geolocator.requestPermission();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString("nationalIdNumber", "P61548465161654816");
-  await prefs.setString("mobileID", "200");
-  var fn =
-      '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
-  await prefs.setString("fileName", fn);
+  // await Geolocator.requestPermission();
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // await prefs.setString("nationalIdNumber", "P61548465161654816");
+  // await prefs.setString("mobileID", "200");
+  // var fn =
+  //     '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
+  // await prefs.setString("fileName", fn);
 
-  FlutterBackgroundService.initialize(onStart);
-  // Workmanager().initialize(
-  //   callbackDispatcher,
-  // );
-  // Workmanager().registerPeriodicTask(
-  //   '1',
-  //   taskPushFtpServer,
-  //   frequency: Duration(minutes: 15),
-  // );
+  // FlutterBackgroundService.initialize(onStart);
+  xx();
   runApp(MyApp());
 }
 
