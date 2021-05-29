@@ -1,5 +1,5 @@
 <?php
-require('conn.php');
+require('credentials.php');
 $conn = new mysqli(HOST, USERNAME, PASSWORD, DATABASENAME);
 if (mysqli_connect_errno()) {
     trigger_error("Problem with connecting to database.");
