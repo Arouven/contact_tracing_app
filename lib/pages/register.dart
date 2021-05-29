@@ -21,6 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _email = TextEditingController();
   TextEditingController _dateOfBirth = TextEditingController();
   TextEditingController _nationalIdNumber = TextEditingController();
+  TextEditingController _password = TextEditingController();
 
   String msg = "";
 
@@ -47,6 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': _email.text,
         'dateOfBirth': _dateOfBirth.text,
         'nationalIdNumber': _nationalIdNumber.text,
+        'password': _password.text,
       },
     );
 
@@ -277,6 +279,28 @@ class _RegisterPageState extends State<RegisterPage> {
                     border: InputBorder.none,
                     labelText: "NIC",
                     hintText: "NIC",
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.amber, Colors.pink],
+                  ),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: TextField(
+                  controller: _password,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    labelText: "Password",
+                    hintText: "Password",
                   ),
                 ),
               ),

@@ -1,19 +1,19 @@
 <?php
-use Phppot\DataSource;
 
-require_once 'DataSource.php';
-$db = new DataSource();
+
+require_once '../database.php';
+$db = new database();
 $conn = $db->getConnection();
 
 $files = glob('csvFiles/*.{csv}', GLOB_BRACE);
-foreach($files as $file) {
-  //do your work here
+foreach ($files as $file) {
+    //do your work here
     $inserted = array();
-        
+
     $f = fopen($file, "r");
-    
+
     while (($column = fgetcsv($f, 10000, ",")) !== FALSE) {
-        
+
         $mobileId = "";
         if (isset($column[0])) {
             $mobileId = mysqli_real_escape_string($conn, $column[0]);
@@ -34,7 +34,7 @@ foreach($files as $file) {
         if (isset($column[4])) {
             $accuracy = mysqli_real_escape_string($conn, $column[4]);
         }
-        
+
         $sqlInsert = "INSERT into Coordinates (mobileId,dateTime,latitude,longitude,accuracy)
                 values (?,?,?,?,?)";
         $paramType = "issss";
@@ -46,21 +46,21 @@ foreach($files as $file) {
             $accuracy
         );
         $insertId = $db->insert($sqlInsert, $paramType, $paramArray);
-        
-        if (! empty($insertId)) {
+
+        if (!empty($insertId)) {
             $type = "success";
             $message = "CSV Data Imported into the Database";
-            array_push($inserted , true);
+            array_push($inserted, true);
         } else {
             $type = "error";
             $message = "Problem in Importing CSV Data";
-            array_push($inserted , false);
+            array_push($inserted, false);
         }
     }
-    if (in_array(false,$inserted)) {
+    if (in_array(false, $inserted)) {
         //echo '';
     } //do not delete the file
-    else{
+    else {
         unlink($file);
     }
 }

@@ -8,6 +8,7 @@ CREATE TABLE `User` (
   `email` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
   `nationalIdNumber` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`userId`)
 );
 

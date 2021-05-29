@@ -1,38 +1,10 @@
 <?php
-
-
-
-/**
- * Copyright (C) 2019 Phppot
- *
- * Distributed under MIT license with an exception that,
- * you don’t have to include the full MIT License in your code.
- * In essense, you can use it on commercial software, modify and distribute free.
- * Though not mandatory, you are requested to attribute this URL in your code or website.
- */
-namespace Phppot;
-//
-/**
- * Generic datasource class for handling DB operations.
- * Uses MySqli and PreparedStatements.
- *
- * @version 2.5 - recordCount function added
- */
 require 'credentials.php';
-class DataSource
+class database
 {
-
     // PHP 7.1.0 visibility modifiers are allowed for class constants.
     // when using above 7.1.0, declare the below constants as private
-  
-    
-    // const HOST = $hostname;
 
-    // const USERNAME = $username;
-
-    // const PASSWORD = $password;
-
-    // const DATABASENAME = $databasename;
 
     private $conn;
 
@@ -55,11 +27,11 @@ class DataSource
      * If connection object is needed use this method and get access to it.
      * Otherwise, use the below methods for insert / update / etc.
      *
-     * @return \mysqli
+     * @return mysqli
      */
     public function getConnection()
-    {   
-        $conn = new \mysqli(HOST, USERNAME, PASSWORD, DATABASENAME);
+    {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DATABASENAME);
         if (mysqli_connect_errno()) {
             trigger_error("Problem with connecting to database.");
         }
@@ -80,7 +52,7 @@ class DataSource
     {
         $stmt = $this->conn->prepare($query);
 
-        if (! empty($paramType) && ! empty($paramArray)) {
+        if (!empty($paramType) && !empty($paramArray)) {
 
             $this->bindQueryParams($stmt, $paramType, $paramArray);
         }
@@ -93,7 +65,7 @@ class DataSource
             }
         }
 
-        if (! empty($resultset)) {
+        if (!empty($resultset)) {
             return $resultset;
         }
     }
@@ -127,7 +99,7 @@ class DataSource
     {
         $stmt = $this->conn->prepare($query);
 
-        if (! empty($paramType) && ! empty($paramArray)) {
+        if (!empty($paramType) && !empty($paramArray)) {
             $this->bindQueryParams($stmt, $paramType, $paramArray);
         }
         $stmt->execute();
@@ -144,9 +116,9 @@ class DataSource
      */
     public function bindQueryParams($stmt, $paramType, $paramArray = array())
     {
-        $paramValueReference[] = & $paramType;
-        for ($i = 0; $i < count($paramArray); $i ++) {
-            $paramValueReference[] = & $paramArray[$i];
+        $paramValueReference[] = &$paramType;
+        for ($i = 0; $i < count($paramArray); $i++) {
+            $paramValueReference[] = &$paramArray[$i];
         }
         call_user_func_array(array(
             $stmt,
@@ -165,7 +137,7 @@ class DataSource
     public function getRecordCount($query, $paramType = "", $paramArray = array())
     {
         $stmt = $this->conn->prepare($query);
-        if (! empty($paramType) && ! empty($paramArray)) {
+        if (!empty($paramType) && !empty($paramArray)) {
 
             $this->bindQueryParams($stmt, $paramType, $paramArray);
         }

@@ -1,32 +1,73 @@
 <?php
 
-require "credentials.php";
-$con = mysqli_connect(HOST, USERNAME, PASSWORD, DATABASENAME) or die('cannot connect to database');
+require '../database.php';
+$db = new database();
+$conn = $db->getConnection();
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	$data = array();
+	$firstName = "";
+	if (isset($_POST['firstName'])) {
+		$firstName = mysqli_real_escape_string($conn, $_POST['firstName']);
+	}
+	$lastName = "";
+	if (isset($_POST['lastName'])) {
+		$lastName = mysqli_real_escape_string($conn, $_POST['lastName']);
+	}
+	$country = "";
+	if (isset($_POST['country'])) {
+		$country = mysqli_real_escape_string($conn, $_POST['country']);
+	}
+	$address = "";
+	if (isset($_POST['address'])) {
+		$address = mysqli_real_escape_string($conn, $_POST['address']);
+	}
+	$telephone = "";
+	if (isset($_POST['telephone'])) {
+		$telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
+	}
+	$email = "";
+	if (isset($_POST['email'])) {
+		$email = mysqli_real_escape_string($conn, $_POST['email']);
+	}
+	$dateOfBirth = "";
+	if (isset($_POST['dateOfBirth'])) {
+		$dateOfBirth = mysqli_real_escape_string($conn, $_POST['dateOfBirth']);
+	}
+	$nationalIdNumber = "";
+	if (isset($_POST['nationalIdNumber'])) {
+		$nationalIdNumber = mysqli_real_escape_string($conn, $_POST['nationalIdNumber']);
+	}
+	$password = "";
+	if (isset($_POST['password'])) {
+		$password = mysqli_real_escape_string($conn, $_POST['password']);
+	}
 
-	$username = $_POST['username'];
-	$password = $_POST['password'];
-	$level = $_POST['level'];
+	$selectquery = "SELECT * FROM User WHERE nationalIdNumber = ? AND password = ?;";
+	$selectparamType = "ss";
+	$selectparamArray = array(
+		$nationalIdNumber,
+		$password
+	);
 
-	$cek = mysqli_query($con, "SELECT * FROM User WHERE username='$username' AND password='$password'");
-	$cekData = mysqli_fetch_array($cek);
 
-	if (isset($cekData)) {
-		$data['status'] = 1;
-		$data['msg'] = "Data Sudah Ada!";
-		echo json_encode($data);
-	} else {
-		$query = mysqli_query($con, "INSERT INTO User VALUE(null, '$username', '$password', '$level')");
-
-		if (isset($query)) {
-			$data['status'] = 2;
-			$data['msg'] = "Berhasil Di Inputkan";
-			echo json_encode($data);
-		} else {
-			$data['status'] = 3;
-			$data['msg'] = "Cannot Add Your Data!";
-			echo json_encode($data);
-		}
+	$cekData = $db->select(query: $selectquery, paramType: $insertparamType, paramArray: $selectparamArray);
+	if (isset($cekData)) { // already exist
+		echo json_encode('nic already existed in database');
+	} else { //insert it
+		$insertquery = "INSERT INTO User (firstName, lastName, country, address, telephone,email, dateOfBirth, nationalIdNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		$insertparamType = "sssssssss";
+		$insertparamArray = array(
+			$firstName,
+			$lastName,
+			$country,
+			$address,
+			$telephone,
+			$email,
+			$dateOfBirth,
+			$nationalIdNumber,
+			$password
+		);
+		$insertedId = $db->insert(query: $insertquery, paramType: $insertparamType, paramArray: $insertparamArray);
+		echo json_encode($insertedId);
 	}
 }
