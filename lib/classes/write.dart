@@ -40,11 +40,12 @@ class Writefile {
     File result;
     if (file.existsSync()) {
       print('file already exists adding data');
-      result = await file.writeAsString('$text\n', mode: FileMode.append);
+      result = await file.writeAsString('$text', mode: FileMode.append);
     } else {
       print('no file, creating it');
-      result = await file.writeAsString('$text\n');
+      result = await file.writeAsString('$text');
     }
+    print(result.toString());
     if (result == null) {
       print("Writing to file failed");
     } else {

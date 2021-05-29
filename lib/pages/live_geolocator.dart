@@ -1,21 +1,13 @@
-import 'package:contact_tracing/classes/background.dart';
 import 'package:contact_tracing/classes/globals.dart';
-import 'package:contact_tracing/classes/scheduler.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:workmanager/workmanager.dart';
-import '../classes/write.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../widgets/drawer.dart';
-import '../classes/notification.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -35,18 +27,8 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   @override
   void initState() {
     super.initState();
-    initialiser();
-
     _mapController = MapController();
     initLocationService();
-  }
-
-  void initialiser() async {
-    // Background background = new Background();
-    // background.startBackground('1', taskPushNotification1Minute);
-
-    // Scheduler scheduler = new Scheduler();
-    // scheduler.cronFileUpload();
   }
 
   void initLocationService() async {

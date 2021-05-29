@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:contact_tracing/classes/background.dart';
+import 'package:contact_tracing/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,25 +12,11 @@ import './pages/live_geolocator.dart';
 import 'dart:async';
 
 import 'classes/globals.dart';
+import 'classes/uploadClass.dart';
 import 'classes/write.dart';
+import 'pages/register.dart';
 
 Writefile _wf = new Writefile();
-// const taskPushFtpServer = 'taskPushFtpServer';
-// void callbackDispatcher() {
-//   Workmanager().executeTask(
-//     (task, inputData) async {
-//       // await ;
-//       switch (task) {
-//         case taskPushFtpServer:
-//           //Background background = new Background();
-//           // Background().taskPushFtpServer();
-//           //print('pushed to ftp server');
-//           break;
-//       }
-//       return Future.value(true);
-//     },
-//   );
-// }
 
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,11 +37,13 @@ void onStart() {
   Timer.periodic(Duration(minutes: 1), (timer) async {
     if (!(await service.isServiceRunning())) timer.cancel();
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: geolocatorAccuracy);
+      desiredAccuracy: geolocatorAccuracy,
+    );
     _wf.writeToFile('${position.latitude.toString()}',
         '${position.longitude.toString()}', '${position.accuracy.toString()}');
     if (counter > timeToUploadPerMinute) {
-      Background().taskPushFtpServer();
+      UploadFile uploadFile = new UploadFile();
+      uploadFile.uploadToServer();
       counter = 0;
     }
     service.setNotificationInfo(
@@ -96,16 +84,16 @@ Future xx() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Geolocator.requestPermission();
-  // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setString("nationalIdNumber", "P61548465161654816");
-  // await prefs.setString("mobileID", "200");
-  // var fn =
-  //     '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
-  // await prefs.setString("fileName", fn);
+  await Geolocator.requestPermission();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("nationalIdNumber", "P61548465161654816");
+  await prefs.setString("mobileID", "200");
+  var fn =
+      '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
+  await prefs.setString("fileName", fn);
 
-  // FlutterBackgroundService.initialize(onStart);
-  xx();
+  FlutterBackgroundService.initialize(onStart);
+  //xx();
   runApp(MyApp());
 }
 
@@ -118,10 +106,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: LiveGeolocatorPage(), //HomePage(),
-      // routes: <String, WidgetBuilder>{
-      //   LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
-      // },
+      home: RegisterPage(), //HomePage(),
+      routes: <String, WidgetBuilder>{
+        LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
+        RegisterPage.route: (context) => RegisterPage(),
+      },
     );
   }
 }

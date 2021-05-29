@@ -1,5 +1,7 @@
+import 'package:contact_tracing/pages/register.dart';
 import 'package:flutter/material.dart';
 import '../pages/live_geolocator.dart';
+import '../pages/register.dart';
 import '../pages/home.dart';
 
 Widget _buildMenuItem(
@@ -36,8 +38,14 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         ),
         _buildMenuItem(
           context,
-          const Text('geolocator'),
+          const Text('GPS Live'),
           LiveGeolocatorPage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Register'),
+          RegisterPage.route,
           currentRoute,
         ),
       ],

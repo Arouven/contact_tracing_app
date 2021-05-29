@@ -1,3 +1,4 @@
+-- CREATING TABLES
 CREATE TABLE `User` (
   `userId` BIGINT NOT NULL AUTO_INCREMENT,
   `firstName` VARCHAR(255) NOT NULL,
@@ -30,3 +31,54 @@ CREATE TABLE `Coordinates` (
   PRIMARY KEY (`coordinatesId`),
   FOREIGN KEY (`mobileId`) REFERENCES `Mobile`(`mobileId`)
 );
+
+-- INSERTING TABLES
+INSERT INTO
+  `User` (
+    firstName,
+    lastName,
+    country,
+    address,
+    telephone,
+    email,
+    dateOfBirth,
+    nationalIdNumber,
+    password
+  )
+VALUES
+  (
+    'John',
+    'Smith',
+    'Mauritius',
+    'Port-Louis',
+    '654654652',
+    'JohnSmith@gmail.com',
+    '2000-01-13',
+    'J6465516549846513',
+    '1234'
+  );
+
+INSERT INTO
+  `User` (
+    firstName,
+    lastName,
+    country,
+    address,
+    telephone,
+    email,
+    dateOfBirth,
+    nationalIdNumber,
+    password
+  )
+VALUES
+  (
+    'James',
+    'Smith',
+    'Mauritius',
+    'Port-Louis',
+    '564654654',
+    'JamesSmith@gmail.com',
+    '2000-01-13',
+    'J6465516549846513',
+    '1234'
+  );

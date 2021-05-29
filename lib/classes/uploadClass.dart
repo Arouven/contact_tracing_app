@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:contact_tracing/classes/notification.dart';
 import 'package:ftpconnect/ftpconnect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../credentials/credentials.dart';
-import 'dart:async';
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'globals.dart';
 
 class UploadFile {
   //String fileToUpload;

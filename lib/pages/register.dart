@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   insertApi() async {
     final res = await http.post(
-      Uri.parse(regis),
+      Uri.parse(registerUrl),
       body: {
         'firstName': _firstName.text,
         'lastName': _lastName.text,
@@ -66,35 +66,42 @@ class _RegisterPageState extends State<RegisterPage> {
     if (dataJson['status'] == 1) {
       print(dataJson['msg']);
       showDialog(
-          context: context,
-          builder: (c) {
-            return AlertDialog(
-              title: Text("Notifikasi"),
-              content: Text(dataJson['msg']),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Close"),
-                )
-              ],
-            );
-          });
-      setState(() {
-        msg = dataJson['msg'];
-      });
+        context: context,
+        builder: (c) {
+          return AlertDialog(
+            title: Text("Notifikasi"),
+            content: Text(dataJson['msg']),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Close"),
+              )
+            ],
+          );
+        },
+      );
+      setState(
+        () {
+          msg = dataJson['msg'];
+        },
+      );
     } else if (dataJson['status'] == 2) {
       print(dataJson['msg']);
       Navigator.of(context).pop();
-      setState(() {
-        msg = "";
-      });
+      setState(
+        () {
+          msg = "";
+        },
+      );
     } else {
       print(dataJson['msg']);
-      setState(() {
-        msg = dataJson['msg'];
-      });
+      setState(
+        () {
+          msg = dataJson['msg'];
+        },
+      );
     }
   }
 
