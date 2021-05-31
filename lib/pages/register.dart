@@ -161,7 +161,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _lastName,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "Lastname",
@@ -183,7 +182,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _country,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "Country",
@@ -205,7 +203,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _address,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "Address",
@@ -227,7 +224,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _telephone,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "Telephone",
@@ -249,7 +245,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _email,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "Email",
@@ -271,7 +266,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _dateOfBirth,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "DOB",
@@ -293,7 +287,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _nationalIdNumber,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "NIC",
@@ -315,7 +308,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: TextField(
                       controller: _username,
-                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         labelText: "username",
