@@ -107,7 +107,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: HomePage(), //HomePage(),
+      home: LoginPage(), //HomePage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),

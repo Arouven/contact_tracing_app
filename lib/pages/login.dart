@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 //import '../pages/register.dart';
 
@@ -31,15 +30,17 @@ class _LoginState extends State<LoginPage> {
       _password.clear();
       setState(
         () {
-          Fluttertoast.showToast(
-            msg: msgError,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
+          //register btn appear
+        },
+      );
+    } else {
+      print(data['msg']);
+      msgError = ""; //"User logged in";
+      _username.clear();
+      _password.clear();
+      setState(
+        () {
+          //redirect to home
         },
       );
     }
@@ -85,10 +86,11 @@ class _LoginState extends State<LoginPage> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.amber, Colors.pink],
-                        ),
-                        borderRadius: BorderRadius.circular(20.0)),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.grey],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                     child: TextField(
                       controller: _username,
                       decoration: InputDecoration(
@@ -105,9 +107,11 @@ class _LoginState extends State<LoginPage> {
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                        gradient:
-                            LinearGradient(colors: [Colors.amber, Colors.pink]),
-                        borderRadius: BorderRadius.circular(20.0)),
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.grey],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                     child: TextField(
                       controller: _password,
                       obscureText: true,
@@ -124,7 +128,7 @@ class _LoginState extends State<LoginPage> {
                   Material(
                     borderRadius: BorderRadius.circular(20.0),
                     elevation: 10.0,
-                    color: Colors.pink,
+                    color: Colors.blue,
                     child: MaterialButton(
                       onPressed: () {
                         getApi(
@@ -132,7 +136,7 @@ class _LoginState extends State<LoginPage> {
                           _password.text,
                         );
                       },
-                      color: Colors.pink,
+                      //color: Colors.blue,
                       child: Text("LOGIN"),
                     ),
                   ),

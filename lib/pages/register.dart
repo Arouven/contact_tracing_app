@@ -22,6 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _email = TextEditingController();
   TextEditingController _dateOfBirth = TextEditingController();
   TextEditingController _nationalIdNumber = TextEditingController();
+  TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
 
   String msg = "";
@@ -49,6 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': _email.text,
         'dateOfBirth': _dateOfBirth.text,
         'nationalIdNumber': _nationalIdNumber.text,
+        'username': _username.text,
         'password': _password.text,
       },
     );
@@ -63,6 +65,8 @@ class _RegisterPageState extends State<RegisterPage> {
     _email.clear();
     _dateOfBirth.clear();
     _nationalIdNumber.clear();
+    _username.clear();
+    _password.clear();
 
     if (dataJson['status'] == 1) {
       print(dataJson['msg']);
@@ -130,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -151,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -173,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -195,7 +199,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -217,7 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -239,7 +243,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -261,7 +265,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -283,7 +287,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -305,7 +309,29 @@ class _RegisterPageState extends State<RegisterPage> {
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber, Colors.pink],
+                        colors: [Colors.white, Colors.grey],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _username,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "username",
+                        hintText: "username",
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.grey],
                       ),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
