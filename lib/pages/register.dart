@@ -1,3 +1,4 @@
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../classes/globals.dart';
@@ -72,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
             title: Text("Notifikasi"),
             content: Text(dataJson['msg']),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -107,235 +108,244 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Register"),
-        backgroundColor: Colors.pink,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Center(
-          child: ListView(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Register"),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
+          ),
+          drawer: buildDrawer(context, RegisterPage.route),
+          body: Container(
+            padding: EdgeInsets.all(10.0),
+            child: Center(
+              child: ListView(
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _firstName,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Firstname",
+                        hintText: "Firstname",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _firstName,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Firstname",
-                    hintText: "Firstname",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _lastName,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Lastname",
+                        hintText: "Lastname",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _lastName,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Lastname",
-                    hintText: "Lastname",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _country,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Country",
+                        hintText: "Country",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _country,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Country",
-                    hintText: "Country",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _address,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Address",
+                        hintText: "Address",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _address,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Address",
-                    hintText: "Address",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _telephone,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Telephone",
+                        hintText: "Telephone",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _telephone,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Telephone",
-                    hintText: "Telephone",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _email,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Email",
+                        hintText: "Email",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _email,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Email",
-                    hintText: "Email",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _dateOfBirth,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "DOB",
+                        hintText: "DOB",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _dateOfBirth,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "DOB",
-                    hintText: "DOB",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _nationalIdNumber,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "NIC",
+                        hintText: "NIC",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _nationalIdNumber,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "NIC",
-                    hintText: "NIC",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber, Colors.pink],
+                  Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.amber, Colors.pink],
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: TextField(
+                      controller: _password,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        labelText: "Password",
+                        hintText: "Password",
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: TextField(
-                  controller: _password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    labelText: "Password",
-                    hintText: "Password",
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
+                  Material(
+                    borderRadius: BorderRadius.circular(20.0),
+                    elevation: 10.0,
+                    color: Colors.pink,
+                    child: MaterialButton(
+                      onPressed: () {
+                        insertApi();
+                      },
+                      color: Colors.pink,
+                      child: Text("REGISTER"),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Center(
+                    child: Text(
+                      msg,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
+                ],
               ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Material(
-                borderRadius: BorderRadius.circular(20.0),
-                elevation: 10.0,
-                color: Colors.pink,
-                child: MaterialButton(
-                  onPressed: () {
-                    insertApi();
-                  },
-                  color: Colors.pink,
-                  child: Text("REGISTER"),
-                ),
-              ),
-              SizedBox(
-                height: 15.0,
-              ),
-              Center(
-                child: Text(
-                  msg,
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ),

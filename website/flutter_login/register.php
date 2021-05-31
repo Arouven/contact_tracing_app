@@ -37,15 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	if (isset($_POST['nationalIdNumber'])) {
 		$nationalIdNumber = mysqli_real_escape_string($conn, $_POST['nationalIdNumber']);
 	}
+	$username = "";
+	if (isset($_POST['username'])) {
+		$username = mysqli_real_escape_string($conn, $_POST['username']);
+	}
 	$password = "";
 	if (isset($_POST['password'])) {
 		$password = mysqli_real_escape_string($conn, $_POST['password']);
 	}
 
-	$selectquery = "SELECT * FROM User WHERE nationalIdNumber = ? AND password = ?;";
+	$selectquery = "SELECT * FROM User WHERE username = ? AND password = ?;";
 	$selectparamType = "ss";
 	$selectparamArray = array(
-		$nationalIdNumber,
+		$username,
 		$password
 	);
 
@@ -54,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	if (isset($cekData)) { // already exist
 		echo json_encode('nic already existed in database');
 	} else { //insert it
-		$insertquery = "INSERT INTO User (firstName, lastName, country, address, telephone,email, dateOfBirth, nationalIdNumber, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
-		$insertparamType = "sssssssss";
+		$insertquery = "INSERT INTO User (firstName, lastName, country, address, telephone,email, dateOfBirth, nationalIdNumber, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		$insertparamType = "ssssssssss";
 		$insertparamArray = array(
 			$firstName,
 			$lastName,
@@ -65,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 			$email,
 			$dateOfBirth,
 			$nationalIdNumber,
+			$username,
 			$password
 		);
 		$insertedId = $db->insert(query: $insertquery, paramType: $insertparamType, paramArray: $insertparamArray);

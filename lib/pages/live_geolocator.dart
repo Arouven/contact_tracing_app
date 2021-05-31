@@ -71,84 +71,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    LatLng currentLatLng;
-    var locationAccuracy;
-    // Until currentLocation is initially updated, Widget can locate to 0, 0
-    // by default or store previous location value to show.
-    if (_currentLocation != null) {
-      currentLatLng =
-          LatLng(_currentLocation.latitude, _currentLocation.longitude);
-      locationAccuracy = _currentLocation.accuracy;
-    } else {
-      currentLatLng = LatLng(0, 0);
-      locationAccuracy = 0;
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('GPS Live Location'),
-        centerTitle: true,
-      ),
-      drawer: buildDrawer(context, LiveGeolocatorPage.route),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: _serviceError.isEmpty
-                  ? Text(
-                      'latitude ${currentLatLng.latitude}, longitude ${currentLatLng.longitude}, accuracy ${locationAccuracy.toString()}')
-                  : Text(
-                      'Error occured while acquiring location. Error Message : '
-                      '$_serviceError'),
-            ),
-            Flexible(
-              child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  center:
-                      LatLng(currentLatLng.latitude, currentLatLng.longitude),
-                  zoom: 15.0,
-                  interactiveFlags: InteractiveFlag.all,
-                ),
-                layers: [
-                  TileLayerOptions(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: ['a', 'b', 'c'],
-                    tileProvider: NonCachingNetworkTileProvider(),
-                  ),
-                  MarkerLayerOptions(
-                    markers: <Marker>[
-                      Marker(
-                        width: 35,
-                        height: 35,
-                        point: currentLatLng,
-                        builder: (ctx) {
-                          return Container(
-                            child: IconButton(
-                              icon: Icon(Icons.location_on),
-                              color: Colors.red,
-                              iconSize: 35.0,
-                              onPressed: () {},
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _toggleListening(
       LocationAccuracy desiredAccuracy, Duration intervalDuration) {
     final positionStream = Geolocator.getPositionStream(
@@ -167,6 +89,92 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           },
         );
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    LatLng currentLatLng;
+    var locationAccuracy;
+    // Until currentLocation is initially updated, Widget can locate to 0, 0
+    // by default or store previous location value to show.
+    if (_currentLocation != null) {
+      currentLatLng =
+          LatLng(_currentLocation.latitude, _currentLocation.longitude);
+      locationAccuracy = _currentLocation.accuracy;
+    } else {
+      currentLatLng = LatLng(0, 0);
+      locationAccuracy = 0;
+    }
+
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('GPS Live Location'),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
+          ),
+          drawer: buildDrawer(context, LiveGeolocatorPage.route),
+          body: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: _serviceError.isEmpty
+                      ? Text(
+                          'latitude ${currentLatLng.latitude}, longitude ${currentLatLng.longitude}, accuracy ${locationAccuracy.toString()}')
+                      : Text(
+                          'Error occured while acquiring location. Error Message : '
+                          '$_serviceError'),
+                ),
+                Flexible(
+                  child: FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      center: LatLng(
+                          currentLatLng.latitude, currentLatLng.longitude),
+                      zoom: 15.0,
+                      interactiveFlags: InteractiveFlag.all,
+                    ),
+                    layers: [
+                      TileLayerOptions(
+                        urlTemplate:
+                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        subdomains: ['a', 'b', 'c'],
+                        tileProvider: NonCachingNetworkTileProvider(),
+                      ),
+                      MarkerLayerOptions(
+                        markers: <Marker>[
+                          Marker(
+                            width: 35,
+                            height: 35,
+                            point: currentLatLng,
+                            builder: (ctx) {
+                              return Container(
+                                child: IconButton(
+                                  icon: Icon(Icons.location_on),
+                                  color: Colors.red,
+                                  iconSize: 35.0,
+                                  onPressed: () {},
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:contact_tracing/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +9,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import './pages/live_geolocator.dart';
-import 'dart:async';
 
-import 'classes/globals.dart';
-import 'classes/uploadClass.dart';
-import 'classes/write.dart';
-import 'pages/register.dart';
-import 'pages/login.dart';
+import './pages/live_geolocator.dart';
+import './classes/globals.dart';
+import './classes/uploadClass.dart';
+import './classes/write.dart';
+import './pages/register.dart';
+import './pages/login.dart';
 
 Writefile _wf = new Writefile();
 
@@ -112,7 +112,7 @@ class MyApp extends StatelessWidget {
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         RegisterPage.route: (context) => RegisterPage(),
-        // LoginPage.route: (context) => LoginPage(),
+        LoginPage.route: (context) => LoginPage(),
       },
     );
   }

@@ -9,6 +9,7 @@ CREATE TABLE `User` (
   `email` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
   `nationalIdNumber` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL,
   `password` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`userId`)
 );
@@ -43,6 +44,7 @@ INSERT INTO
     email,
     dateOfBirth,
     nationalIdNumber,
+    username,
     password
   )
 VALUES
@@ -55,6 +57,7 @@ VALUES
     'JohnSmith@gmail.com',
     '2000-01-13',
     'J6465516549846513',
+    'Johny',
     '1234'
   );
 
@@ -68,6 +71,7 @@ INSERT INTO
     email,
     dateOfBirth,
     nationalIdNumber,
+    username,
     password
   )
 VALUES
@@ -80,5 +84,6 @@ VALUES
     'JamesSmith@gmail.com',
     '2000-01-13',
     'J6465516549846523',
+    'JamesSmith',
     '1234'
   );
