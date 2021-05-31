@@ -120,10 +120,13 @@ class database
         for ($i = 0; $i < count($paramArray); $i++) {
             $paramValueReference[] = &$paramArray[$i];
         }
-        call_user_func_array(array(
-            $stmt,
-            'bind_param'
-        ), $paramValueReference);
+        call_user_func_array(
+            array(
+                $stmt,
+                'bind_param'
+            ),
+            $paramValueReference
+        );
     }
 
     /**

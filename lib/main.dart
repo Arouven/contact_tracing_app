@@ -15,6 +15,7 @@ import 'classes/globals.dart';
 import 'classes/uploadClass.dart';
 import 'classes/write.dart';
 import 'pages/register.dart';
+import 'pages/login.dart';
 
 Writefile _wf = new Writefile();
 
@@ -93,7 +94,7 @@ void main() async {
   await prefs.setString("fileName", fn);
 
   FlutterBackgroundService.initialize(onStart);
-  //xx();
+
   runApp(MyApp());
 }
 
@@ -106,10 +107,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: RegisterPage(), //HomePage(),
+      home: HomePage(), //HomePage(),
       routes: <String, WidgetBuilder>{
+        HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         RegisterPage.route: (context) => RegisterPage(),
+        // LoginPage.route: (context) => LoginPage(),
       },
     );
   }

@@ -1,12 +1,6 @@
 <?php
 require '../database.php';
 $db = new database();
-$conn = $db->getConnection();
-
-
-// $nationalIdNumber = $_POST['nationalIdNumber'];
-
-// $password =  $_POST['password'];
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $nationalIdNumber = "";
@@ -17,17 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['password'])) {
         $password = mysqli_real_escape_string($conn, $_POST['password']);
     }
-    $selectquery = "SELECT nationalIdNumber,password FROM User WHERE nationalIdNumber = ? AND password = ?;";
 
-
+    $selectquery = "SELECT * FROM User WHERE nationalIdNumber = '?' AND password = '?';";
     $selectparamType = "ss";
     $selectparamArray = array(
         $nationalIdNumber,
-        $password
+        $password,
     );
-    $data = $db->select($selectquery, $selectparamType, $selectparamArray);
+    $data = $db->select(query: $selectquery, paramType: $insertparamType, paramArray: $selectparamArray);
 
     if (isset($data) && $data != null) { //if there is something in the result
-        print json_encode($data);
+        echo json_encode($data);
     }
 }

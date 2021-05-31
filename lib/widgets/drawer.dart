@@ -1,7 +1,9 @@
+import 'package:contact_tracing/pages/login.dart';
 import 'package:contact_tracing/pages/register.dart';
 import 'package:flutter/material.dart';
 import '../pages/live_geolocator.dart';
 import '../pages/register.dart';
+import '../pages/login.dart';
 import '../pages/home.dart';
 
 Widget _buildMenuItem(
@@ -48,6 +50,12 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           RegisterPage.route,
           currentRoute,
         ),
+        // _buildMenuItem(
+        //   context,
+        //   const Text('Login'),
+        //   LoginPage.route,
+        //   currentRoute,
+        // ),
       ],
     ),
   );
