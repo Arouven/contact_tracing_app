@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		);
 		$insertedId = $db->insert($insertquery, $insertparamType, $insertparamArray);
 		$data['msg'] = 'user inserted';
-		$data['userid'] = $insertedId;
+		$data['userId'] = $insertedId;
 		print json_encode($data);
 	}
 }

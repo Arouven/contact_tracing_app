@@ -1,6 +1,7 @@
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/globals.dart';
 import 'dart:convert';
 
@@ -55,9 +56,29 @@ class _RegisterPageState extends State<RegisterPage> {
         'password': password
       },
     );
-    print(res.body);
+    //print(res.body);
     final data = jsonDecode(res.body);
 
+    if (data['msg'] == 'username already existed') {
+      msg = 'username already existed';
+      print(msg);
+    } else {
+      //user inserted
+      //redirect to home
+      print('user inserted');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('firstName', firstname);
+      prefs.setString('lastName', lastname);
+      prefs.setString('country', country);
+      prefs.setString('address', address);
+      prefs.setString('telephone', telephone);
+      prefs.setString('email', email);
+      prefs.setString('dateOfBirth', dateOfBirth);
+      prefs.setString('nationalIdNumber', nationalIdNumber);
+      prefs.setString('username', username);
+      prefs.setString('password', password);
+      prefs.setString("userId", data['userId']);
+    }
     _firstName.clear();
     _lastName.clear();
     _country.clear();
@@ -68,16 +89,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _nationalIdNumber.clear();
     _username.clear();
     _password.clear();
-
-    if (data['msg'] == 'username already existed') {
-      msg = 'username already existed';
-      print(msg);
-    } else {
-      //user inserted
-      //redirect to home
-      print('user inserted');
-    }
-
     // if (dataJson['status'] == 1) {
     //   print(dataJson['msg']);
     //   showDialog(

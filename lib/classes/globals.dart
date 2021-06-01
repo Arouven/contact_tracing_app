@@ -19,6 +19,20 @@ String fileName;
 String mobileID;
 String nationalIdNumber;
 
+//in register.dart
+// final SharedPreferences prefs = await SharedPreferences.getInstance();
+// prefs.setString('firstName', firstname);
+// prefs.setString('lastName', lastname);
+// prefs.setString('country', country);
+// prefs.setString('address', address);
+// prefs.setString('telephone', telephone);
+// prefs.setString('email', email);
+// prefs.setString('dateOfBirth', dateOfBirth);
+// prefs.setString('nationalIdNumber', nationalIdNumber);
+// prefs.setString('username', username);
+// prefs.setString('password', password);
+// prefs.setString("userId", data['userId']);
+
 // class Globals {
 //   main() async {
 //     final SharedPreferences prefs = await SharedPreferences.getInstance();

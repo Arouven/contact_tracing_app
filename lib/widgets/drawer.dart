@@ -1,4 +1,5 @@
 import 'package:contact_tracing/pages/login.dart';
+import 'package:contact_tracing/pages/mobiles.dart';
 import 'package:contact_tracing/pages/register.dart';
 import 'package:flutter/material.dart';
 import '../pages/live_geolocator.dart';
@@ -54,6 +55,12 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           context,
           const Text('Login'),
           LoginPage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Mobile'),
+          MobilePage.route,
           currentRoute,
         ),
       ],

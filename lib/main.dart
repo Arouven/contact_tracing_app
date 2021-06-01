@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:contact_tracing/pages/home.dart';
+import 'package:contact_tracing/pages/mobiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,6 +19,26 @@ import './pages/register.dart';
 import './pages/login.dart';
 
 Writefile _wf = new Writefile();
+
+Future<bool> checkValues() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if ((prefs.containsKey('firstName') &&
+          prefs.containsKey('lastName') &&
+          prefs.containsKey('country') &&
+          prefs.containsKey('address') &&
+          prefs.containsKey('telephone') &&
+          prefs.containsKey('email') &&
+          prefs.containsKey('dateOfBirth') &&
+          prefs.containsKey('nationalIdNumber') &&
+          prefs.containsKey('username') &&
+          prefs.containsKey('password') &&
+          prefs.containsKey('userId')) ==
+      true) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,39 +81,19 @@ void onStart() {
   });
 }
 
-Future getData() async {
-  var url = 'https://contacttracing.infinityfreeapp.com/connectOnline/get.php';
-  http.Response response = await http.get(Uri.parse(url));
-  var data = jsonDecode(response.body);
-  print(data.toString());
-}
-
-Future xx() async {
-  final ioc = new HttpClient();
-  ioc.badCertificateCallback =
-      (X509Certificate cert, String host, int port) => true;
-  final https = new IOClient(ioc);
-  var url = 'https://contact-tracing-utm.000webhostapp.com/get.php';
-
-  https.post(Uri.parse(url)).then(
-    (response) {
-      // print("Reponse status : ${response.statusCode}");
-      // print("Response body : ${response.body}");
-      print(jsonDecode(response.body));
-    },
-  );
-}
-
 void main() async {
+  if (await checkValues()) {
+    //redirect to home (no need to register or login)
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString("nationalIdNumber", "P61548465161654816");
   await prefs.setString("mobileID", "200");
   var fn =
-      '${prefs.getString("mobileID")}_${prefs.getString("nationalIdNumber")}_geolocatorbest.csv';
+      '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
   await prefs.setString("fileName", fn);
 
+///////
   FlutterBackgroundService.initialize(onStart);
 
   runApp(MyApp());
@@ -107,12 +108,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: RegisterPage(), //HomePage(),
+      home: MobilePage(), //HomePage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         RegisterPage.route: (context) => RegisterPage(),
         LoginPage.route: (context) => LoginPage(),
+        MobilePage.route: (context) => MobilePage(),
       },
     );
   }
