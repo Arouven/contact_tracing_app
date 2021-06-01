@@ -38,24 +38,25 @@ class _RegisterPageState extends State<RegisterPage> {
 
   //String valueItem = "admin";
 
-  insertApi() async {
+  insertApi(firstname, lastname, country, address, telephone, email,
+      dateOfBirth, nationalIdNumber, username, password) async {
     final res = await http.post(
       Uri.parse(registerUrl),
       body: {
-        'firstName': _firstName.text,
-        'lastName': _lastName.text,
-        'country': _country.text,
-        'address': _address.text,
-        'telephone': _telephone.text,
-        'email': _email.text,
-        'dateOfBirth': _dateOfBirth.text,
-        'nationalIdNumber': _nationalIdNumber.text,
-        'username': _username.text,
-        'password': _password.text,
+        'firstName': firstname,
+        'lastName': lastname,
+        'country': country,
+        'address': address,
+        'telephone': telephone,
+        'email': email,
+        'dateOfBirth': dateOfBirth,
+        'nationalIdNumber': nationalIdNumber,
+        'username': username,
+        'password': password
       },
     );
-
-    final dataJson = jsonDecode(res.body);
+    print(res.body);
+    final data = jsonDecode(res.body);
 
     _firstName.clear();
     _lastName.clear();
@@ -68,46 +69,55 @@ class _RegisterPageState extends State<RegisterPage> {
     _username.clear();
     _password.clear();
 
-    if (dataJson['status'] == 1) {
-      print(dataJson['msg']);
-      showDialog(
-        context: context,
-        builder: (c) {
-          return AlertDialog(
-            title: Text("Notifikasi"),
-            content: Text(dataJson['msg']),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Close"),
-              )
-            ],
-          );
-        },
-      );
-      setState(
-        () {
-          msg = dataJson['msg'];
-        },
-      );
-    } else if (dataJson['status'] == 2) {
-      print(dataJson['msg']);
-      Navigator.of(context).pop();
-      setState(
-        () {
-          msg = "";
-        },
-      );
+    if (data['msg'] == 'username already existed') {
+      msg = 'username already existed';
+      print(msg);
     } else {
-      print(dataJson['msg']);
-      setState(
-        () {
-          msg = dataJson['msg'];
-        },
-      );
+      //user inserted
+      //redirect to home
+      print('user inserted');
     }
+
+    // if (dataJson['status'] == 1) {
+    //   print(dataJson['msg']);
+    //   showDialog(
+    //     context: context,
+    //     builder: (c) {
+    //       return AlertDialog(
+    //         title: Text("Notifikasi"),
+    //         content: Text(dataJson['msg']),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //             },
+    //             child: Text("Close"),
+    //           )
+    //         ],
+    //       );
+    //     },
+    //   );
+    //   setState(
+    //     () {
+    //       msg = dataJson['msg'];
+    //     },
+    //   );
+    // } else if (dataJson['status'] == 2) {
+    //   print(dataJson['msg']);
+    //   Navigator.of(context).pop();
+    //   setState(
+    //     () {
+    //       msg = "";
+    //     },
+    //   );
+    // } else {
+    //   print(dataJson['msg']);
+    //   setState(
+    //     () {
+    //       msg = dataJson['msg'];
+    //     },
+    //   );
+    // }
   }
 
   @override
@@ -346,7 +356,18 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: Colors.pink,
                     child: MaterialButton(
                       onPressed: () {
-                        insertApi();
+                        insertApi(
+                          _firstName.text,
+                          _lastName.text,
+                          _country.text,
+                          _address.text,
+                          _telephone.text,
+                          _email.text,
+                          _dateOfBirth.text,
+                          _nationalIdNumber.text,
+                          _username.text,
+                          _password.text,
+                        );
                       },
                       color: Colors.pink,
                       child: Text("REGISTER"),
