@@ -35,7 +35,7 @@ foreach ($files as $file) {
             $accuracy = mysqli_real_escape_string($conn, $column[4]);
         }
 
-        $sqlInsert = "INSERT into Coordinates (mobileId,dateTime,latitude,longitude,accuracy)
+        $sqlInsert = "INSERT into Coordinates (mobileId,dateTimeEpoch,latitude,longitude,accuracy)
                 values (?,?,?,?,?)";
         $paramType = "issss";
         $paramArray = array(
@@ -64,3 +64,26 @@ foreach ($files as $file) {
         unlink($file);
     }
 }
+
+
+//update contact tracing
+//     $infectedMetres = floatval($data[0]['infected']);
+//if (isset($data) && $data != null) { //if there is something in the result
+    //     $outputArray['msg'] = "data exist";
+    //     //$outputArray['infected'] = $data[0]['infected'];
+    //     $infectedMetres = floatval($data[0]['infected']);
+
+    //     //https://www.php.net/manual/en/function.time.php
+    //     $noDays = 1;
+    //     $searchFrom = time() - ($noDays * 24 * 60 * 60); // xx days; 24 hours; 60 mins; 60 secs
+    //     while ($searchFrom < time()) {
+    //         $selectquery = "SELECT * FROM Coordinates;"; //<=2m
+    //         $data = $db->select($selectquery);
+    //         if (isset($data) && $data != null) { //if there is something in the result
+    //             $outputArray['msg'] = "data exist";
+    //             //$outputArray['infected'] = $data[0]['infected'];
+    //             $infectedMetres = floatval($data[0]['infected']);
+    //         }
+    //         echo '<br>';
+    //         echo  $searchFrom = $searchFrom + 1;
+    //     }

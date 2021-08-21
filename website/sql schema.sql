@@ -18,6 +18,10 @@ CREATE TABLE `Mobile` (
   `mobileId` BIGINT NOT NULL AUTO_INCREMENT,
   `userId` BIGINT NOT NULL,
   `mobileName` VARCHAR(255) NOT NULL,
+  `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
+  `potential` BOOLEAN NOT NULL DEFAULT FALSE,
+  `performCovidTest` BOOLEAN NOT NULL DEFAULT FALSE,
+  `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`mobileId`),
   FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
 );
@@ -25,7 +29,7 @@ CREATE TABLE `Mobile` (
 CREATE TABLE `Coordinates` (
   `coordinatesId` BIGINT NOT NULL AUTO_INCREMENT,
   `mobileId` BIGINT NOT NULL,
-  `dateTime` DATETIME NOT NULL,
+  `dateTimeEpoch` VARCHAR(255) NOT NULL,
   `latitude` VARCHAR(255) NOT NULL,
   `longitude` VARCHAR(255) NOT NULL,
   `accuracy` VARCHAR(255) NOT NULL,
@@ -33,7 +37,44 @@ CREATE TABLE `Coordinates` (
   FOREIGN KEY (`mobileId`) REFERENCES `Mobile`(`mobileId`)
 );
 
+CREATE TABLE `Search` (
+  `searchId` BIGINT NOT NULL AUTO_INCREMENT,
+  `potential` VARCHAR(255) NOT NULL,
+  `infected` VARCHAR(255) NOT NULL,
+  `days` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`searchId`)
+);
+
+CREATE TABLE `Testing` (
+  `testingId` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `latitude` VARCHAR(255) NOT NULL,
+  `longitude` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`testingId`)
+);
+
 -- INSERTING TABLES
+INSERT INTO
+  `Search` (potential, infected)
+VALUES
+  ('10', '2');
+
+INSERT INTO
+  `Testing` (
+    name,
+    address,
+    latitude,
+    longitude
+  )
+VALUES
+  (
+    'port-louis testing center',
+    'Volcy Pougnet Street (ex-rue Madame), Port Louis',
+    '-20.1689972',
+    '57.4999664'
+  );
+
 INSERT INTO
   `User` (
     firstName,
