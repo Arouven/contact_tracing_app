@@ -39,7 +39,6 @@ class distanceCalculator
         $this->lon1 = $lon1;
         $this->lat2 = $lat2;
         $this->lon2 = $lon2;
-        $this->distanceMetres();
     }
 
 
