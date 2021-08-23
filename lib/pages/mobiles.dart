@@ -1,12 +1,12 @@
-import 'package:contact_tracing/classes/globals.dart';
+// import 'package:contact_tracing/classes/globals.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:flutter_map/flutter_map.dart';
+// import 'package:latlong/latlong.dart';
+// import 'package:geolocator/geolocator.dart';
 import '../widgets/drawer.dart';
 
 class MobilePage extends StatefulWidget {
