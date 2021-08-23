@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'dart:js';
 
 import 'package:contact_tracing/pages/home.dart';
 import 'package:contact_tracing/pages/mobiles.dart';
@@ -97,6 +98,8 @@ void main() async {
 
   if (await checkValues()) {
     //redirect to home (no need to register or login)
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => LiveGeolocatorPage()));
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
@@ -121,7 +124,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: MobilePage(), //HomePage(),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
