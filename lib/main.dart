@@ -84,17 +84,17 @@ void onStart() {
 
 void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString("firstName", "John");
-  await prefs.setString('lastName', 'Smith');
-  await prefs.setString('country', 'Mauritius');
-  await prefs.setString('address', 'Bambous');
-  await prefs.setString('telephone', '654654652');
-  await prefs.setString('email', 'JohnSmith@gmail.com');
-  await prefs.setString('dateOfBirth', '2000-01-13');
-  await prefs.setString('nationalIdNumber', 'J6465516549846513');
-  await prefs.setString('username', 'Johny');
-  await prefs.setString('password', '1234');
-  await prefs.setString('userId', '1');
+  // await prefs.setString("firstName", "John");
+  // await prefs.setString('lastName', 'Smith');
+  // await prefs.setString('country', 'Mauritius');
+  // await prefs.setString('address', 'Bambous');
+  // await prefs.setString('telephone', '654654652');
+  // await prefs.setString('email', 'JohnSmith@gmail.com');
+  // await prefs.setString('dateOfBirth', '2000-01-13');
+  // await prefs.setString('nationalIdNumber', 'J6465516549846513');
+  // await prefs.setString('username', 'Johny');
+  // await prefs.setString('password', '1234');
+  // await prefs.setString('userId', '1');
 
   if (await checkValues()) {
     //redirect to home (no need to register or login)
@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: HomePage(),
+      home: LiveGeolocatorPage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
