@@ -82,13 +82,26 @@ void onStart() {
 }
 
 void main() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("firstName", "John");
+  await prefs.setString('lastName', 'Smith');
+  await prefs.setString('country', 'Mauritius');
+  await prefs.setString('address', 'Bambous');
+  await prefs.setString('telephone', '654654652');
+  await prefs.setString('email', 'JohnSmith@gmail.com');
+  await prefs.setString('dateOfBirth', '2000-01-13');
+  await prefs.setString('nationalIdNumber', 'J6465516549846513');
+  await prefs.setString('username', 'Johny');
+  await prefs.setString('password', '1234');
+  await prefs.setString('userId', '1');
+
   if (await checkValues()) {
     //redirect to home (no need to register or login)
   }
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString("mobileID", "200");
+  //final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("mobileID", "8");
   var fn =
       '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
   await prefs.setString("fileName", fn);

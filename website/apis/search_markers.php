@@ -1,43 +1,37 @@
 <?php
 require '../database.php';
 
-$db = new database();
-$conn = $db->getConnection();
 
-$testingcenter = null;
-
-
-$potential = null;
-$outputArray = null;
-$outputArray = array();
-
-if (isset($_GET['potential'])) {
-    $selectquery = "SELECT UNIQUE MAX(dateTimeCoordinates), latitude, longitude FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId=Mobile.mobileId WHERE Mobile.contactWithInfected=TRUE;";
+$output = array();
+$selectquery = "SELECT name, address, latitude, longitude FROM TestingCentres;";
+$title = 'testingcentres';
+$output = array_merge(getArray($selectquery, $title), $output);
+$selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.contactWithInfected = TRUE';
+$title = 'contactWithInfected';
+$output = array_merge(getArray($selectquery, $title), $output);
+$selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.confirmInfected = TRUE';
+$title = 'confirmInfected';
+$output = array_merge(getArray($selectquery, $title), $output);
+if (isset($output) && $output != null) { //if there is something in the result
+    $item1 = array('status' => "200", 'msg' => "OK");
+    $output = array_merge($item1, $output);
+} else {
+    $item1 = array('status' => "400", 'msg' => "missing parameters");
+    $output = array_merge($item1, $output);
 }
 
-if (isset($_GET['confirmInfected'])) {
-    $selectquery = "SELECT UNIQUE MAX(dateTimeCoordinates), latitude, longitude FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId=Mobile.mobileId WHERE Mobile.confirmInfected=TRUE;";
+print json_encode($output);
+
+
+
+function getArray($selectquery, $outputTitle)
+{
+    $db = new database();
     $data = $db->select($selectquery);
-    if (isset($data) && $data != null) { //if there is something in the result
+    $outputArray = array();
 
-        $outputArray['msg'] = "data about confirm infected";
-        $outputArray['confirmInfected'] = $data; //[0]['confirmInfected'];
-        //print json_encode($outputArray);
-    } else {
-        $outputArray['msg'] = "data does not exist";
-        print json_encode($outputArray);
-    }
-}
-if (isset($_GET['testingcenter'])) {
-    $selectquery = "SELECT name, address, latitude, longitude FROM TestingCentres;";
-    $data = $db->select($selectquery);
     if (isset($data) && $data != null) { //if there is something in the result
-
-        $outputArray['msg'] = "data about testing centres";
-        $outputArray['testingcentres'] = $data; //[0]['confirmInfected'];
-        //print json_encode($outputArray);
-    } else {
-        $outputArray['msg'] = "data does not exist";
-        print json_encode($outputArray);
+        $outputArray[$outputTitle] = $data;
     }
-}
+    return $outputArray;
+};

@@ -65,7 +65,7 @@ VALUES
   ('2', '7', '14');
 
 INSERT INTO
-  `Testing` (
+  `TestingCentres` (
     name,
     address,
     latitude,
@@ -138,14 +138,25 @@ INSERT INTO
     mobileName,
     contactWithInfected,
     performCovidTest,
-    confirmInfected,
-    dateTimeLastTest
+    confirmInfected
   )
 VALUES
   (4, 2, 'nokia de james', 1, 0, 0),
   (5, 2, 'nokia de la mere de james', 0, 0, 0),
   (6, 2, 'nokia de la soeur de james', 0, 0, 0),
-  (7, 2, 'nokia du frere de james', 0, 0, 0),
+  (7, 2, 'nokia du frere de james', 0, 0, 0);
+
+INSERT INTO
+  `Mobile` (
+    mobileId,
+    userId,
+    mobileName,
+    contactWithInfected,
+    performCovidTest,
+    confirmInfected,
+    dateTimeLastTest
+  )
+VALUES
   (
     8,
     2,
@@ -266,24 +277,24 @@ VALUES
     13,
     5,
     '1629629291',
-    '-20.160839',
-    '57.497987',
+    '-20.405418',
+    '57.709455',
     '1'
   ),
   (
     14,
     5,
     '1629629292',
-    '-20.160839',
-    '57.497987',
+    '-20.405418',
+    '57.709455',
     '1'
   ),
   (
     15,
     5,
     '1629629293',
-    '-20.160839',
-    '57.497987',
+    '-20.405418',
+    '57.709455',
     '1'
   ),
   (

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:contact_tracing/classes/globals.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../widgets/drawer.dart';
+import 'package:http/http.dart' as http;
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -28,6 +31,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   void initState() {
     super.initState();
     _mapController = MapController();
+    generateMarkers();
     initLocationService();
   }
 
@@ -90,6 +94,34 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         );
       },
     );
+  }
+
+  void generateMarkers() async {
+    final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
+    final data = jsonDecode(res.body);
+
+    if (data['status'] == "200") {
+      print("00000000000000000000000000000000000000000000000000000000000000");
+      print(data);
+      // msgError = "User does not exist or wrong password!";
+      // _username.clear();
+      // _password.clear();
+      setState(
+        () {
+          //register btn appear
+        },
+      );
+    } else {
+      print(data);
+      // msgError = ""; //"User logged in";
+      // _username.clear();
+      // _password.clear();
+      setState(
+        () {
+          //redirect to home
+        },
+      );
+    }
   }
 
   @override
