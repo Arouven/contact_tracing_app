@@ -19,6 +19,10 @@ import './classes/write.dart';
 import './pages/register.dart';
 import './pages/login.dart';
 
+import 'package:contact_tracing/classes/globals.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 Writefile _wf = new Writefile();
 
 Future<bool> checkValues() async {
@@ -57,7 +61,7 @@ void onStart() {
 
   // bring to foreground
   service.setForegroundMode(true);
-  Timer.periodic(Duration(minutes: 1), (timer) async {
+  Timer.periodic(Duration(seconds: 1), (timer) async {
     if (!(await service.isServiceRunning())) timer.cancel();
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: geolocatorAccuracy,
@@ -82,9 +86,39 @@ void onStart() {
   });
 }
 
+Future generateMarkers() async {
+  final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
+  print(latestUpdateLocationsUrl);
+  final data = jsonDecode(res.body);
+  print("00000000000000000000000000000000000000000000000000000000000000");
+  print(data);
+  if (data['status'] == "200") {
+    print("00000000000000000000000000000000000000000000000000000000000000");
+    print(data);
+    // msgError = "User does not exist or wrong password!";
+    // _username.clear();
+    // _password.clear();
+    // setState(
+    //   () {
+    //     //register btn appear
+    //   },
+    // );
+  } else {
+    print(data);
+    // msgError = ""; //"User logged in";
+    // _username.clear();
+    // _password.clear();
+    // setState(
+    //   () {
+    //     //redirect to home
+    //   },
+    // );
+  }
+}
+
 void main() async {
   // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setString("firstName", "John");
+  //await prefs.setString('firstName', 'John');
   // await prefs.setString('lastName', 'Smith');
   // await prefs.setString('country', 'Mauritius');
   // await prefs.setString('address', 'Bambous');
@@ -102,14 +136,27 @@ void main() async {
   //     context, MaterialPageRoute(builder: (context) => LiveGeolocatorPage()));
   //}
   WidgetsFlutterBinding.ensureInitialized();
-  //await Geolocator.requestPermission();
-  //final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setString("mobileID", "8");
-  // var fn =
-  //     '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
-  // await prefs.setString("fileName", fn);
+  await Geolocator.requestPermission();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('firstName', 'John');
+  await prefs.setString('lastName', 'Smith');
+  await prefs.setString('country', 'Mauritius');
+  await prefs.setString('address', 'Bambous');
+  await prefs.setString('telephone', '654654652');
+  await prefs.setString('email', 'JohnSmith@gmail.com');
+  await prefs.setString('dateOfBirth', '2000-01-13');
+  await prefs.setString('nationalIdNumber', 'J6465516549846513');
+  await prefs.setString('username', 'Johny');
+  await prefs.setString('password', '1234');
+  await prefs.setString('userId', '1');
+  await prefs.setString("mobileID", "8");
+
+  var fn =
+      '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
+  await prefs.setString("fileName", fn);
 
 ///////
+
   FlutterBackgroundService.initialize(onStart);
 
   runApp(MyApp());
@@ -124,7 +171,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: HomePage(),
+      home: LiveGeolocatorPage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),

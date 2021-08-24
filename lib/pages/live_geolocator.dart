@@ -35,6 +35,18 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     initLocationService();
   }
 
+  Future generateMarkers() async {
+    final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
+    print(latestUpdateLocationsUrl);
+    final data = jsonDecode(res.body);
+    if (data['status'] == "200") {
+      print("00000000000000000000000000000000000000000000000000000000000000");
+      print(data);
+    } else {
+      print(data);
+    }
+  }
+
   void initLocationService() async {
     bool serviceEnabled;
     bool serviceRequestResult;
@@ -94,34 +106,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         );
       },
     );
-  }
-
-  void generateMarkers() async {
-    final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
-    final data = jsonDecode(res.body);
-
-    if (data['status'] == "200") {
-      print("00000000000000000000000000000000000000000000000000000000000000");
-      print(data);
-      // msgError = "User does not exist or wrong password!";
-      // _username.clear();
-      // _password.clear();
-      setState(
-        () {
-          //register btn appear
-        },
-      );
-    } else {
-      print(data);
-      // msgError = ""; //"User logged in";
-      // _username.clear();
-      // _password.clear();
-      setState(
-        () {
-          //redirect to home
-        },
-      );
-    }
   }
 
   @override

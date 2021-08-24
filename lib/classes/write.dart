@@ -34,8 +34,10 @@ class Writefile {
   Future writeToFile(String latitude, String longitude, String accuracy) async {
     final file = await _localFile;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String time = (new DateTime.now().millisecondsSinceEpoch).toString();
+    time = time.substring(0, time.length - 3);
     String text =
-        '${prefs.getString("mobileID")},${(new DateTime.now().microsecondsSinceEpoch).toString()},$latitude,$longitude,$accuracy\n';
+        '${prefs.getString("mobileID")},$time,$latitude,$longitude,$accuracy\n';
 
     File result;
     if (file.existsSync()) {

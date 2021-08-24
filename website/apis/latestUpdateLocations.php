@@ -19,7 +19,8 @@ if (isset($output) && $output != null) { //if there is something in the result
     $item1 = array('status' => "400", 'msg' => "missing parameters");
     $output = array_merge($item1, $output);
 }
-
+header("Content-Type:application/json");
+//header("HTTP/1.1 $status $statusMessage");
 print json_encode($output);
 
 
