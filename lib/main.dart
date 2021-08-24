@@ -83,7 +83,7 @@ void onStart() {
 }
 
 void main() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
   // await prefs.setString("firstName", "John");
   // await prefs.setString('lastName', 'Smith');
   // await prefs.setString('country', 'Mauritius');
@@ -96,18 +96,18 @@ void main() async {
   // await prefs.setString('password', '1234');
   // await prefs.setString('userId', '1');
 
-  if (await checkValues()) {
-    //redirect to home (no need to register or login)
-    // Navigator.push(
-    //     context, MaterialPageRoute(builder: (context) => LiveGeolocatorPage()));
-  }
+  //if (await checkValues()) {
+  //redirect to home (no need to register or login)
+  // Navigator.push(
+  //     context, MaterialPageRoute(builder: (context) => LiveGeolocatorPage()));
+  //}
   WidgetsFlutterBinding.ensureInitialized();
-  await Geolocator.requestPermission();
+  //await Geolocator.requestPermission();
   //final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString("mobileID", "8");
-  var fn =
-      '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
-  await prefs.setString("fileName", fn);
+  // await prefs.setString("mobileID", "8");
+  // var fn =
+  //     '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
+  // await prefs.setString("fileName", fn);
 
 ///////
   FlutterBackgroundService.initialize(onStart);
@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: mapBoxBlue,
       ),
-      home: LiveGeolocatorPage(),
+      home: HomePage(),
       routes: <String, WidgetBuilder>{
         HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
