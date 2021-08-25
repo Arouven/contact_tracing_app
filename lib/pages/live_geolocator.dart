@@ -28,6 +28,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   bool _permission = false;
   String _serviceError = '';
   List<Marker> _markers = [];
+  Color _myMarkerColour = Colors.green;
 
   @override
   void initState() {
@@ -46,50 +47,89 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
     if (data['status'] == "200") {
       print(data);
-      if (data["confirmInfected"] != null) {}
-      if (data["contactWithInfected"] != null) {
-        var mobiles = data["contactWithInfected"];
-        print(mobiles);
-        for (var mobile in mobiles) {
-          try {
-            int firstInt = int.parse(mobile['mobileId'].toString());
-            int secondInt = int.parse(myMobileId.toString());
-            if (firstInt != secondInt) {
-              print(mobile['mobileId']);
-              print(mobile['longitude']);
-              print(mobile['latitude']);
-              print(mobile['MaxDateTime']);
-              var marker = Marker(
-                width: 35,
-                height: 35,
-                point: LatLng(double.parse(mobile['latitude'].toString()),
-                    double.parse(mobile['longitude'].toString())),
-                builder: (ctx) {
-                  return Container(
-                    child: IconButton(
-                      icon: Icon(Icons.location_on),
-                      color: Colors.red,
-                      iconSize: 35.0,
-                      onPressed: () {
-                        print(mobile['MaxDateTime']);
-                      },
-                    ),
-                  );
-                },
-              );
-              _markers.add(marker);
-            }
-          } on FormatException {
-            print("FormatException for firstInt");
-          }
-        }
-        print("00000000000000000000000000000000000000000000000000000000000000");
-      }
+
+      populateMarkers(data["confirmInfected"], myMobileId, Colors.red[400],
+          Colors.red.shade900);
+      populateMarkers(data["contactWithInfected"], myMobileId,
+          Colors.yellow[400], Colors.yellow.shade900);
+      populateCentresMarkers(data["testingcentres"], Colors.blue);
+      print("00000000000000000000000000000000000000000000000000000000000000");
     } else {
       print(data);
     }
-    print(_markers);
+    //print(_markers);
     //return _markers;
+  }
+
+  void populateCentresMarkers(places, colour) {
+    if (places != null) {
+      print(places);
+      for (var place in places) {
+        print(place['longitude']);
+        print(place['latitude']);
+        print(place['name']);
+        var marker = Marker(
+          width: 25,
+          height: 25,
+          point: LatLng(double.parse(place['latitude'].toString()),
+              double.parse(place['longitude'].toString())),
+          builder: (ctx) {
+            return Container(
+              child: IconButton(
+                icon: Icon(Icons.location_on_outlined),
+                color: colour,
+                iconSize: 25.0,
+                onPressed: () {
+                  print(place['name']);
+                },
+              ),
+            );
+          },
+        );
+        _markers.add(marker);
+      }
+    }
+  }
+
+  void populateMarkers(mobiles, myMobileId, colour, myMarkerColour) {
+    if (mobiles != null) {
+      print(mobiles);
+      for (var mobile in mobiles) {
+        try {
+          int firstInt = int.parse(mobile['mobileId'].toString());
+          int secondInt = int.parse(myMobileId.toString());
+          if (firstInt != secondInt) {
+            print(mobile['mobileId']);
+            print(mobile['longitude']);
+            print(mobile['latitude']);
+            print(mobile['MaxDateTime']);
+            var marker = Marker(
+              width: 25,
+              height: 25,
+              point: LatLng(double.parse(mobile['latitude'].toString()),
+                  double.parse(mobile['longitude'].toString())),
+              builder: (ctx) {
+                return Container(
+                  child: IconButton(
+                    icon: Icon(Icons.location_on),
+                    color: colour,
+                    iconSize: 25.0,
+                    onPressed: () {
+                      print(mobile['MaxDateTime']);
+                    },
+                  ),
+                );
+              },
+            );
+            _markers.add(marker);
+          } else {
+            _myMarkerColour = myMarkerColour;
+          }
+        } on FormatException {
+          print("FormatException for firstInt");
+        }
+      }
+    }
   }
 
   void initLocationService() async {
@@ -168,7 +208,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       currentLatLng = LatLng(0, 0);
       locationAccuracy = 0;
     }
-    //var mark =await generateMarkers(); // as List).cast<Marker> => marker.toList());
+
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -213,15 +253,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                       MarkerLayerOptions(
                         markers: <Marker>[
                           Marker(
-                            width: 35,
-                            height: 35,
+                            width: 25,
+                            height: 25,
                             point: currentLatLng,
                             builder: (ctx) {
                               return Container(
                                 child: IconButton(
                                   icon: Icon(Icons.location_on),
-                                  color: Colors.blue,
-                                  iconSize: 35.0,
+                                  color: _myMarkerColour,
+                                  iconSize: 25.0,
                                   onPressed: () {},
                                 ),
                               );
