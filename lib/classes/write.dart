@@ -37,7 +37,7 @@ class Writefile {
     String time = (new DateTime.now().millisecondsSinceEpoch).toString();
     time = time.substring(0, time.length - 3);
     String text =
-        '${prefs.getString("mobileID")},$time,$latitude,$longitude,$accuracy\n';
+        '${prefs.getString("mobileId")},$time,$latitude,$longitude,$accuracy\n';
 
     File result;
     if (file.existsSync()) {

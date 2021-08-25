@@ -39,6 +39,6 @@ String nationalIdNumber;
 //     final SharedPreferences prefs = await SharedPreferences.getInstance();
 //     fileName = prefs.getString("fileName");
 //     nationalIdNumber = prefs.getString("nationalIdNumber");
-//     mobileID = prefs.getString("mobileID");
+//     mobileId = prefs.getString("mobileId");
 //   }
 // }

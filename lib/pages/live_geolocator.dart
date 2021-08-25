@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/drawer.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,12 +27,13 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   MapController _mapController;
   bool _permission = false;
   String _serviceError = '';
+  List<Marker> _markers = [];
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-    generateMarkers();
+
     initLocationService();
   }
 
@@ -39,58 +41,55 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
     print(latestUpdateLocationsUrl);
     final data = jsonDecode(res.body);
-    var Markers = [];
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String myMobileId = prefs.getString("mobileId");
+
     if (data['status'] == "200") {
       print(data);
-      if (data["confirmInfected"] != null) {
-        // print("00000000000000000000000000000000000000000000000000000000000000");
-        // print(data["confirmInfected"]);
-        // //ls.forEach((car) => print("${car.name} is electric? ${car.isElectric}"));
-        // var marker = Marker(
-        //   width: 35,
-        //   height: 35,
-        //   point: LatLng(0, 0),
-        //   builder: (ctx) {
-        //     return Container(
-        //       child: IconButton(
-        //         icon: Icon(Icons.location_on),
-        //         color: Colors.red,
-        //         iconSize: 35.0,
-        //         onPressed: () {},
-        //       ),
-        //     );
-        //   },
-        // );
-        // //Markers.add(value)
-      }
+      if (data["confirmInfected"] != null) {}
       if (data["contactWithInfected"] != null) {
+        var mobiles = data["contactWithInfected"];
+        print(mobiles);
+        for (var mobile in mobiles) {
+          try {
+            int firstInt = int.parse(mobile['mobileId'].toString());
+            int secondInt = int.parse(myMobileId.toString());
+            if (firstInt != secondInt) {
+              print(mobile['mobileId']);
+              print(mobile['longitude']);
+              print(mobile['latitude']);
+              print(mobile['MaxDateTime']);
+              var marker = Marker(
+                width: 35,
+                height: 35,
+                point: LatLng(double.parse(mobile['latitude'].toString()),
+                    double.parse(mobile['longitude'].toString())),
+                builder: (ctx) {
+                  return Container(
+                    child: IconButton(
+                      icon: Icon(Icons.location_on),
+                      color: Colors.red,
+                      iconSize: 35.0,
+                      onPressed: () {
+                        print(mobile['MaxDateTime']);
+                      },
+                    ),
+                  );
+                },
+              );
+              _markers.add(marker);
+            }
+          } on FormatException {
+            print("FormatException for firstInt");
+          }
+        }
         print("00000000000000000000000000000000000000000000000000000000000000");
-        print(data["contactWithInfected"]);
-        var ls = data["contactWithInfected"];
-        ls.forEach((mobile) {
-          int mobileId = int.parse(mobile['mobileId']);
-          if (mobileId != get) print("$x");
-        });
-        // var marker = Marker(
-        //   width: 35,
-        //   height: 35,
-        //   point: LatLng(0, 0),
-        //   builder: (ctx) {
-        //     return Container(
-        //       child: IconButton(
-        //         icon: Icon(Icons.location_on),
-        //         color: Colors.red,
-        //         iconSize: 35.0,
-        //         onPressed: () {},
-        //       ),
-        //     );
-        //   },
-        // );
-        //Markers.add(value)
       }
     } else {
       print(data);
     }
+    print(_markers);
+    //return _markers;
   }
 
   void initLocationService() async {
@@ -98,6 +97,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     bool serviceRequestResult;
     Position location;
     try {
+      await generateMarkers();
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
@@ -168,7 +168,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       currentLatLng = LatLng(0, 0);
       locationAccuracy = 0;
     }
-
+    //var mark =await generateMarkers(); // as List).cast<Marker> => marker.toList());
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -200,7 +200,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                     options: MapOptions(
                       center: LatLng(
                           currentLatLng.latitude, currentLatLng.longitude),
-                      zoom: 15.0,
+                      zoom: 10.0,
                       interactiveFlags: InteractiveFlag.all,
                     ),
                     layers: [
@@ -230,7 +230,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                         ],
                       ),
                       MarkerLayerOptions(
-                        markers: <Marker>[],
+                        markers: _markers,
                       ),
                     ],
                   ),

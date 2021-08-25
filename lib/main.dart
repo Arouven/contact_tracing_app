@@ -119,10 +119,10 @@ void main() async {
   await prefs.setString('username', 'Johny');
   await prefs.setString('password', '1234');
   await prefs.setString('userId', '1');
-  await prefs.setString("mobileID", "8");
+  await prefs.setString("mobileId", "8");
 
   var fn =
-      '${prefs.getString("mobileID")}_${prefs.getString("username")}_geolocatorbest.csv';
+      '${prefs.getString("mobileId")}_${prefs.getString("username")}_geolocatorbest.csv';
   await prefs.setString("fileName", fn);
 
 ///////
