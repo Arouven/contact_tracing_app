@@ -61,7 +61,7 @@ void onStart() {
 
   // bring to foreground
   service.setForegroundMode(true);
-  Timer.periodic(Duration(seconds: 1), (timer) async {
+  Timer.periodic(Duration(minutes: 1), (timer) async {
     if (!(await service.isServiceRunning())) timer.cancel();
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: geolocatorAccuracy,
@@ -84,36 +84,6 @@ void onStart() {
     );
     counter = counter + 1;
   });
-}
-
-Future generateMarkers() async {
-  final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
-  print(latestUpdateLocationsUrl);
-  final data = jsonDecode(res.body);
-  print("00000000000000000000000000000000000000000000000000000000000000");
-  print(data);
-  if (data['status'] == "200") {
-    print("00000000000000000000000000000000000000000000000000000000000000");
-    print(data);
-    // msgError = "User does not exist or wrong password!";
-    // _username.clear();
-    // _password.clear();
-    // setState(
-    //   () {
-    //     //register btn appear
-    //   },
-    // );
-  } else {
-    print(data);
-    // msgError = ""; //"User logged in";
-    // _username.clear();
-    // _password.clear();
-    // setState(
-    //   () {
-    //     //redirect to home
-    //   },
-    // );
-  }
 }
 
 void main() async {

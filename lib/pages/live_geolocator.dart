@@ -39,9 +39,55 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
     print(latestUpdateLocationsUrl);
     final data = jsonDecode(res.body);
+    var Markers = [];
     if (data['status'] == "200") {
-      print("00000000000000000000000000000000000000000000000000000000000000");
       print(data);
+      if (data["confirmInfected"] != null) {
+        // print("00000000000000000000000000000000000000000000000000000000000000");
+        // print(data["confirmInfected"]);
+        // //ls.forEach((car) => print("${car.name} is electric? ${car.isElectric}"));
+        // var marker = Marker(
+        //   width: 35,
+        //   height: 35,
+        //   point: LatLng(0, 0),
+        //   builder: (ctx) {
+        //     return Container(
+        //       child: IconButton(
+        //         icon: Icon(Icons.location_on),
+        //         color: Colors.red,
+        //         iconSize: 35.0,
+        //         onPressed: () {},
+        //       ),
+        //     );
+        //   },
+        // );
+        // //Markers.add(value)
+      }
+      if (data["contactWithInfected"] != null) {
+        print("00000000000000000000000000000000000000000000000000000000000000");
+        print(data["contactWithInfected"]);
+        var ls = data["contactWithInfected"];
+        ls.forEach((mobile) {
+          int mobileId = int.parse(mobile['mobileId']);
+          if (mobileId != get) print("$x");
+        });
+        // var marker = Marker(
+        //   width: 35,
+        //   height: 35,
+        //   point: LatLng(0, 0),
+        //   builder: (ctx) {
+        //     return Container(
+        //       child: IconButton(
+        //         icon: Icon(Icons.location_on),
+        //         color: Colors.red,
+        //         iconSize: 35.0,
+        //         onPressed: () {},
+        //       ),
+        //     );
+        //   },
+        // );
+        //Markers.add(value)
+      }
     } else {
       print(data);
     }
@@ -174,7 +220,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                               return Container(
                                 child: IconButton(
                                   icon: Icon(Icons.location_on),
-                                  color: Colors.red,
+                                  color: Colors.blue,
                                   iconSize: 35.0,
                                   onPressed: () {},
                                 ),
@@ -182,7 +228,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                             },
                           ),
                         ],
-                      )
+                      ),
+                      MarkerLayerOptions(
+                        markers: <Marker>[],
+                      ),
                     ],
                   ),
                 ),
