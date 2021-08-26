@@ -18,10 +18,11 @@ CREATE TABLE `Mobile` (
   `mobileId` BIGINT NOT NULL AUTO_INCREMENT,
   `userId` BIGINT NOT NULL,
   `mobileName` VARCHAR(255) NOT NULL,
+  `mobileNumber` VARCHAR(255) NOT NULL,
   `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `performCovidTest` BOOLEAN NOT NULL DEFAULT FALSE,
   `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
-  `dateTimeLastTest` VARCHAR(255) DEFAULT NULL,
+  `dateTimeLastTest` BIGINT DEFAULT NULL,
   PRIMARY KEY (`mobileId`),
   FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
 );
@@ -29,7 +30,7 @@ CREATE TABLE `Mobile` (
 CREATE TABLE `Coordinates` (
   `coordinatesId` BIGINT NOT NULL AUTO_INCREMENT,
   `mobileId` BIGINT NOT NULL,
-  `dateTimeCoordinates` VARCHAR(255) NOT NULL,
+  `dateTimeCoordinates` BIGINT NOT NULL,
   `latitude` VARCHAR(255) NOT NULL,
   `longitude` VARCHAR(255) NOT NULL,
   `accuracy` VARCHAR(255) NOT NULL,
@@ -39,9 +40,9 @@ CREATE TABLE `Coordinates` (
 
 CREATE TABLE `AdminParamters` (
   `searchId` BIGINT NOT NULL AUTO_INCREMENT,
-  `contactDistance` VARCHAR(255) NOT NULL,
-  `daysOfTestValidity` VARCHAR(255) NOT NULL,
-  `daysFromContact` VARCHAR(255) NOT NULL,
+  `contactDistance` BIGINT NOT NULL,
+  `daysOfTestValidity` BIGINT NOT NULL,
+  `daysFromContact` BIGINT NOT NULL,
   PRIMARY KEY (`searchId`)
 );
 
@@ -62,7 +63,7 @@ INSERT INTO
     daysFromContact
   )
 VALUES
-  ('2', '7', '14');
+  (2, 7, 14);
 
 INSERT INTO
   `TestingCentres` (
@@ -125,32 +126,58 @@ VALUES
   );
 
 INSERT INTO
-  `Mobile` (mobileId, userId, mobileName)
+  `Mobile` (mobileId, userId, mobileName, mobileNumber)
 VALUES
-  (1, 1, 'Samsung me'),
-  (2, 1, 'iphone mother'),
-  (3, 1, 'huawei father');
+  (1, 1, 'Samsung me', '+23012345678'),
+  (2, 1, 'iphone mother', '+23012345678'),
+  (3, 1, 'huawei father', '+23012345678');
 
 INSERT INTO
   `Mobile` (
     mobileId,
     userId,
     mobileName,
+    mobileNumber,
     contactWithInfected,
     performCovidTest,
     confirmInfected
   )
 VALUES
-  (4, 2, 'nokia de james', 1, 0, 0),
-  (5, 2, 'nokia de la mere de james', 0, 0, 0),
-  (6, 2, 'nokia de la soeur de james', 0, 0, 0),
-  (7, 2, 'nokia du frere de james', 0, 0, 0);
+  (4, 2, 'nokia de james', '+23012345678', 1, 0, 0),
+  (
+    5,
+    2,
+    'nokia de la mere de james',
+    '+23012345678',
+    0,
+    0,
+    0
+  ),
+  (
+    6,
+    2,
+    'nokia de la soeur de james',
+    '+23012345678',
+    0,
+    0,
+    0
+  ),
+  (
+    7,
+    2,
+    'nokia du frere de james',
+    '+23012345678',
+    0,
+    0,
+    0
+  );
 
 INSERT INTO
   `Mobile` (
     mobileId,
     userId,
     mobileName,
+    mobileNumber,
     contactWithInfected,
     performCovidTest,
     confirmInfected,
@@ -161,10 +188,11 @@ VALUES
     8,
     2,
     'nokia du pere de james',
+    '+23012345678',
     0,
     1,
     1,
-    '1629629292'
+    1629629292
   );
 
 INSERT INTO
@@ -180,7 +208,7 @@ VALUES
   (
     1,
     1,
-    '1629629291',
+    1629629291,
     '-20.267031',
     '57.417493',
     '1'
@@ -188,7 +216,7 @@ VALUES
   (
     2,
     1,
-    '1629629292',
+    1629629292,
     '-20.267031',
     '57.417493',
     '1'
@@ -196,7 +224,7 @@ VALUES
   (
     3,
     1,
-    '1629629293',
+    1629629293,
     '-20.267031',
     '57.417493',
     '1'
@@ -204,7 +232,7 @@ VALUES
   (
     4,
     2,
-    '1629629291',
+    1629629291,
     '-20.267031',
     '57.417493',
     '1'
@@ -212,7 +240,7 @@ VALUES
   (
     5,
     2,
-    '1629629292',
+    1629629292,
     '-20.267031',
     '57.417493',
     '1'
@@ -220,7 +248,7 @@ VALUES
   (
     6,
     2,
-    '1629629293',
+    1629629293,
     '-20.267031',
     '57.417493',
     '1'
@@ -228,7 +256,7 @@ VALUES
   (
     7,
     3,
-    '1629629291',
+    1629629291,
     '-20.183035',
     '57.469663',
     '1'
@@ -236,7 +264,7 @@ VALUES
   (
     8,
     3,
-    '1629629292',
+    1629629292,
     '-20.183035',
     '57.469663',
     '1'
@@ -244,7 +272,7 @@ VALUES
   (
     9,
     3,
-    '1629629293',
+    1629629293,
     '-20.183035',
     '57.469663',
     '1'
@@ -252,7 +280,7 @@ VALUES
   (
     10,
     4,
-    '1629629291',
+    1629629291,
     '-20.160839',
     '57.497987',
     '1'
@@ -260,7 +288,7 @@ VALUES
   (
     11,
     4,
-    '1629629292',
+    1629629292,
     '-20.160839',
     '57.497987',
     '1'
@@ -268,7 +296,7 @@ VALUES
   (
     12,
     4,
-    '1629629293',
+    1629629293,
     '-20.160839',
     '57.497987',
     '1'
@@ -276,7 +304,7 @@ VALUES
   (
     13,
     5,
-    '1629629291',
+    1629629291,
     '-20.405418',
     '57.709455',
     '1'
@@ -284,7 +312,7 @@ VALUES
   (
     14,
     5,
-    '1629629292',
+    1629629292,
     '-20.405418',
     '57.709455',
     '1'
@@ -292,7 +320,7 @@ VALUES
   (
     15,
     5,
-    '1629629293',
+    1629629293,
     '-20.405418',
     '57.709455',
     '1'
@@ -300,7 +328,7 @@ VALUES
   (
     16,
     6,
-    '1629629291',
+    1629629291,
     '-20.160839',
     '57.497987',
     '1'
@@ -308,7 +336,7 @@ VALUES
   (
     17,
     6,
-    '1629629292',
+    1629629292,
     '-20.160839',
     '57.497987',
     '1'
@@ -316,7 +344,7 @@ VALUES
   (
     18,
     6,
-    '1629629293',
+    1629629293,
     '-20.160839',
     '57.497987',
     '1'
@@ -324,7 +352,7 @@ VALUES
   (
     19,
     7,
-    '1629629291',
+    1629629291,
     '-20.160839',
     '57.497987',
     '1'
@@ -332,7 +360,7 @@ VALUES
   (
     20,
     7,
-    '1629629292',
+    1629629292,
     '-20.160839',
     '57.497987',
     '1'
@@ -340,7 +368,7 @@ VALUES
   (
     21,
     7,
-    '1629629293',
+    1629629293,
     '-20.160839',
     '57.497987',
     '1'
@@ -348,7 +376,7 @@ VALUES
   (
     22,
     8,
-    '1629629288',
+    1629629288,
     '-20.160839',
     '57.497987',
     '1'
@@ -356,7 +384,7 @@ VALUES
   (
     23,
     8,
-    '1629629289',
+    1629629289,
     '-20.160839',
     '57.497987',
     '1'
@@ -364,7 +392,7 @@ VALUES
   (
     24,
     8,
-    '1629629290',
+    1629629290,
     '-20.160839',
     '57.497987',
     '1'
@@ -372,7 +400,7 @@ VALUES
   (
     25,
     8,
-    '1629629291',
+    1629629291,
     '-20.183035',
     '57.469663',
     '1'
@@ -380,7 +408,7 @@ VALUES
   (
     26,
     8,
-    '1629629292',
+    1629629292,
     '-20.183035',
     '57.469663',
     '1'
@@ -388,7 +416,7 @@ VALUES
   (
     27,
     8,
-    '1629629293',
+    1629629293,
     '-20.183035',
     '57.469663',
     '1'
@@ -396,7 +424,7 @@ VALUES
   (
     28,
     8,
-    '1629629294',
+    1629629294,
     '-20.160839',
     '57.497987',
     '1'
@@ -404,7 +432,7 @@ VALUES
   (
     29,
     8,
-    '1629629295',
+    1629629295,
     '-20.160839',
     '57.497987',
     '1'
@@ -412,7 +440,7 @@ VALUES
   (
     30,
     8,
-    '1629629296',
+    1629629296,
     '-20.160839',
     '57.497987',
     '1'

@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:contact_tracing/classes/globals.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:speech_bubble/speech_bubble.dart';
 
 import 'package:flutter_map/flutter_map.dart';
+import 'package:map_markers/map_markers.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/drawer.dart';
 import 'package:http/http.dart' as http;
@@ -73,6 +77,31 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           height: 25,
           point: LatLng(double.parse(place['latitude'].toString()),
               double.parse(place['longitude'].toString())),
+          //        builder: (context) {
+          //   return Container(
+          //     child: BubbleMarker(
+          //       bubbleColor: Colors.white,
+          //       widgetBuilder: (BuildContext context) {
+          //         return Icon(
+          //           Icons.location_on_outlined,
+          //           size: 25.0,
+          //           color: colour,
+          //         );
+          //       },
+          //       bubbleContentWidgetBuilder: (BuildContext context) {
+          //         var text = place['name'].toString();
+          //         return Text(text);
+          //       },
+          //     ),
+          //     //  IconButton(
+          //     //    icon: Icon(Icons.location_on_outlined),
+          //     //   color: colour,
+          //     //   iconSize: 25.0,
+          //     //   onPressed: () {
+          //     //     print(place['name']);
+          //     //   },)
+          //   );
+          // },
           builder: (ctx) {
             return Container(
               child: IconButton(
@@ -103,7 +132,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             print(mobile['longitude']);
             print(mobile['latitude']);
             print(mobile['MaxDateTime']);
-            var marker = Marker(
+            Marker marker = Marker(
               width: 25,
               height: 25,
               point: LatLng(double.parse(mobile['latitude'].toString()),

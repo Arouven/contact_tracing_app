@@ -24,7 +24,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.3
+  cupertino_icons: ^0.1.2 #cupertino_icons: ^1.0.3
   path_provider: ^2.0.2
   csv: ^5.0.0
   permission_handler: ^8.1.4+2
@@ -42,11 +42,13 @@ dependencies:
   location: ^4.3.0
   geolocator: ^7.4.0
   ftpconnect: ^1.0.0
+  #flutter_osm_plugin: ^0.7.5
   #cron: ^0.3.0
   move_to_background: ^1.0.2
   shared_preferences: ^2.0.7
   #workmanager: ^0.4.0
   flutter_local_notifications: ^8.1.1+1
+  map_markers: ^0.1.0
   flutter_background_service: ^0.1.5
   #services: ^0.0.1
   http: ^0.13.3
@@ -55,11 +57,12 @@ dependencies:
   rxdart: ^0.27.1
   test: ^1.16.8 #1.9.0 #1.17.11
   mockito: ^5.0.15 #5.0.14 #4.1.4
+  pedantic: ^1.11.1
+  speech_bubble: ^0.0.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.11.1
   
 
 flutter:
