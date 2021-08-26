@@ -1,6 +1,7 @@
 <?php
 
-require_once '../database.php';
+require '../database.php';
+
 class csvtosql
 {
     function __construct()
@@ -40,7 +41,7 @@ class csvtosql
 
                 $sqlInsert = "INSERT into Coordinates (mobileId,dateTimeCoordinates,latitude,longitude,accuracy)
                         values (?,?,?,?,?)";
-                $paramType = "issss";
+                $paramType = "iisss";
                 $paramArray = array(
                     $mobileId,
                     $dateTime,

@@ -20,7 +20,7 @@ CREATE TABLE `Mobile` (
   `mobileName` VARCHAR(255) NOT NULL,
   `mobileNumber` VARCHAR(255) NOT NULL,
   `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
-  `performCovidTest` BOOLEAN NOT NULL DEFAULT FALSE,
+  -- `performCovidTest` BOOLEAN NOT NULL DEFAULT FALSE,
   `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
   PRIMARY KEY (`mobileId`),
@@ -139,7 +139,7 @@ INSERT INTO
     mobileName,
     mobileNumber,
     contactWithInfected,
-    performCovidTest,
+    --    performCovidTest,
     confirmInfected
   )
 VALUES
@@ -150,7 +150,7 @@ VALUES
     'nokia de la mere de james',
     '+23012345678',
     0,
-    0,
+    --   0,
     0
   ),
   (
@@ -159,7 +159,7 @@ VALUES
     'nokia de la soeur de james',
     '+23012345678',
     0,
-    0,
+    --   0,
     0
   ),
   (
@@ -168,7 +168,7 @@ VALUES
     'nokia du frere de james',
     '+23012345678',
     0,
-    0,
+    --   0,
     0
   );
 
@@ -179,7 +179,7 @@ INSERT INTO
     mobileName,
     mobileNumber,
     contactWithInfected,
-    performCovidTest,
+    --   performCovidTest,
     confirmInfected,
     dateTimeLastTest
   )
@@ -190,7 +190,7 @@ VALUES
     'nokia du pere de james',
     '+23012345678',
     0,
-    1,
+    --    1,
     1,
     1629629292
   );
