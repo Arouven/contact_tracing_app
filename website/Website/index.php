@@ -475,9 +475,9 @@
                                                 <span>active mobiles</span>
                                             </div>
                                         </div>
-                                        <div class="overview-chart">
+                                        <!-- <div class="overview-chart">
                                             <canvas id="widgetChart1"></canvas>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -489,13 +489,22 @@
                                                 <i class="zmdi zmdi-shopping-cart"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>388,688</h2>
-                                                <span>items solid</span>
+                                                <h2>
+                                                    <?php
+                                                    $selectquery =
+                                                        'SELECT COUNT(*) as concact_trace FROM Mobile WHERE contactWithInfected = TRUE AND dateTimeLastTest IS NULL;';
+                                                    $data = $db->select($selectquery);
+                                                    if (isset($data) && $data != null) { //if there is something in the result
+                                                        print $data[0]['concact_trace'];
+                                                    }
+                                                    ?>
+                                                </h2>
+                                                <span>contact trace</span>
                                             </div>
                                         </div>
-                                        <div class="overview-chart">
+                                        <!-- <div class="overview-chart">
                                             <canvas id="widgetChart2"></canvas>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -507,13 +516,22 @@
                                                 <i class="zmdi zmdi-calendar-note"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>1,086</h2>
-                                                <span>this week</span>
+                                                <h2>
+                                                    <?php
+                                                    $selectquery =
+                                                        'SELECT COUNT(*) as infected_person FROM Mobile WHERE confirmInfected = TRUE;';
+                                                    $data = $db->select($selectquery);
+                                                    if (isset($data) && $data != null) { //if there is something in the result
+                                                        print $data[0]['infected_person'];
+                                                    }
+                                                    ?>
+                                                </h2>
+                                                <span>infected person</span>
                                             </div>
                                         </div>
-                                        <div class="overview-chart">
+                                        <!-- <div class="overview-chart">
                                             <canvas id="widgetChart3"></canvas>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
