@@ -518,12 +518,15 @@
                                             <div class="text">
                                                 <h2>
                                                     <?php
+                                                    //
                                                     $selectquery =
                                                         'SELECT COUNT(*) as infected_person FROM Mobile WHERE confirmInfected = TRUE;';
                                                     $data = $db->select($selectquery);
                                                     if (isset($data) && $data != null) { //if there is something in the result
                                                         print $data[0]['infected_person'];
                                                     }
+
+
                                                     ?>
                                                 </h2>
                                                 <span>infected person</span>
@@ -543,13 +546,22 @@
                                                 <i class="zmdi zmdi-money"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>$1,060,386</h2>
-                                                <span>total earnings</span>
+                                                <h2>
+                                                    <?php
+
+                                                    $array = array();
+                                                    $data = file('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/country_data/Mauritius.csv');
+                                                    $array[0] = str_getcsv($data[0]);
+                                                    $array[1] = str_getcsv($data[count($data) - 1]);
+                                                    print_r($array[1][array_search('people_fully_vaccinated', $array[0])]);
+                                                    ?>
+                                                </h2>
+                                                <span>fully vaccinated mauritian</span>
                                             </div>
                                         </div>
-                                        <div class="overview-chart">
+                                        <!-- <div class="overview-chart">
                                             <canvas id="widgetChart4"></canvas>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
