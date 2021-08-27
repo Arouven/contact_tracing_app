@@ -43,7 +43,7 @@ class updateDatabase
     }
     function getAllNonInfectedAtThatTime($datetimeInfected)
     {
-        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude,Mobile.mobileId FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = ' . $datetimeInfected . ';';
+        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude,Mobile.mobileId FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = ' . $datetimeInfected . '  AND Mobile.dateTimeLastTest IS NULL;';
         $data = $this->db->select($selectquery);
         $array = array();
 
@@ -85,7 +85,7 @@ class updateDatabase
         //     [INNER | LEFT] JOIN t2 ON join_predicate
         // WHERE 
         //     where_predicate;
-        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected= FALSE, Mobile.confirmInfected= FALSE, Mobile.dateTimeLastTest = NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
+        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected= FALSE, Mobile.confirmInfected= FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
         $this->db->execute($updateStatement);
         print "updated";
     }
