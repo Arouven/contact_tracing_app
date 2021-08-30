@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:contact_tracing/classes/globals.dart';
+import 'package:contact_tracing/pages/register.dart';
+import 'package:contact_tracing/pages/splash.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-//import '../pages/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
@@ -15,39 +17,125 @@ class LoginPage extends StatefulWidget {
   }
 }
 
+// Used for controlling whether the user is loggin or creating an account
+enum FormType { login, register }
+
 class _LoginState extends State<LoginPage> {
   String msgError = "";
 
-  getApi(String username, String password) async {
+  TextEditingController _username = TextEditingController();
+  TextEditingController _password = TextEditingController();
+
+  // our default setting is to login, and we should switch to creating an account when the user chooses to
+  FormType _form = FormType.login;
+
+  // Swap in between our two forms, registering and logging in
+  Future<void> _formChange() async {
+    setState(() {
+      if (_form == FormType.register) {
+        _form = FormType.login;
+      } else {
+        _form = FormType.register;
+      }
+    });
+  }
+
+  Future<void> _loginPressed() async {
     final res = await http.post(Uri.parse(loginUrl),
-        body: {"username": username, "password": password});
+        body: {"username": _username.text, "password": _password.text});
     final data = jsonDecode(res.body);
 
     if (data['msg'] == "data does not exist") {
-      print(data['msg']);
-      msgError = "User does not exist or wrong password!";
+      msgError = "Wrong Credentials!";
       _username.clear();
       _password.clear();
-      setState(
-        () {
-          //register btn appear
-        },
-      );
+      setState(() {});
     } else {
-      print(data['msg']);
       msgError = ""; //"User logged in";
-      _username.clear();
-      _password.clear();
       setState(
-        () {
+        () async {
           //redirect to home
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('username', _username.text);
+          await prefs.setString('password', _password.text);
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (ctx) => SplashPage()));
         },
       );
     }
   }
 
-  TextEditingController _username = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  void _createAccountPressed() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => RegisterPage()));
+  }
+
+  void _passwordReset() {
+    // print("The user wants a password reset request sent to $_email");
+  }
+  Widget _buildTextFields() {
+    return new Container(
+      child: new Column(
+        children: <Widget>[
+          new Container(
+            child: new TextField(
+              controller: _username,
+              decoration: new InputDecoration(labelText: 'Username'),
+            ),
+          ),
+          new Container(
+            child: new TextField(
+              controller: _password,
+              decoration: new InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    if (_form == FormType.login) {
+      return new Container(
+        child: new Column(
+          children: <Widget>[
+            new ElevatedButton(
+              child: new Text('Login'),
+              onPressed: _loginPressed,
+            ),
+            new TextButton(
+              child: new Text('Dont have an account? Tap here to register.'),
+              onPressed: _formChange,
+            ),
+            new TextButton(
+              child: new Text('Forgot Password?'),
+              onPressed: _passwordReset,
+            )
+          ],
+        ),
+      );
+    } else {
+      return new Container(
+        child: new Column(
+          children: <Widget>[
+            new ElevatedButton(
+              child: new Text('Create an Account'),
+              onPressed: _createAccountPressed,
+            ),
+            new TextButton(
+              child: new Text('Have an account? Click here to login.'),
+              onPressed: _formChange,
+            ),
+            new TextButton(
+              child: new Text('Have an account? Click here to login.'),
+              onPressed: _formChange,
+            )
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,20 +149,6 @@ class _LoginState extends State<LoginPage> {
             centerTitle: true,
             title: Text("Login"),
             backgroundColor: Colors.blue,
-            // elevation: 0.5,
-            // actions: <Widget>[
-            //   TextButton(
-            //     onPressed: () {
-            //       Navigator.of(context).push(
-            //         MaterialPageRoute(
-            //           builder: (context) => RegisterPage(),
-            //         ),
-            //       );
-            //     },
-            //     child: Text("Register"),
-
-            //   )
-            // ],
           ),
           drawer: buildDrawer(context, LoginPage.route),
           body: Container(
@@ -82,67 +156,8 @@ class _LoginState extends State<LoginPage> {
             child: Center(
               child: ListView(
                 children: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: TextField(
-                      controller: _username,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Username",
-                        hintText: "Username",
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: TextField(
-                      controller: _password,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Password",
-                        hintText: "Password",
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Material(
-                    borderRadius: BorderRadius.circular(20.0),
-                    elevation: 10.0,
-                    color: Colors.blue,
-                    child: MaterialButton(
-                      onPressed: () {
-                        getApi(
-                          _username.text,
-                          _password.text,
-                        );
-                      },
-                      //color: Colors.blue,
-                      child: Text("LOGIN"),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  _buildTextFields(),
+                  _buildButtons(),
                   Center(
                     child: Text(
                       msgError,

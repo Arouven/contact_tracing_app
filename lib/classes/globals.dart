@@ -16,9 +16,9 @@ const String latestUpdateLocationsUrl =
 const String ftpServer = 'ftpupload.net';
 const String ftpUser = 'epiz_28555904';
 const String ftpPassword = 'dCSxRI3N1p';
-String fileName;
-String mobileID;
-String nationalIdNumber;
+// String fileName;
+// String mobileID;
+// String nationalIdNumber;
 
 //in register.dart
 // final SharedPreferences prefs = await SharedPreferences.getInstance();

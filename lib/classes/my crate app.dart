@@ -7,4 +7,7 @@ class StartApplication {
 // create location file
 // store file path in global var
 //
+
+//todo
+//reset password
 }

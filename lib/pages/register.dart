@@ -151,216 +151,217 @@ class _RegisterPageState extends State<RegisterPage> {
               child: ListView(
                 children: <Widget>[
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _firstName,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Firstname",
-                        hintText: "Firstname",
-                      ),
+                      decoration: new InputDecoration(labelText: 'First Name'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "Firstname",
+                      //   hintText: "Firstname",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _lastName,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Lastname",
-                        hintText: "Lastname",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Last Name'),
                     ),
                   ),
                   SizedBox(
                     height: 20.0,
                   ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _country,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Country",
-                        hintText: "Country",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Country'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "Country",
+                      //   hintText: "Country",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _address,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Address",
-                        hintText: "Address",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Address'),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _telephone,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Telephone",
-                        hintText: "Telephone",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Telephonne'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "Telephone",
+                      //   hintText: "Telephone",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _email,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Email",
-                        hintText: "Email",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Email'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "Email",
+                      //   hintText: "Email",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _dateOfBirth,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "DOB",
-                        hintText: "DOB",
-                      ),
+                      decoration:
+                          new InputDecoration(labelText: 'Date of Birth'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "DOB",
+                      //   hintText: "DOB",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _nationalIdNumber,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "NIC",
-                        hintText: "NIC",
-                      ),
+                      decoration: new InputDecoration(labelText: 'NIC'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "NIC",
+                      //   hintText: "NIC",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _username,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "username",
-                        hintText: "username",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Username'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "username",
+                      //   hintText: "username",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.grey],
-                      ),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
+                    // alignment: Alignment.center,
+                    // padding: EdgeInsets.all(10.0),
+                    // decoration: BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [Colors.white, Colors.grey],
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(20.0),
+                    // ),
                     child: TextField(
                       controller: _password,
                       obscureText: true,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        labelText: "Password",
-                        hintText: "Password",
-                      ),
+                      decoration: new InputDecoration(labelText: 'Password'),
+                      // decoration: InputDecoration(
+                      //   border: InputBorder.none,
+                      //   labelText: "Password",
+                      //   hintText: "Password",
+                      // ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   Material(
                     borderRadius: BorderRadius.circular(20.0),
                     elevation: 10.0,
