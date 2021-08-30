@@ -16,6 +16,7 @@
     <link href="css/font-face.css" rel="stylesheet" media="all">
     <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
     <link href="vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-5/css/all.min.css" rel="stylesheet" media="all">
     <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
 
     <!-- Bootstrap CSS-->
@@ -457,7 +458,7 @@
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
-                                                <i class="zmdi zmdi-account-o"></i>
+                                                <i class="fas fa-mobile"></i>
                                             </div>
                                             <div class="text">
                                                 <h2>
@@ -486,7 +487,7 @@
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
-                                                <i class="zmdi zmdi-shopping-cart"></i>
+                                                <i class="fas fa-users"></i>
                                             </div>
                                             <div class="text">
                                                 <h2>
@@ -513,12 +514,11 @@
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
-                                                <i class="zmdi zmdi-calendar-note"></i>
+                                                <i class="fas fa-viruses"></i>
                                             </div>
                                             <div class="text">
                                                 <h2>
                                                     <?php
-                                                    //
                                                     $selectquery =
                                                         'SELECT COUNT(*) as infected_person FROM Mobile WHERE confirmInfected = TRUE;';
                                                     $data = $db->select($selectquery);
@@ -543,18 +543,10 @@
                                     <div class="overview__inner">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
-                                                <i class="zmdi zmdi-money"></i>
+                                                <i class="fas fa-shield-virus"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>
-                                                    <?php
-
-                                                    $array = array();
-                                                    $data = file('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/country_data/Mauritius.csv');
-                                                    $array[0] = str_getcsv($data[0]);
-                                                    $array[1] = str_getcsv($data[count($data) - 1]);
-                                                    print_r($array[1][array_search('people_fully_vaccinated', $array[0])]);
-                                                    ?>
+                                                <h2 id='fullyVaccinated'>
                                                 </h2>
                                                 <span>fully vaccinated mauritian</span>
                                             </div>
@@ -1051,6 +1043,9 @@
     <script src="vendor/chartjs/Chart.bundle.min.js"></script>
     <script src="vendor/select2/select2.min.js">
     </script>
+    </script>
+    <script src="vendor/jquery-csv/jquery.csv-0.71.js"></script>
+    </script>
 
     <!-- Main JS-->
     <script src="js/main.js"></script>
@@ -1059,3 +1054,17 @@
 
 </html>
 <!-- end document-->
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/country_data/Mauritius.csv",
+            dataType: "text",
+            success: function(response) {
+                var data = $.csv.toArrays(response);
+                $('#fullyVaccinated').text(data[data.length - 1][data[0].indexOf("people_fully_vaccinated")]);
+                //generateHtmlTable(data);
+            }
+        });
+    });
+</script>
