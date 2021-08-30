@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 // Used for controlling whether the user is loggin or creating an account
-enum FormType { login, register }
+//enum FormType { login, register }
 
 class _LoginState extends State<LoginPage> {
   String msgError = "";
@@ -26,19 +26,19 @@ class _LoginState extends State<LoginPage> {
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
 
-  // our default setting is to login, and we should switch to creating an account when the user chooses to
-  FormType _form = FormType.login;
+  // // our default setting is to login, and we should switch to creating an account when the user chooses to
+  // FormType _form = FormType.login;
 
-  // Swap in between our two forms, registering and logging in
-  Future<void> _formChange() async {
-    setState(() {
-      if (_form == FormType.register) {
-        _form = FormType.login;
-      } else {
-        _form = FormType.register;
-      }
-    });
-  }
+  // // Swap in between our two forms, registering and logging in
+  // Future<void> _formChange() async {
+  //   setState(() {
+  //     if (_form == FormType.register) {
+  //       _form = FormType.login;
+  //     } else {
+  //       _form = FormType.register;
+  //     }
+  //   });
+  // }
 
   Future<void> _loginPressed() async {
     final res = await http.post(Uri.parse(loginUrl),
@@ -96,45 +96,24 @@ class _LoginState extends State<LoginPage> {
   }
 
   Widget _buildButtons() {
-    if (_form == FormType.login) {
-      return new Container(
-        child: new Column(
-          children: <Widget>[
-            new ElevatedButton(
-              child: new Text('Login'),
-              onPressed: _loginPressed,
-            ),
-            new TextButton(
-              child: new Text('Dont have an account? Tap here to register.'),
-              onPressed: _formChange,
-            ),
-            new TextButton(
-              child: new Text('Forgot Password?'),
-              onPressed: _passwordReset,
-            )
-          ],
-        ),
-      );
-    } else {
-      return new Container(
-        child: new Column(
-          children: <Widget>[
-            new ElevatedButton(
-              child: new Text('Create an Account'),
-              onPressed: _createAccountPressed,
-            ),
-            new TextButton(
-              child: new Text('Have an account? Click here to login.'),
-              onPressed: _formChange,
-            ),
-            new TextButton(
-              child: new Text('Have an account? Click here to login.'),
-              onPressed: _formChange,
-            )
-          ],
-        ),
-      );
-    }
+    return new Container(
+      child: new Column(
+        children: <Widget>[
+          new ElevatedButton(
+            child: new Text('Login'),
+            onPressed: _loginPressed,
+          ),
+          new TextButton(
+            child: new Text('Dont have an account? Tap here to register.'),
+            onPressed: _createAccountPressed,
+          ),
+          new TextButton(
+            child: new Text('Forgot Password?'),
+            onPressed: _passwordReset,
+          )
+        ],
+      ),
+    );
   }
 
   @override

@@ -19,7 +19,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   Future<Widget> loadFromFuture() async {
-    Timer(Duration(seconds: 2), null);
+    await Future.delayed(const Duration(seconds: 2), () {});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
