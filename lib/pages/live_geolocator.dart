@@ -1,7 +1,9 @@
 import 'dart:convert';
+//import 'dart:html';
 import 'dart:ui';
 
 import 'package:contact_tracing/classes/globals.dart';
+import 'package:contact_tracing/pages/splash.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/drawer.dart';
 import 'package:http/http.dart' as http;
 
+//import 'package:flutter/material.dart';
+import 'package:cool_alert/cool_alert.dart';
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:animated_dialog_box/animated_dialog_box.dart';
+
+//
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
 
@@ -33,6 +42,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _serviceError = '';
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
+  int _lastUpdateFromServer = 0;
 
   @override
   void initState() {
@@ -56,8 +66,13 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           Colors.red.shade900);
       populateMarkers(data["contactWithInfected"], myMobileId,
           Colors.yellow[400], Colors.yellow.shade900);
+      populateMarkers(data["cleanUsers"], myMobileId, Colors.yellow[400],
+          Colors.green.shade900);
       populateCentresMarkers(data["testingcentres"], Colors.blue);
-      print("00000000000000000000000000000000000000000000000000000000000000");
+      try {
+        _lastUpdateFromServer = int.parse(data["lastUpdateFromServer"]);
+      } catch (exception) {}
+      print("markers populated");
     } else {
       print(data);
     }
@@ -77,38 +92,19 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           height: 25,
           point: LatLng(double.parse(place['latitude'].toString()),
               double.parse(place['longitude'].toString())),
-          //        builder: (context) {
-          //   return Container(
-          //     child: BubbleMarker(
-          //       bubbleColor: Colors.white,
-          //       widgetBuilder: (BuildContext context) {
-          //         return Icon(
-          //           Icons.location_on_outlined,
-          //           size: 25.0,
-          //           color: colour,
-          //         );
-          //       },
-          //       bubbleContentWidgetBuilder: (BuildContext context) {
-          //         var text = place['name'].toString();
-          //         return Text(text);
-          //       },
-          //     ),
-          //     //  IconButton(
-          //     //    icon: Icon(Icons.location_on_outlined),
-          //     //   color: colour,
-          //     //   iconSize: 25.0,
-          //     //   onPressed: () {
-          //     //     print(place['name']);
-          //     //   },)
-          //   );
-          // },
-          builder: (ctx) {
+          builder: (context) {
             return Container(
               child: IconButton(
                 icon: Icon(Icons.location_on_outlined),
                 color: colour,
                 iconSize: 25.0,
                 onPressed: () {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.info,
+                    text: place['name'],
+                    autoCloseDuration: Duration(seconds: 5),
+                  );
                   print(place['name']);
                 },
               ),
@@ -137,7 +133,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
               height: 25,
               point: LatLng(double.parse(mobile['latitude'].toString()),
                   double.parse(mobile['longitude'].toString())),
-              builder: (ctx) {
+              builder: (context) {
                 return Container(
                   child: IconButton(
                     icon: Icon(Icons.location_on),
@@ -180,9 +176,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         );
 
         if (_permission) {
-          location = await Geolocator.getCurrentPosition();
+          location = await Geolocator.getCurrentPosition(
+              desiredAccuracy: geolocatorAccuracy);
           _currentLocation = location;
-          _toggleListening(geolocatorAccuracy, Duration(minutes: 1));
+          // _toggleListening(geolocatorAccuracy, Duration(minutes: 1));
         }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
@@ -255,14 +252,45 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: _serviceError.isEmpty
-                      ? Text(
-                          'latitude ${currentLatLng.latitude}, longitude ${currentLatLng.longitude}, accuracy ${locationAccuracy.toString()}')
-                      : Text(
-                          'Error occured while acquiring location. Error Message : '
-                          '$_serviceError'),
-                ),
+                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: new Row(
+                      children: <Widget>[
+                        Text('Updated: ${_lastUpdateFromServer.toString()}'),
+                        IconButton(
+                          icon: Icon(Icons.refresh),
+                          color: Colors.black,
+                          iconSize: 30.0,
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) => SplashPage()));
+                          },
+                        ),
+                      ],
+                    )
+                    //             return new Container(
+                    // child: new Column(
+                    //   children: <Widget>[
+                    //     new ElevatedButton(
+                    //       child: new Text('Login'),
+                    //       onPressed: _loginPressed,
+                    //     ),
+                    //     new TextButton(
+                    //       child: new Text('Dont have an account? Tap here to register.'),
+                    //       onPressed: _createAccountPressed,
+                    //     ),
+                    //     new TextButton(
+                    //       child: new Text('Forgot Password?'),
+                    //       onPressed: _passwordReset,
+                    //     )
+                    //   ],
+                    // ),
+
+                    // _serviceError.isEmpty
+                    //     ? Text('Updated: ${_lastUpdateFromServer.toString()}')
+                    //     : Text(
+                    //         'Error occured while acquiring location. Error Message : '
+                    //         '$_serviceError'),
+                    ),
                 Flexible(
                   child: FlutterMap(
                     mapController: _mapController,
@@ -285,13 +313,17 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                             width: 25,
                             height: 25,
                             point: currentLatLng,
-                            builder: (ctx) {
+                            builder: (context) {
                               return Container(
                                 child: IconButton(
                                   icon: Icon(Icons.location_on),
                                   color: _myMarkerColour,
                                   iconSize: 25.0,
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (ctx) => SplashPage()));
+                                  },
                                 ),
                               );
                             },
