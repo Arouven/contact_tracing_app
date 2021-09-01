@@ -63,7 +63,7 @@ dependencies:
   #get: ^4.3.8
   animated_dialog_box: ^0.0.2
   cool_alert: ^1.1.0
-  google_fonts:
+  #google_fonts:
 
 dev_dependencies:
   flutter_test:

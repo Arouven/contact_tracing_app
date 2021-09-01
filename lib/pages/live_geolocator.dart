@@ -37,22 +37,23 @@ class LiveGeolocatorPage extends StatefulWidget {
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position _currentLocation;
-  MapController _mapController;
-  bool _permission = false;
+  //MapController _mapController;
+  //bool _permission = false;
   String _serviceError = '';
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
-  int _lastUpdateFromServer = 0;
+  String _lastUpdateFromServer = '0';
 
+  MapController _mapController; //= MapController();
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-
+    generateMarkers();
     initLocationService();
   }
 
-  Future generateMarkers() async {
+  Future<void> generateMarkers() async {
     final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
     print(latestUpdateLocationsUrl);
     final data = jsonDecode(res.body);
@@ -61,17 +62,27 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
     if (data['status'] == "200") {
       print(data);
-
-      populateMarkers(data["confirmInfected"], myMobileId, Colors.red[400],
-          Colors.red.shade900);
-      populateMarkers(data["contactWithInfected"], myMobileId,
+      await populateMarkers(data["confirmInfected"], myMobileId,
+          Colors.red[400], Colors.red.shade900);
+      await populateMarkers(data["contactWithInfected"], myMobileId,
           Colors.yellow[400], Colors.yellow.shade900);
-      populateMarkers(data["cleanUsers"], myMobileId, Colors.yellow[400],
+      await populateMarkers(data["cleanUsers"], myMobileId, Colors.green[400],
           Colors.green.shade900);
-      populateCentresMarkers(data["testingcentres"], Colors.blue);
+      await populateCentresMarkers(data["testingcentres"], Colors.blue);
       try {
-        _lastUpdateFromServer = int.parse(data["lastUpdateFromServer"]);
-      } catch (exception) {}
+        setState(() {
+          int serverLastUpdated = int.parse(
+              data['lastUpdateFromServer'][0]["MaxDateTime"].toString());
+          _lastUpdateFromServer =
+              (DateTime.fromMillisecondsSinceEpoch(serverLastUpdated * 1000))
+                  .toLocal()
+                  .toString();
+          _lastUpdateFromServer = _lastUpdateFromServer.substring(
+              0, _lastUpdateFromServer.length - 4);
+        });
+      } catch (exception) {
+        print('problem');
+      }
       print("markers populated");
     } else {
       print(data);
@@ -80,28 +91,27 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     //return _markers;
   }
 
-  void populateCentresMarkers(places, colour) {
+  Future<void> populateCentresMarkers(places, colour) async {
     if (places != null) {
       print(places);
       for (var place in places) {
-        print(place['longitude']);
-        print(place['latitude']);
         print(place['name']);
-        var marker = Marker(
+        Marker marker = new Marker(
           width: 25,
           height: 25,
           point: LatLng(double.parse(place['latitude'].toString()),
               double.parse(place['longitude'].toString())),
           builder: (context) {
-            return Container(
-              child: IconButton(
-                icon: Icon(Icons.location_on_outlined),
+            return new Container(
+              child: new IconButton(
+                icon: new Icon(Icons.location_on_outlined),
                 color: colour,
                 iconSize: 25.0,
                 onPressed: () {
                   CoolAlert.show(
                     context: context,
                     type: CoolAlertType.info,
+                    title: 'Testing Centre',
                     text: place['name'],
                     autoCloseDuration: Duration(seconds: 5),
                   );
@@ -111,12 +121,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             );
           },
         );
-        _markers.add(marker);
+        setState(() {
+          _markers.add(marker);
+        });
       }
     }
   }
 
-  void populateMarkers(mobiles, myMobileId, colour, myMarkerColour) {
+  Future<void> populateMarkers(
+      mobiles, myMobileId, colour, myMarkerColour) async {
     if (mobiles != null) {
       print(mobiles);
       for (var mobile in mobiles) {
@@ -124,19 +137,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           int firstInt = int.parse(mobile['mobileId'].toString());
           int secondInt = int.parse(myMobileId.toString());
           if (firstInt != secondInt) {
-            print(mobile['mobileId']);
-            print(mobile['longitude']);
-            print(mobile['latitude']);
-            print(mobile['MaxDateTime']);
-            Marker marker = Marker(
+            //print(firstInt.toString() + '  ' + secondInt.toString());
+            Marker marker = new Marker(
               width: 25,
               height: 25,
               point: LatLng(double.parse(mobile['latitude'].toString()),
                   double.parse(mobile['longitude'].toString())),
               builder: (context) {
-                return Container(
-                  child: IconButton(
-                    icon: Icon(Icons.location_on),
+                return new Container(
+                  child: new IconButton(
+                    icon: new Icon(Icons.location_on),
                     color: colour,
                     iconSize: 25.0,
                     onPressed: () {
@@ -146,9 +156,13 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                 );
               },
             );
-            _markers.add(marker);
+            setState(() {
+              _markers.add(marker);
+            });
           } else {
-            _myMarkerColour = myMarkerColour;
+            setState(() {
+              _myMarkerColour = myMarkerColour;
+            });
           }
         } on FormatException {
           print("FormatException for firstInt");
@@ -157,34 +171,23 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  void initLocationService() async {
+  Future<void> initLocationService() async {
     bool serviceEnabled;
     bool serviceRequestResult;
-    Position location;
     try {
-      await generateMarkers();
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (serviceEnabled) {
-        await Geolocator.checkPermission().then(
-          (value) {
-            return {
-              if (value.toString() == 'LocationPermission.always')
-                {_permission = true},
-            };
-          },
-        );
+        _currentLocation = await Geolocator.getCurrentPosition(
+            desiredAccuracy: geolocatorAccuracy);
 
-        if (_permission) {
-          location = await Geolocator.getCurrentPosition(
-              desiredAccuracy: geolocatorAccuracy);
-          _currentLocation = location;
-          // _toggleListening(geolocatorAccuracy, Duration(minutes: 1));
-        }
+        _mapController.move(
+            LatLng(_currentLocation.latitude, _currentLocation.longitude),
+            _mapController.zoom);
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
-          initLocationService();
+          await initLocationService();
           return;
         }
       }
@@ -195,29 +198,60 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       } else if (e.code == 'SERVICE_STATUS_ERROR') {
         _serviceError = e.message;
       }
-      location = null;
     }
   }
 
-  void _toggleListening(
-      LocationAccuracy desiredAccuracy, Duration intervalDuration) {
-    final positionStream = Geolocator.getPositionStream(
-      desiredAccuracy: desiredAccuracy,
-      intervalDuration: intervalDuration,
-    );
-    positionStream.listen(
-      (position) {
-        setState(
-          () {
-            _currentLocation = position;
-
-            _mapController.move(
-                LatLng(_currentLocation.latitude, _currentLocation.longitude),
-                _mapController.zoom);
-          },
+  markerLayerOptions(currentLatLng) {
+    var marker = new Marker(
+      width: 30,
+      height: 30,
+      point: currentLatLng,
+      builder: (context) {
+        return Container(
+          child: IconButton(
+            icon: Icon(Icons.location_on),
+            color: _myMarkerColour,
+            iconSize: 30.0,
+            onPressed: () {},
+          ),
         );
       },
     );
+
+    setState(() {
+      _markers.add(marker);
+    });
+    return MarkerLayerOptions(markers: _markers);
+  }
+
+  getMap(currentLatLng) {
+    if (_markers == null) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height / 1.3,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else {
+      return Flexible(
+        child: FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            center: LatLng(currentLatLng.latitude, currentLatLng.longitude),
+            zoom: 10.0,
+            interactiveFlags: InteractiveFlag.all,
+          ),
+          layers: [
+            TileLayerOptions(
+              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              subdomains: ['a', 'b', 'c'],
+              tileProvider: NonCachingNetworkTileProvider(),
+            ),
+            markerLayerOptions(currentLatLng),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -252,90 +286,43 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             child: Column(
               children: [
                 Padding(
-                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: new Container(
                     child: new Row(
                       children: <Widget>[
-                        Text('Updated: ${_lastUpdateFromServer.toString()}'),
+                        Expanded(
+                          child: Text(
+                              'Updated: ${_lastUpdateFromServer.toString()}',
+                              textAlign: TextAlign.left),
+                        ),
                         IconButton(
                           icon: Icon(Icons.refresh),
                           color: Colors.black,
                           iconSize: 30.0,
+                          alignment: Alignment.centerRight,
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => SplashPage()));
+                                builder: (context) => SplashPage()));
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.info),
+                          alignment: Alignment.centerRight,
+                          color: Colors.black,
+                          iconSize: 30.0,
+                          onPressed: () {
+                            CoolAlert.show(
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: 'something',
+                            );
                           },
                         ),
                       ],
-                    )
-                    //             return new Container(
-                    // child: new Column(
-                    //   children: <Widget>[
-                    //     new ElevatedButton(
-                    //       child: new Text('Login'),
-                    //       onPressed: _loginPressed,
-                    //     ),
-                    //     new TextButton(
-                    //       child: new Text('Dont have an account? Tap here to register.'),
-                    //       onPressed: _createAccountPressed,
-                    //     ),
-                    //     new TextButton(
-                    //       child: new Text('Forgot Password?'),
-                    //       onPressed: _passwordReset,
-                    //     )
-                    //   ],
-                    // ),
-
-                    // _serviceError.isEmpty
-                    //     ? Text('Updated: ${_lastUpdateFromServer.toString()}')
-                    //     : Text(
-                    //         'Error occured while acquiring location. Error Message : '
-                    //         '$_serviceError'),
                     ),
-                Flexible(
-                  child: FlutterMap(
-                    mapController: _mapController,
-                    options: MapOptions(
-                      center: LatLng(
-                          currentLatLng.latitude, currentLatLng.longitude),
-                      zoom: 10.0,
-                      interactiveFlags: InteractiveFlag.all,
-                    ),
-                    layers: [
-                      TileLayerOptions(
-                        urlTemplate:
-                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        subdomains: ['a', 'b', 'c'],
-                        tileProvider: NonCachingNetworkTileProvider(),
-                      ),
-                      MarkerLayerOptions(
-                        markers: <Marker>[
-                          Marker(
-                            width: 25,
-                            height: 25,
-                            point: currentLatLng,
-                            builder: (context) {
-                              return Container(
-                                child: IconButton(
-                                  icon: Icon(Icons.location_on),
-                                  color: _myMarkerColour,
-                                  iconSize: 25.0,
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (ctx) => SplashPage()));
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      MarkerLayerOptions(
-                        markers: _markers,
-                      ),
-                    ],
                   ),
                 ),
+                getMap(currentLatLng),
               ],
             ),
           ),

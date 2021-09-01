@@ -4,11 +4,6 @@ require '../database.php';
 
 $output = array();
 
-//get last time coordinates updated
-$selectquery = "SELECT MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates;";
-$title = 'lastUpdateFromServer';
-$output = array_merge(getArray($selectquery, $title), $output);
-
 //all virus testing centres
 $selectquery = "SELECT name, address, latitude, longitude FROM TestingCentres;";
 $title = 'testingcentres';
@@ -27,6 +22,11 @@ $output = array_merge(getArray($selectquery, $title), $output);
 //infected mobiles
 $selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.confirmInfected = TRUE';
 $title = 'confirmInfected';
+$output = array_merge(getArray($selectquery, $title), $output);
+
+//get last time coordinates updated
+$selectquery = "SELECT MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates;";
+$title = 'lastUpdateFromServer';
 $output = array_merge(getArray($selectquery, $title), $output);
 
 
