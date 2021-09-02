@@ -14,6 +14,8 @@ class Mobile {
 
   static Future<List<Mobile>> getMobiles() async {
     //SELECT Mobile.mobileId,Mobile.mobileName,Mobile.mobileDescription FROM Mobile INNER JOIN User ON Mobile.userId=User.userId WHERE User.username='Johny'
+
+    List<Mobile> mymobiles = [];
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString('username');
 
@@ -22,17 +24,28 @@ class Mobile {
     final data = jsonDecode(res.body);
     //_displayError = false;
     if (data['msg'] == "data does not exist") {
+      //new user no mobile in db
+      //print(data);
     } else {
       //"User has mobiles";
 
-      print(data);
+      var mobiles = data['mobiles'];
+      print(mobiles);
+      for (var mobile in mobiles) {
+        mymobiles.add(
+          Mobile(
+              mobileId: mobile['mobileId'],
+              mobileName: mobile['mobileName'],
+              mobileDescription: mobile['mobileDescription']),
+        );
+      }
     }
-    return <Mobile>[
-      Mobile(mobileId: 1, mobileName: "Aaron", mobileDescription: "Jackson"),
-      Mobile(mobileId: 2, mobileName: "Ben", mobileDescription: "John"),
-      Mobile(mobileId: 3, mobileName: "Carrie", mobileDescription: "Brown"),
-      Mobile(mobileId: 4, mobileName: "Deep", mobileDescription: "Sen"),
-      Mobile(mobileId: 5, mobileName: "Emily", mobileDescription: "Jane"),
-    ];
+
+    // final mobiledata = List<Mobile>.from(
+    //   data.map<dynamic>(
+    //     (dynamic item) => mymobiles,
+    //   ),
+    // );
+    return mymobiles;
   }
 }

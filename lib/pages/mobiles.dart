@@ -22,12 +22,20 @@ class MobilePage extends StatefulWidget {
 }
 
 class _MobilePageState extends State<MobilePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   final mobiles = ['work', 'home'];
   Future<void> addItem() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('mobileId', '8');
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => AddMobilePage()));
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    Mobile.getMobiles();
+
     //Navigator.of(context)
     //   .push(MaterialPageRoute(builder: (context) => SplashPage()));
     // setState(
