@@ -9,6 +9,7 @@ const int timeToUploadPerMinute = 5; //6 * 60;//6 hours
 //login register
 const String website = 'https://contact-tracing-utm.000webhostapp.com/';
 const String loginUrl = website + "flutter_login/login.php";
+const String getMobilesUrl = website + "apis/getMobiles.php";
 const String registerUrl = website + "flutter_login/register.php";
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";

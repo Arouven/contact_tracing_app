@@ -47,13 +47,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         ),
         _buildMenuItem(
           context,
-          const Text('Register'),
-          RegisterPage.route,
-          currentRoute,
-        ),
-        _buildMenuItem(
-          context,
-          const Text('Login'),
+          const Text('Login/Register'),
           LoginPage.route,
           currentRoute,
         ),

@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:http/http.dart' as http;
 
 import './pages/live_geolocator.dart';
+import './pages/addMobile.dart';
 import './classes/globals.dart';
 import './classes/uploadClass.dart';
 import './classes/write.dart';
@@ -178,6 +179,7 @@ class MyApp extends StatelessWidget {
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         SplashPage.route: (context) => SplashPage(),
         RegisterPage.route: (context) => RegisterPage(),
+        AddMobilePage.route: (context) => AddMobilePage(),
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
       },

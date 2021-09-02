@@ -1,5 +1,6 @@
-// import 'package:contact_tracing/classes/globals.dart';
+import 'package:contact_tracing/classes/mobile.dart';
 
+import 'package:contact_tracing/pages/addMobile.dart';
 import 'package:contact_tracing/pages/splash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,9 @@ class _MobilePageState extends State<MobilePage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('mobileId', '8');
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => SplashPage()));
+        .push(MaterialPageRoute(builder: (context) => AddMobilePage()));
+    //Navigator.of(context)
+    //   .push(MaterialPageRoute(builder: (context) => SplashPage()));
     // setState(
     //   () {
     //     mobiles.add(mobiles[-1]);
