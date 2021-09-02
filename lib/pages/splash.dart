@@ -23,13 +23,14 @@ class _SplashPageState extends State<SplashPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', 'Johny');
     await prefs.setString('password', '1234');
-    // await prefs.setString("mobileId", '8');
+    // await prefs.setString("mobileId", '9');
     if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
       var fn =
           '${prefs.getString("mobileId")}_${prefs.getString("username")}_geolocatorbest.csv';
       await prefs.setString("fileName", fn);
+      // return Future.value(MobilePage());
       return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
