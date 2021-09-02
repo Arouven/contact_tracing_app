@@ -38,6 +38,7 @@ class LiveGeolocatorPage extends StatefulWidget {
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position _currentLocation;
   MapController _mapController;
+  bool _isLoading = true;
   String _serviceError = '';
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
@@ -297,20 +298,116 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    LatLng currentLatLng;
-    var locationAccuracy;
-    // Until currentLocation is initially updated, Widget can locate to 0, 0
-    // by default or store previous location value to show.
-    if (_currentLocation != null) {
-      currentLatLng =
-          LatLng(_currentLocation.latitude, _currentLocation.longitude);
-      locationAccuracy = _currentLocation.accuracy;
-    } else {
-      currentLatLng = LatLng(0, 0);
-      locationAccuracy = 0;
-    }
+  builder(currentLatLng) {
+    return FutureBuilder<String>(
+      future: generateMarkers(),
+      builder: (context, snapshot) {
+        _isLoading = true;
+        if (snapshot.hasData) {
+          print(_markers.toString());
+          _isLoading = false;
+          return Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: new Container(
+                    child: new Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                              'Updated: ${_lastUpdateFromServer.toString()}',
+                              textAlign: TextAlign.left),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.refresh),
+                          color: Colors.black,
+                          iconSize: 30.0,
+                          alignment: Alignment.centerRight,
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SplashPage()));
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.info),
+                          alignment: Alignment.centerRight,
+                          color: Colors.black,
+                          iconSize: 30.0,
+                          onPressed: () {
+                            _showMyDialog();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      center: LatLng(
+                          currentLatLng.latitude, currentLatLng.longitude),
+                      zoom: 10.0,
+                      interactiveFlags: InteractiveFlag.all,
+                    ),
+                    layers: [
+                      TileLayerOptions(
+                        urlTemplate:
+                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        subdomains: ['a', 'b', 'c'],
+                        tileProvider: NonCachingNetworkTileProvider(),
+                      ),
+                      MarkerLayerOptions(markers: _markers),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Container(
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text('Error: ${snapshot.error}'),
+                )
+              ],
+            ),
+          );
+        } else {
+          return Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.3,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                // Padding(
+                //   //padding: EdgeInsets.only(top: 16),
+                //   child:
+                Text('Awaiting result...'),
+                // )
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  addCurrentLocationToMarkers(currentLatLng) {
     var marker = new Marker(
       width: 30,
       height: 30,
@@ -327,6 +424,23 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       },
     );
     _markers.add(marker);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    LatLng currentLatLng;
+    var locationAccuracy;
+    // Until currentLocation is initially updated, Widget can locate to 0, 0
+    // by default or store previous location value to show.
+    if (_currentLocation != null) {
+      currentLatLng =
+          LatLng(_currentLocation.latitude, _currentLocation.longitude);
+      locationAccuracy = _currentLocation.accuracy;
+    } else {
+      currentLatLng = LatLng(0, 0);
+      locationAccuracy = 0;
+    }
+    addCurrentLocationToMarkers(currentLatLng);
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -339,111 +453,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, LiveGeolocatorPage.route),
-          body: FutureBuilder<String>(
-            future: generateMarkers(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                print(_markers.toString());
-                return Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: new Container(
-                          child: new Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    'Updated: ${_lastUpdateFromServer.toString()}',
-                                    textAlign: TextAlign.left),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.refresh),
-                                color: Colors.black,
-                                iconSize: 30.0,
-                                alignment: Alignment.centerRight,
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => SplashPage()));
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.info),
-                                alignment: Alignment.centerRight,
-                                color: Colors.black,
-                                iconSize: 30.0,
-                                onPressed: () {
-                                  _showMyDialog();
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: FlutterMap(
-                          mapController: _mapController,
-                          options: MapOptions(
-                            center: LatLng(currentLatLng.latitude,
-                                currentLatLng.longitude),
-                            zoom: 10.0,
-                            interactiveFlags: InteractiveFlag.all,
-                          ),
-                          layers: [
-                            TileLayerOptions(
-                              urlTemplate:
-                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              subdomains: ['a', 'b', 'c'],
-                              tileProvider: NonCachingNetworkTileProvider(),
-                            ),
-                            MarkerLayerOptions(markers: _markers),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-                // ];
-              } else if (snapshot.hasError) {
-                return Container(
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 60,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: Text('Error: ${snapshot.error}'),
-                      )
-                    ],
-                  ),
-                );
-              } else {
-                return Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height / 1.3,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                      // Padding(
-                      //   //padding: EdgeInsets.only(top: 16),
-                      //   child:
-                      Text('Awaiting result...'),
-                      // )
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
+          body: builder(currentLatLng),
+          floatingActionButton: _isLoading
+              ? null
+              : FloatingActionButton(
+                  child: Icon(Icons.search),
+                  onPressed: () {
+                    //MoveToBackground.moveTaskToBack();
+                  },
+                ),
         ),
       ),
     );

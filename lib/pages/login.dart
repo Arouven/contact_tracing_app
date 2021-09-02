@@ -21,47 +21,85 @@ class LoginPage extends StatefulWidget {
 //enum FormType { login, register }
 
 class _LoginState extends State<LoginPage> {
-  String msgError = "";
+  bool _isLoading = false;
+  //bool _displayError = false;
+  String _msgError = "";
 
   TextEditingController _username = TextEditingController();
   TextEditingController _password = TextEditingController();
 
-  // // our default setting is to login, and we should switch to creating an account when the user chooses to
-  // FormType _form = FormType.login;
-
-  // // Swap in between our two forms, registering and logging in
-  // Future<void> _formChange() async {
-  //   setState(() {
-  //     if (_form == FormType.register) {
-  //       _form = FormType.login;
-  //     } else {
-  //       _form = FormType.register;
-  //     }
-  //   });
-  // }
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Wrong Credentials',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                new Row(
+                  children: [
+                    Icon(
+                      Icons.cancel,
+                      color: Colors.red,
+                    ),
+                    Expanded(
+                      child: Text(_msgError),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _loginPressed() async {
+    setState(() {
+      _isLoading = true;
+    });
     final res = await http.post(Uri.parse(loginUrl),
         body: {"username": _username.text, "password": _password.text});
     final data = jsonDecode(res.body);
-
+    //_displayError = false;
     if (data['msg'] == "data does not exist") {
-      msgError = "Wrong Credentials!";
+      //_displayError = true;
+      _msgError = "Wrong Credentials!";
       _username.clear();
       _password.clear();
-      setState(() {});
+      setState(() {
+        _isLoading = false;
+        _showMyDialog();
+      });
     } else {
-      msgError = ""; //"User logged in";
-      setState(
-        () async {
-          //redirect to home
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('username', _username.text);
-          await prefs.setString('password', _password.text);
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (ctx) => SplashPage()));
-        },
-      );
+      _msgError = ""; //"User logged in";
+      setState(() async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('username', _username.text);
+        await prefs.setString('password', _password.text);
+        _isLoading = false;
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => SplashPage()),
+            (e) => false);
+      });
+      //redirect to home
+
     }
   }
 
@@ -101,7 +139,11 @@ class _LoginState extends State<LoginPage> {
         children: <Widget>[
           new ElevatedButton(
             child: new Text('Login'),
-            onPressed: _loginPressed,
+            onPressed: () {
+              _isLoading = true;
+
+              _loginPressed();
+            },
           ),
           new TextButton(
             child: new Text('Dont have an account? Tap here to register.'),
@@ -111,6 +153,50 @@ class _LoginState extends State<LoginPage> {
             child: new Text('Forgot Password?'),
             onPressed: _passwordReset,
           )
+        ],
+      ),
+    );
+  }
+
+  Widget displayLogin() {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: Center(
+        child: ListView(
+          children: <Widget>[
+            _buildTextFields(),
+            _buildButtons(),
+            Center(
+              child: Text(
+                _msgError,
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget displayCircle() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 1.3,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          // Padding(
+          //   //padding: EdgeInsets.only(top: 16),
+          //   child:
+          Text('Awaiting result...'),
+          // )
         ],
       ),
     );
@@ -130,25 +216,7 @@ class _LoginState extends State<LoginPage> {
             backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, LoginPage.route),
-          body: Container(
-            padding: EdgeInsets.all(10.0),
-            child: Center(
-              child: ListView(
-                children: <Widget>[
-                  _buildTextFields(),
-                  _buildButtons(),
-                  Center(
-                    child: Text(
-                      msgError,
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
+          body: _isLoading ? displayCircle() : displayLogin(),
         ),
       ),
     );
