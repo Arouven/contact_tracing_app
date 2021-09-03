@@ -24,23 +24,6 @@ class MobilePage extends StatefulWidget {
 }
 
 class _MobilePageState extends State<MobilePage> {
-  // final mobiles = ['work', 'home'];
-  // Future<void> addItem() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('mobileId', '8');
-  //   Navigator.of(context)
-  //       .push(MaterialPageRoute(builder: (context) => AddMobilePage()));
-  //   print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-  //   Mobile.getMobiles();
-
-  //   //Navigator.of(context)
-  //   //   .push(MaterialPageRoute(builder: (context) => SplashPage()));
-  //   // setState(
-  //   //   () {
-  //   //     mobiles.add(mobiles[-1]);
-  //   //   }
-  //   // );
-  // }
   bool _isLoading = true;
   int selectedRadioTile;
   int _myMobileId;
@@ -69,7 +52,9 @@ class _MobilePageState extends State<MobilePage> {
     super.initState();
   }
 
-  void setSelectedRadioTile(int val) {
+  Future<void> setSelectedRadioTile(int val) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('mobileId', val.toString());
     setState(() {
       selectedRadioTile = val;
     });
@@ -80,6 +65,56 @@ class _MobilePageState extends State<MobilePage> {
     try {
       _myMobileId = int.parse(prefs.getString("mobileId"));
     } catch (exception) {}
+  }
+
+  Future<void> _showEditDialog(Mobile mobile) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Modify Mobile',
+            style: TextStyle(
+              color: Colors.orange,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                new Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                          'Are you sure you want to make changes to "${mobile.mobileName}" mobile?'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Accept'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        UpdateMobilePage(mobile: mobile),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   List<Widget> buildMobiles(List<Mobile> mobiles) {
@@ -103,15 +138,10 @@ class _MobilePageState extends State<MobilePage> {
             secondary: new IconButton(
               icon: new Icon(Icons.edit),
               onPressed: () {
-                setState(() {
-                  print('mobile press');
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          UpdateMobilePage(mobile: mobile),
-                    ),
-                  );
-                });
+                //setState(() {
+                print('mobile press');
+                _showEditDialog(mobile);
+                // });
               },
             ),
           ),
@@ -136,15 +166,10 @@ class _MobilePageState extends State<MobilePage> {
             secondary: IconButton(
               icon: Icon(Icons.edit),
               onPressed: () {
-                setState(() {
-                  print('mobile press');
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          UpdateMobilePage(mobile: mobile),
-                    ),
-                  );
-                });
+                //setState(() {
+                print('mobile press');
+                _showEditDialog(mobile);
+                // });
               },
             ),
             //selected: selectedUser == mobile,
@@ -172,36 +197,7 @@ class _MobilePageState extends State<MobilePage> {
           drawer: buildDrawer(context, MobilePage.route),
           body: _isLoading
               ? Center(child: CircularProgressIndicator())
-              : Column(children: buildMobiles(_mobiles))
-
-          // FutureBuilder<List<Mobile>>(
-          //   future: ApiMobile.getMobiles(),
-          //   builder: (context, snapshot) {
-          //     final moblies = snapshot.data;
-          //     // _isLoading = true;
-          //     if (snapshot.hasError) {
-          //       return Center(child: Text('Some error occurred!'));
-          //     } else if (snapshot.hasData) {
-          //       // _isLoading = false;
-          //       // toggleLoading();
-          //       return Column(children: buildMobiles(moblies));
-          //     } else {
-          //       return Center(child: CircularProgressIndicator());
-          //     }
-
-          //     // switch (snapshot.connectionState) {
-          //     //   case ConnectionState.waiting:
-          //     //     return Center(child: CircularProgressIndicator());
-          //     //   default:
-          //     //     if (snapshot.hasError) {
-          //     //       return Center(child: Text('Some error occurred!'));
-          //     //     } else {
-          //     //       return Column(children: buildMobiles(moblies));
-          //     //     }
-          //     // }
-          //   },
-          // ),
-          ,
+              : Column(children: buildMobiles(_mobiles)),
           floatingActionButton: _isLoading
               ? null
               : FloatingActionButton(

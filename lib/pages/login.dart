@@ -216,7 +216,7 @@ class _LoginState extends State<LoginPage> {
             backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, LoginPage.route),
-          body: _isLoading ? displayCircle() : Expanded(child: displayLogin()),
+          body: _isLoading ? displayCircle() : displayLogin(),
         ),
       ),
     );

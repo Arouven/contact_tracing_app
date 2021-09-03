@@ -5,9 +5,9 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $mobileId = "";
-    if (isset($_POST['mobileId'])) {
-        $mobileId = mysqli_real_escape_string($conn, $_POST['mobileId']);
+    $username = "";
+    if (isset($_POST['username'])) {
+        $username = mysqli_real_escape_string($conn, $_POST['username']);
     }
     $mobileName = "";
     if (isset($_POST['mobileName'])) {
@@ -22,20 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $mobileNumber = mysqli_real_escape_string($conn, $_POST['mobileNumber']);
     }
 
-    $executequery = "UPDATE Mobile SET Mobile.mobileName = ?, Mobile.mobileDescription = ?, Mobile.mobileNumber = ? WHERE Mobile.mobileId = ?;";
-    $executeparamType = "sssi";
+    $executequery = "CALL InsertMobile(?,?,?,?);";
+    $executeparamType = "ssss";
     $executeparamArray = array(
+        $username,
         $mobileName,
         $mobileDescription,
-        $mobileNumber,
-        $mobileId
+        $mobileNumber
     );
     $db->execute($executequery, $executeparamType, $executeparamArray);
 
 
 
     $outputArray = array();
-    $outputArray['msg'] = "success";
+    $outputArray['msg'] = "added";
 
     print json_encode($outputArray);
 }

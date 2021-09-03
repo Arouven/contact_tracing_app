@@ -55,6 +55,31 @@ CREATE TABLE `TestingCentres` (
   PRIMARY KEY (`testingId`)
 );
 
+-- create stored procedure
+DELIMITER / / CREATE PROCEDURE InsertMobile(
+  IN username VARCHAR(255),
+  IN mobileName VARCHAR(255),
+  IN mobileDescription VARCHAR(255),
+  IN mobileNumber VARCHAR(255)
+) BEGIN DECLARE userId INT DEFAULT 0;
+
+SELECT
+  User.userId INTO userId
+FROM
+  User
+WHERE
+  User.username = username;
+
+INSERT INTO
+  `Mobile`
+SET
+  `userId` = userId,
+  `mobileName` = mobileName,
+  `mobileDescription` = mobileDescription,
+  `mobileNumber` = mobileNumber;
+
+END / / DELIMITER;
+
 -- INSERTING TEST DATA INTO TABLES
 INSERT INTO
   `AdminParamters` (

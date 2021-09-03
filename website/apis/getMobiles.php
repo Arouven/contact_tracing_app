@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['username'])) {
         $username = mysqli_real_escape_string($conn, $_POST['username']);
     }
-    $selectquery = "SELECT Mobile.mobileId, Mobile.mobileName, Mobile.mobileDescription FROM Mobile INNER JOIN User ON Mobile.userId = User.userId WHERE User.username = ?;";
+    $selectquery = "SELECT Mobile.mobileId, Mobile.mobileName, Mobile.mobileDescription, Mobile.mobileNumber FROM Mobile INNER JOIN User ON Mobile.userId = User.userId WHERE User.username = ?;";
     $selectparamType = "s";
     $selectparamArray = array(
         $username

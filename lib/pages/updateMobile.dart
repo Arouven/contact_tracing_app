@@ -1,16 +1,19 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:device_info/device_info.dart';
 import '../classes/globals.dart';
 import 'package:contact_tracing/classes/mobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'mobiles.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
 
 class UpdateMobilePage extends StatefulWidget {
   final Mobile mobile;
   static const String route = '/updateMobile';
-  UpdateMobilePage({
+  const UpdateMobilePage({
     Key key,
     @required this.mobile,
   }) : super(key: key);
@@ -19,9 +22,50 @@ class UpdateMobilePage extends StatefulWidget {
 }
 
 class _UpdateMobilePageState extends State<UpdateMobilePage> {
-  bool _isLoading = true;
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  String _deviceData = "";
+  bool _isLoading = false;
   TextEditingController _mobileName = TextEditingController();
   TextEditingController _mobileDescription = TextEditingController();
+  TextEditingController _mobileNumber = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState().whenComplete(() => setState(() {
+          _mobileName.text = widget.mobile.mobileName;
+          _mobileDescription.text = widget.mobile.mobileDescription;
+          _mobileNumber.text = widget.mobile.mobileNumber;
+          print(_deviceData);
+          _isLoading = false;
+        }));
+  }
+
+  Future<void> initPlatformState() async {
+    String deviceData = "";
+    try {
+      if (Platform.isAndroid) {
+        deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+      } else if (Platform.isIOS) {
+        deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+      }
+    } on PlatformException {
+      deviceData = 'Error:';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _deviceData = deviceData;
+    });
+  }
+
+  String _readAndroidBuildData(AndroidDeviceInfo build) {
+    return build.model.toString();
+  }
+
+  String _readIosDeviceInfo(IosDeviceInfo data) {
+    return data.model.toString();
+  }
 
   Future<void> _showDiscardDialog() async {
     return showDialog<void>(
@@ -51,16 +95,17 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
           ),
           actions: <Widget>[
             TextButton(
-                child: const Text('Yes'),
-                onPressed: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => MobilePage()),
-                      (e) => false);
-                }),
-            TextButton(
-              child: const Text('No'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Accept'),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => MobilePage()),
+                    (e) => false);
               },
             ),
           ],
@@ -95,17 +140,16 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
           ),
           actions: <Widget>[
             TextButton(
-                child: const Text('Yes'),
-                onPressed: () async {
-                  await saveToDb();
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => MobilePage()),
-                      (e) => false);
-                }),
-            TextButton(
-              child: const Text('No'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Accept'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await saveToDb();
               },
             ),
           ],
@@ -115,38 +159,25 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   }
 
   Future<void> saveToDb() async {
+    setState(() {
+      _isLoading = true;
+    });
     var url = await updateMobileUrl;
     final res = await http.post(Uri.parse(url), body: {
-      "mobileId": widget.mobile.mobileId,
-      "mobileName": _mobileName.text,
-      "mobileDescription": _mobileDescription.text
+      "mobileId": widget.mobile.mobileId.toString(),
+      "mobileName": _mobileName.text.toString(),
+      "mobileDescription": _mobileDescription.text.toString(),
+      "mobileNumber": _mobileNumber.text.toString()
     });
     final data = jsonDecode(res.body);
-    //_displayError = false;
     print(data);
-    // if (data['msg'] == "data does not exist") {
-    //   //_displayError = true;
-    //   _msgError = "Wrong Credentials!";
-    //   _username.clear();
-    //   _password.clear();
-    //   setState(() {
-    //     _isLoading = false;
-    //     _showMyDialog();
-    //   });
-    // } else {
-    //   _msgError = ""; //"User logged in";
-    //   setState(() async {
-    //     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //     await prefs.setString('username', _username.text);
-    //     await prefs.setString('password', _password.text);
-    //     _isLoading = false;
-    //     Navigator.of(context).pushAndRemoveUntil(
-    //         MaterialPageRoute(builder: (context) => SplashPage()),
-    //         (e) => false);
-    //   });
-    //redirect to home
-
-    //}
+    if (data['msg'] == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => MobilePage()), (e) => false);
+    }
   }
 
   Widget displayCircle() {
@@ -178,14 +209,14 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
         child: ListView(
           children: <Widget>[
             _buildTextFields(),
-            Center(
-              child: Text(
-                'hello',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            )
+            // Center(
+            //   child: Text(
+            //     'hello',
+            //     style: TextStyle(
+            //       color: Colors.red,
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),
@@ -193,23 +224,48 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   }
 
   Widget _buildTextFields() {
-    setState(() {
-      _mobileName.text = widget.mobile.mobileName;
-      _isLoading = false;
-    });
     return new Container(
       child: new Column(
         children: <Widget>[
           new Container(
-            child: new TextField(
-              controller: _mobileName,
-              decoration: new InputDecoration(labelText: 'Mobile Name'),
+              child: new Row(
+            children: <Widget>[
+              Expanded(
+                child: new TextField(
+                  controller: _mobileName,
+                  decoration: new InputDecoration(labelText: 'Mobile Name'),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                color: Colors.black,
+                iconSize: 30.0,
+                alignment: Alignment.centerRight,
+                onPressed: () {
+                  setState(() {
+                    _mobileName.text = _deviceData;
+                  });
+                },
+              ),
+            ],
+          )),
+          new Container(
+            child: new Row(
+              children: <Widget>[
+                Expanded(
+                  child: new TextField(
+                    controller: _mobileDescription,
+                    decoration:
+                        new InputDecoration(labelText: 'Mobile Description'),
+                  ),
+                ),
+              ],
             ),
           ),
           new Container(
             child: new TextField(
-              controller: _mobileDescription,
-              decoration: new InputDecoration(labelText: 'Mobile Description'),
+              controller: _mobileNumber,
+              decoration: new InputDecoration(labelText: 'Mobile Number'),
             ),
           )
         ],
@@ -219,9 +275,6 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.mobile.mobileId);
-    print(widget.mobile.mobileName);
-    print(widget.mobile.mobileDescription);
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -258,60 +311,8 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
                 },
               ),
             ],
-          ), //AppBar
-          // appBar: AppBar(
-          //   title: Text('Mobiles'),
-          //   actions: [],
-          //   centerTitle: true,
-          //   backgroundColor: Colors.blue,
-          // ),
-          //drawer: buildDrawer(context, AddMobilePage.route),
-          body:
-              Expanded(child: displayMobile()), //_isLoading ? displayCircle() :
-          //Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Column(
-          //     children: [
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //         children: [
-          //           new TextField(
-          //             //initialValue: widget.mobile.mobileName,
-          //             controller: _mobileName,
-          //             decoration: new InputDecoration(labelText: 'Mobile Name'),
-          //           ),
-          //           // TextButton(
-          //           //   //textColor: Colors.white,
-          //           //   onPressed: () {},
-          //           //   child: Text(mobile.mobileName),
-          //           //   //shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-          //           // ),
-          //           TextButton(
-          //             //textColor: Colors.white,
-          //             onPressed: () {},
-          //             child: Text(widget.mobile.mobileDescription),
-          //             //shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-          //           ),
-          //         ],
-          //       ),
-          //       // ListView.separated(
-          //       //   itemCount: mobiles.length,
-          //       //   itemBuilder: (context, index) {
-          //       //     return ListTile(
-          //       //       title: Text(mobiles[index]),
-          //       //     );
-          //       //   },
-          //       //   separatorBuilder: (context, index) {
-          //       //     return Divider();
-          //       //   },
-          //       // ),
-          //     ],
-          //   ),
-          // ),
-          // floatingActionButton: FloatingActionButton(
-          //   child: Icon(Icons.add),
-          //   onPressed: addItem,
-          // ),
+          ),
+          body: _isLoading ? displayCircle() : displayMobile(),
         ),
       ),
     );
