@@ -171,7 +171,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
     });
     final data = jsonDecode(res.body);
     print(data);
-    if (data['msg'] == "success") {
+    if (data['msg'] == "added") {
       setState(() {
         _isLoading = false;
       });

@@ -203,10 +203,9 @@ class _MobilePageState extends State<MobilePage> {
               : FloatingActionButton(
                   child: Icon(Icons.add),
                   onPressed: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (BuildContext context) =>
-                    //       UpdateMobilePage(mobile: moblie),
-                    // ));
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => AddMobilePage(),
+                    ));
                   } //addItem,
                   ),
         ),
