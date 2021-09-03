@@ -105,7 +105,7 @@ class _LoginState extends State<LoginPage> {
 
   void _createAccountPressed() {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => RegisterPage()));
+        .push(MaterialPageRoute(builder: (context) => RegisterPage()));
   }
 
   void _passwordReset() {

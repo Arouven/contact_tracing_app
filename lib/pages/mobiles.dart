@@ -3,6 +3,7 @@ import 'package:contact_tracing/classes/mobile.dart';
 
 import 'package:contact_tracing/pages/addMobile.dart';
 import 'package:contact_tracing/pages/splash.dart';
+import 'package:contact_tracing/pages/updateMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,12 +46,13 @@ class _MobilePageState extends State<MobilePage> {
   int _myMobileId;
   List<Mobile> users;
   bool _findSelected = false;
+  var _mobiles;
 
   @override
   void initState() {
-    super.initState();
     getMyMobileId().whenComplete(() => setState(
           () {
+            //_isLoading = false;
             if (_myMobileId != null) {
               _findSelected = false;
               selectedRadioTile = _myMobileId;
@@ -60,6 +62,11 @@ class _MobilePageState extends State<MobilePage> {
             }
           },
         ));
+    ApiMobile.getMobiles().then((value) => setState(() {
+          _mobiles = value;
+          _isLoading = false;
+        }));
+    super.initState();
   }
 
   void setSelectedRadioTile(int val) {
@@ -77,10 +84,7 @@ class _MobilePageState extends State<MobilePage> {
 
   List<Widget> buildMobiles(List<Mobile> mobiles) {
     List<Widget> widgets = [];
-    //isInList(mobiles);
-    //int i = 0;
     for (Mobile mobile in mobiles) {
-      //selectedId = mobile.mobileId;
       if (_findSelected) {
         widgets.add(
           RadioListTile(
@@ -89,7 +93,6 @@ class _MobilePageState extends State<MobilePage> {
             onChanged: (val) {
               print("val = $val, selected tile = $selectedRadioTile");
               setSelectedRadioTile(val);
-              // setSelectedUser(val);
             },
             title: Text(
               mobile.mobileName,
@@ -97,11 +100,20 @@ class _MobilePageState extends State<MobilePage> {
             subtitle: Text(
               mobile.mobileDescription,
             ),
-            secondary: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {},
+            secondary: new IconButton(
+              icon: new Icon(Icons.edit),
+              onPressed: () {
+                setState(() {
+                  print('mobile press');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          UpdateMobilePage(mobile: mobile),
+                    ),
+                  );
+                });
+              },
             ),
-            //selected: selectedUser == mobile,
           ),
         );
         _findSelected = false;
@@ -123,7 +135,17 @@ class _MobilePageState extends State<MobilePage> {
             ),
             secondary: IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  print('mobile press');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          UpdateMobilePage(mobile: mobile),
+                    ),
+                  );
+                });
+              },
             ),
             //selected: selectedUser == mobile,
           ),
@@ -135,6 +157,7 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   Widget build(BuildContext context) {
+    //var moblies = ApiMobile.getMobiles();
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -147,36 +170,48 @@ class _MobilePageState extends State<MobilePage> {
             backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, MobilePage.route),
-          body: FutureBuilder<List<Mobile>>(
-            future: ApiMobile.getMobiles(),
-            builder: (context, snapshot) {
-              final moblies = snapshot.data;
-              _isLoading = true;
-              if (snapshot.hasError) {
-                return Center(child: Text('Some error occurred!'));
-              } else if (snapshot.hasData) {
-                _isLoading = false;
-                return Column(children: buildMobiles(moblies));
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
+          body: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Column(children: buildMobiles(_mobiles))
 
-              // switch (snapshot.connectionState) {
-              //   case ConnectionState.waiting:
-              //     return Center(child: CircularProgressIndicator());
-              //   default:
-              //     if (snapshot.hasError) {
-              //       return Center(child: Text('Some error occurred!'));
-              //     } else {
-              //       return Column(children: buildMobiles(moblies));
-              //     }
-              // }
-            },
-          ),
+          // FutureBuilder<List<Mobile>>(
+          //   future: ApiMobile.getMobiles(),
+          //   builder: (context, snapshot) {
+          //     final moblies = snapshot.data;
+          //     // _isLoading = true;
+          //     if (snapshot.hasError) {
+          //       return Center(child: Text('Some error occurred!'));
+          //     } else if (snapshot.hasData) {
+          //       // _isLoading = false;
+          //       // toggleLoading();
+          //       return Column(children: buildMobiles(moblies));
+          //     } else {
+          //       return Center(child: CircularProgressIndicator());
+          //     }
+
+          //     // switch (snapshot.connectionState) {
+          //     //   case ConnectionState.waiting:
+          //     //     return Center(child: CircularProgressIndicator());
+          //     //   default:
+          //     //     if (snapshot.hasError) {
+          //     //       return Center(child: Text('Some error occurred!'));
+          //     //     } else {
+          //     //       return Column(children: buildMobiles(moblies));
+          //     //     }
+          //     // }
+          //   },
+          // ),
+          ,
           floatingActionButton: _isLoading
               ? null
               : FloatingActionButton(
-                  child: Icon(Icons.add), onPressed: () {} //addItem,
+                  child: Icon(Icons.add),
+                  onPressed: () {
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (BuildContext context) =>
+                    //       UpdateMobilePage(mobile: moblie),
+                    // ));
+                  } //addItem,
                   ),
         ),
       ),
