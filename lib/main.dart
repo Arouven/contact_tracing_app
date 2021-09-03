@@ -179,7 +179,6 @@ class MyApp extends StatelessWidget {
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         SplashPage.route: (context) => SplashPage(),
         RegisterPage.route: (context) => RegisterPage(),
-        AddMobilePage.route: (context) => AddMobilePage(),
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
       },
