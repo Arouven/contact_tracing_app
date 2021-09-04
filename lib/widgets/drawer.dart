@@ -1,11 +1,10 @@
 import 'package:contact_tracing/pages/login.dart';
 import 'package:contact_tracing/pages/mobiles.dart';
-import 'package:contact_tracing/pages/register.dart';
+import 'package:contact_tracing/pages/notifications.dart';
+import 'package:contact_tracing/pages/profile.dart';
 import 'package:flutter/material.dart';
 import '../pages/live_geolocator.dart';
-import '../pages/register.dart';
 import '../pages/login.dart';
-import '../pages/home.dart';
 
 Widget _buildMenuItem(
     BuildContext context, Widget title, String routeName, String currentRoute) {
@@ -36,12 +35,6 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         _buildMenuItem(
           context,
           const Text('Home'),
-          HomePage.route,
-          currentRoute,
-        ),
-        _buildMenuItem(
-          context,
-          const Text('GPS Live'),
           LiveGeolocatorPage.route,
           currentRoute,
         ),
@@ -55,6 +48,18 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           context,
           const Text('Mobile'),
           MobilePage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Notifications'),
+          NotificationsPage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Profile'),
+          ProfilePage.route,
           currentRoute,
         ),
       ],

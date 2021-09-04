@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/globals.dart';
-import 'package:contact_tracing/classes/mobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -160,9 +159,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
     setState(() {
       _isLoading = true;
     });
-    var url = await addMobileUrl;
+    final url = addMobileUrl;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var username = await prefs.getString('username');
+    var username = prefs.getString('username');
     final res = await http.post(Uri.parse(url), body: {
       "username": username,
       "mobileName": _mobileName.text.toString(),
@@ -237,7 +236,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.refresh),
+                icon: Icon(Icons.info),
                 color: Colors.black,
                 iconSize: 30.0,
                 alignment: Alignment.centerRight,

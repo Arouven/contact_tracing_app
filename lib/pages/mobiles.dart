@@ -2,16 +2,10 @@ import 'package:contact_tracing/classes/apiMobile.dart';
 import 'package:contact_tracing/classes/mobile.dart';
 
 import 'package:contact_tracing/pages/addMobile.dart';
-import 'package:contact_tracing/pages/splash.dart';
 import 'package:contact_tracing/pages/updateMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter/services.dart';
-
-// import 'package:flutter_map/flutter_map.dart';
-// import 'package:latlong/latlong.dart';
-// import 'package:geolocator/geolocator.dart';
 import '../widgets/drawer.dart';
 
 class MobilePage extends StatefulWidget {
@@ -52,11 +46,13 @@ class _MobilePageState extends State<MobilePage> {
     super.initState();
   }
 
-  Future<void> setSelectedRadioTile(int val) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('mobileId', val.toString());
-    setState(() {
+  setSelectedRadioTile(int val) {
+    setState(() async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('mobileId', val.toString());
+
       selectedRadioTile = val;
+      print(val.toString());
     });
   }
 
@@ -119,6 +115,10 @@ class _MobilePageState extends State<MobilePage> {
 
   List<Widget> buildMobiles(List<Mobile> mobiles) {
     List<Widget> widgets = [];
+    if (mobiles == null) {
+      return widgets;
+    }
+
     for (Mobile mobile in mobiles) {
       if (_findSelected) {
         widgets.add(
@@ -133,7 +133,7 @@ class _MobilePageState extends State<MobilePage> {
               mobile.mobileName,
             ),
             subtitle: Text(
-              mobile.mobileDescription,
+              mobile.mobileNumber,
             ),
             secondary: new IconButton(
               icon: new Icon(Icons.edit),

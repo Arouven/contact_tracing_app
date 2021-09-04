@@ -36,7 +36,9 @@ const String ftpPassword = 'dCSxRI3N1p';
 // prefs.setString('username', username);
 // prefs.setString('password', password);
 // prefs.setString("userId", data['userId']);
+ // prefs.setString('latestUpdate', time);
 
+ 
 // class Globals {
 //   main() async {
 //     final SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -162,7 +162,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     setState(() {
       _isLoading = true;
     });
-    var url = await updateMobileUrl;
+    final url = updateMobileUrl;
     final res = await http.post(Uri.parse(url), body: {
       "mobileId": widget.mobile.mobileId.toString(),
       "mobileName": _mobileName.text.toString(),

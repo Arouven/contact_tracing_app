@@ -36,6 +36,7 @@ class Writefile {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String time = (new DateTime.now().millisecondsSinceEpoch).toString();
     time = time.substring(0, time.length - 3);
+    await prefs.setString('latestUpdate', time);
     String text =
         '${prefs.getString("mobileId")},$time,$latitude,$longitude,$accuracy\n';
 

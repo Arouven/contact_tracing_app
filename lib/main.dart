@@ -1,17 +1,8 @@
-// import 'dart:convert';
-// import 'dart:io';
 import 'dart:async';
-// import 'dart:js';
-
-import 'package:contact_tracing/pages/home.dart';
-import 'package:contact_tracing/pages/mobiles.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:splashscreen/splashscreen.dart';
-// import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 import './pages/live_geolocator.dart';
 import './pages/addMobile.dart';
@@ -21,10 +12,9 @@ import './classes/write.dart';
 import './pages/register.dart';
 import './pages/login.dart';
 import './pages/splash.dart';
-
-import 'package:contact_tracing/classes/globals.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
+import './pages/mobiles.dart';
+import 'pages/notifications.dart';
+import './pages/profile.dart';
 
 Writefile _wf = new Writefile();
 
@@ -75,45 +65,8 @@ void onStart() {
 }
 
 void main() async {
-  // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //await prefs.setString('firstName', 'John');
-  // await prefs.setString('lastName', 'Smith');
-  // await prefs.setString('country', 'Mauritius');
-  // await prefs.setString('address', 'Bambous');
-  // await prefs.setString('telephone', '654654652');
-  // await prefs.setString('email', 'JohnSmith@gmail.com');
-  // await prefs.setString('dateOfBirth', '2000-01-13');
-  // await prefs.setString('nationalIdNumber', 'J6465516549846513');
-  // await prefs.setString('username', 'Johny');
-  // await prefs.setString('password', '1234');
-  // await prefs.setString('userId', '1');
-
-  //if (await checkValues()) {
-  //redirect to home (no need to register or login)
-  // Navigator.push(
-  //     context, MaterialPageRoute(builder: (context) => LiveGeolocatorPage()));
-  //}
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
-  // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setString('firstName', 'John');
-  // await prefs.setString('lastName', 'Smith');
-  // await prefs.setString('country', 'Mauritius');
-  // await prefs.setString('address', 'Bambous');
-  // await prefs.setString('telephone', '654654652');
-  // await prefs.setString('email', 'JohnSmith@gmail.com');
-  // await prefs.setString('dateOfBirth', '2000-01-13');
-  // await prefs.setString('nationalIdNumber', 'J6465516549846513');
-  // await prefs.setString('username', 'Johny');
-  // await prefs.setString('password', '1234');
-  // await prefs.setString('userId', '1');
-  //await prefs.setString("mobileId", "8");
-
-  // var fn =
-  //     '${prefs.getString("mobileId")}_${prefs.getString("username")}_geolocatorbest.csv';
-  // await prefs.setString("fileName", fn);
-
-///////
 
   FlutterBackgroundService.initialize(onStart);
 
@@ -121,48 +74,6 @@ void main() async {
     MyApp(),
   );
 }
-
-// class _MyAppState extends State<MyApp> {
-//   Future<Widget> loadFromFuture() async {
-//     // <fetch data from server. ex. login>
-
-//     LoginPage()
-//     return Future.value(new AfterSplash());
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return new SplashScreen(
-//         navigateAfterFuture: loadFromFuture(),
-//         title: new Text(
-//           'Welcome To Contact Tracing App',
-//           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-//         ),
-//         image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
-//         backgroundColor: Colors.white,
-//         styleTextUnderTheLoader: new TextStyle(),
-//         photoSize: 100.0,
-//         onClick: () => print("Flutter Egypt"),
-//         loaderColor: Colors.red);
-//   }
-// }
-
-// class AfterSplash extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return new Scaffold(
-//       appBar: new AppBar(
-//           title: new Text("Welcome In SplashScreen Package"),
-//           automaticallyImplyLeading: false),
-//       body: new Center(
-//         child: new Text(
-//           "Done!",
-//           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 30.0),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -175,12 +86,16 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashPage(),
       routes: <String, WidgetBuilder>{
-        HomePage.route: (context) => HomePage(),
+        //HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         SplashPage.route: (context) => SplashPage(),
         RegisterPage.route: (context) => RegisterPage(),
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
+        AddMobilePage.route: (context) => AddMobilePage(),
+        //UpdateMobilePage.route: (context) => UpdateMobilePage(),
+        NotificationsPage.route: (context) => NotificationsPage(),
+        ProfilePage.route: (context) => ProfilePage(),
       },
     );
   }

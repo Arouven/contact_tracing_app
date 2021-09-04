@@ -18,4 +18,9 @@ class Mobile {
       mobileName: json['mobileName'],
       mobileDescription: json['mobileDescription'],
       mobileNumber: json['mobileNumber']);
+  // static Mobile newmobile() => Mobile(
+  //     mobileId: 0,
+  //     mobileName: 'new mobile name',
+  //     mobileDescription: 'mobile description',
+  //     mobileNumber: '+230');
 }
