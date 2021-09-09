@@ -13,7 +13,7 @@ import './pages/register.dart';
 import './pages/login.dart';
 import './pages/splash.dart';
 import './pages/mobiles.dart';
-import 'pages/notifications.dart';
+import './pages/notifications.dart';
 import './pages/profile.dart';
 
 Writefile _wf = new Writefile();
