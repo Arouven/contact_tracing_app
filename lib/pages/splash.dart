@@ -60,7 +60,7 @@ class _SplashPageState extends State<SplashPage> {
   Future<Widget> loadFromFuture() async {
     await Future.delayed(const Duration(seconds: 2), () {});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', 'Johny');
+    await prefs.setString('username', 'JamesSmith');
     await prefs.setString('password', '1234');
     //await prefs.setString("mobileId", '1');
     if (prefs.getString('latestUpdate') != null) {

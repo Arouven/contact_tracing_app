@@ -161,7 +161,7 @@ class _MobilePageState extends State<MobilePage> {
               mobile.mobileName,
             ),
             subtitle: Text(
-              mobile.mobileDescription,
+              mobile.mobileNumber,
             ),
             secondary: IconButton(
               icon: Icon(Icons.edit),

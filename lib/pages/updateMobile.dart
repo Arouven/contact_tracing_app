@@ -237,7 +237,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.refresh),
+                icon: Icon(Icons.info),
                 color: Colors.black,
                 iconSize: 30.0,
                 alignment: Alignment.centerRight,

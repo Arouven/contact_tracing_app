@@ -1,17 +1,15 @@
 import 'dart:convert';
-//import 'dart:html';
 import 'dart:ui';
 
 import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/pages/splash.dart';
+import 'package:contact_tracing/pages/filter.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:speech_bubble/speech_bubble.dart';
 
 import 'package:flutter_map/flutter_map.dart';
-//import 'package:map_markers/map_markers.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -21,9 +19,6 @@ import 'package:http/http.dart' as http;
 
 //import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:animated_dialog_box/animated_dialog_box.dart';
 
 //
 class LiveGeolocatorPage extends StatefulWidget {
@@ -39,6 +34,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position _currentLocation;
   MapController _mapController;
   bool _isLoading = true;
+  bool _hasError = true;
   String _serviceError = '';
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
@@ -52,9 +48,12 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     initLocationService().whenComplete(() {
       setState(() {});
     });
+    generateMarkers().whenComplete(() {
+      setState(() {});
+    });
   }
 
-  Future<String> generateMarkers() async {
+  Future<void> generateMarkers() async {
     final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
     // print(latestUpdateLocationsUrl);
     final data = jsonDecode(res.body);
@@ -62,6 +61,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     String myMobileId = prefs.getString("mobileId");
 
     if (data['status'] == "200") {
+      _hasError = false;
       print(data);
       await populateMarkers(data["confirmInfected"], myMobileId,
           Colors.red[400], Colors.red.shade900);
@@ -81,14 +81,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             0, _lastUpdateFromServer.length - 4);
       } catch (exception) {
         print('problem');
+        _hasError = true;
       }
       print("markers populated");
     } else {
       print('status not 200');
       print(data);
+      _hasError = true;
     }
-
-    return 'finish initialising';
+    setState(() {});
   }
 
   Future<void> populateCentresMarkers(places, colour) async {
@@ -299,111 +300,112 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   builder(currentLatLng) {
-    return FutureBuilder<String>(
-      future: generateMarkers(),
-      builder: (context, snapshot) {
-        _isLoading = true;
-        if (snapshot.hasData) {
-          print(_markers.toString());
-          _isLoading = false;
-          return Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: new Container(
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                              'Updated: ${_lastUpdateFromServer.toString()}',
-                              textAlign: TextAlign.left),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.refresh),
-                          color: Colors.black,
-                          iconSize: 30.0,
-                          alignment: Alignment.centerRight,
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SplashPage()));
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.info),
-                          alignment: Alignment.centerRight,
-                          color: Colors.black,
-                          iconSize: 30.0,
-                          onPressed: () {
-                            _showMyDialog();
-                          },
-                        ),
-                      ],
+    _isLoading = false;
+    print(_hasError);
+    if (_hasError = false) {
+      print(_markers.toString());
+
+      return Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: new Container(
+                child: new Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                          'Updated: ${_lastUpdateFromServer.toString()}',
+                          textAlign: TextAlign.left),
                     ),
-                  ),
-                ),
-                Flexible(
-                  child: FlutterMap(
-                    mapController: _mapController,
-                    options: MapOptions(
-                      center: LatLng(
-                          currentLatLng.latitude, currentLatLng.longitude),
-                      zoom: 10.0,
-                      interactiveFlags: InteractiveFlag.all,
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      color: Colors.black,
+                      iconSize: 30.0,
+                      alignment: Alignment.centerRight,
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SplashPage()));
+                      },
                     ),
-                    layers: [
-                      TileLayerOptions(
-                        urlTemplate:
-                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        subdomains: ['a', 'b', 'c'],
-                        tileProvider: NonCachingNetworkTileProvider(),
-                      ),
-                      MarkerLayerOptions(markers: _markers),
-                    ],
+                    IconButton(
+                      icon: Icon(Icons.info),
+                      alignment: Alignment.centerRight,
+                      color: Colors.black,
+                      iconSize: 30.0,
+                      onPressed: () {
+                        _showMyDialog();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Flexible(
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  center:
+                      LatLng(currentLatLng.latitude, currentLatLng.longitude),
+                  zoom: 10.0,
+                  interactiveFlags: InteractiveFlag.all,
+                ),
+                layers: [
+                  TileLayerOptions(
+                    urlTemplate:
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: ['a', 'b', 'c'],
+                    tileProvider: NonCachingNetworkTileProvider(),
                   ),
-                ),
-              ],
+                  MarkerLayerOptions(markers: _markers),
+                ],
+              ),
             ),
-          );
-        } else if (snapshot.hasError) {
-          return Container(
-            child: Column(
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 60,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text('Error: ${snapshot.error}'),
-                )
-              ],
+          ],
+        ),
+      );
+    } else if (_hasError = true) {
+      return Container(
+        child: Column(
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 60,
             ),
-          );
-        } else {
-          return Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.3,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                // Padding(
-                //   //padding: EdgeInsets.only(top: 16),
-                //   child:
-                Text('Awaiting result...'),
-                // )
-              ],
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Text('Error: error happened please reload'),
+            )
+          ],
+        ),
+      );
+    } else {
+      //loading
+      return circleLoader();
+    }
+  }
+
+  circleLoader() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 1.3,
+            child: Center(
+              child: CircularProgressIndicator(),
             ),
-          );
-        }
-      },
+          ),
+          // Padding(
+          //   //padding: EdgeInsets.only(top: 16),
+          //   child:
+          Text('Awaiting result...'),
+          // )
+        ],
+      ),
     );
   }
 
@@ -459,7 +461,8 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
               : FloatingActionButton(
                   child: Icon(Icons.search),
                   onPressed: () {
-                    //MoveToBackground.moveTaskToBack();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => FilterPage()));
                   },
                 ),
         ),
