@@ -34,34 +34,37 @@ void onStart() {
 
   // bring to foreground
   service.setForegroundMode(true);
-  Timer.periodic(Duration(minutes: 1), (timer) async {
-    if (!(await service.isServiceRunning())) timer.cancel();
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: geolocatorAccuracy,
-    );
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString("fileName") != null) {
-      _wf.writeToFile(
-          '${position.latitude.toString()}',
-          '${position.longitude.toString()}',
-          '${position.accuracy.toString()}');
-      if (counter > timeToUploadPerMinute) {
-        UploadFile uploadFile = new UploadFile();
-        uploadFile.uploadToServer();
-        counter = 0;
+  Timer.periodic(
+    Duration(minutes: timeToGetLocationPerMinute),
+    (timer) async {
+      if (!(await service.isServiceRunning())) timer.cancel();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: geolocatorAccuracy,
+      );
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (prefs.getString("username") != null) {
+        _wf.writeToFile(
+            '${position.latitude.toString()}',
+            '${position.longitude.toString()}',
+            '${position.accuracy.toString()}');
+        if (counter > timeToUploadPerMinute) {
+          UploadFile uploadFile = new UploadFile();
+          uploadFile.uploadToServer();
+          counter = 0;
+        }
       }
-    }
-    service.setNotificationInfo(
-      title: "Contact tracing",
-      content:
-          "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-    );
+      service.setNotificationInfo(
+        title: "Contact tracing",
+        content:
+            "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+      );
 
-    service.sendData(
-      {"current_date": DateTime.now().toIso8601String()},
-    );
-    counter = counter + 1;
-  });
+      service.sendData(
+        {"current_date": DateTime.now().toIso8601String()},
+      );
+      counter = counter + 1;
+    },
+  );
 }
 
 void main() async {

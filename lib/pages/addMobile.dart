@@ -162,6 +162,10 @@ class _AddMobilePageState extends State<AddMobilePage> {
     final url = addMobileUrl;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var username = prefs.getString('username');
+
+    // var fn = '${username}_geolocatorbest.csv';
+    // await prefs.setString("fileName", fn);
+
     final res = await http.post(Uri.parse(url), body: {
       "username": username,
       "mobileName": _mobileName.text.toString(),
