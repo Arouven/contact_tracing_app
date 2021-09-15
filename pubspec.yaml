@@ -64,6 +64,7 @@ dependencies:
   #get: ^4.3.8
   animated_dialog_box: ^0.0.2
   cool_alert: ^1.1.0
+  flutter_holo_date_picker: ^0.3.4+1
   #google_fonts:
 
 dev_dependencies:

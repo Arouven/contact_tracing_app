@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	if (isset($_POST['address'])) {
 		$address = mysqli_real_escape_string($conn, $_POST['address']);
 	}
-	$telephone = "";
-	if (isset($_POST['telephone'])) {
-		$telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
-	}
+	// $telephone = "";
+	// if (isset($_POST['telephone'])) {
+	// 	$telephone = mysqli_real_escape_string($conn, $_POST['telephone']);
+	// }
 	$email = "";
 	if (isset($_POST['email'])) {
 		$email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -61,14 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		$data['msg'] = 'username already existed';
 		print json_encode($data);
 	} else { //insert it
-		$insertquery = "INSERT INTO User (firstName, lastName, country, address, telephone, email, dateOfBirth, nationalIdNumber, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-		$insertparamType = "ssssssssss";
+		$insertquery = "INSERT INTO User (firstName, lastName, country, address, email, dateOfBirth, nationalIdNumber, username, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		$insertparamType = "sssssssss";
 		$insertparamArray = array(
 			$firstName,
 			$lastName,
 			$country,
 			$address,
-			$telephone,
 			$email,
 			$dateOfBirth,
 			$nationalIdNumber,
