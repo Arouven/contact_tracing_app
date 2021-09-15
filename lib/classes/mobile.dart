@@ -18,6 +18,11 @@ class Mobile {
       mobileName: json['mobileName'],
       mobileDescription: json['mobileDescription'],
       mobileNumber: json['mobileNumber']);
+  static Mobile problem(non) => Mobile(
+      mobileId: 0,
+      mobileName: 'mobileName',
+      mobileDescription: 'mobileDescription',
+      mobileNumber: 'mobileNumber');
   // static Mobile newmobile() => Mobile(
   //     mobileId: 0,
   //     mobileName: 'new mobile name',

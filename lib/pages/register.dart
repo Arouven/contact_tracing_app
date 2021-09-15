@@ -135,35 +135,38 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           new Container(
-            child: new Column(
-              children: [
-                new Row(
-                  children: [
-                    new Text('Date of birth'),
-                  ],
-                ),
-                new Row(
-                  children: [
-                    new DatePickerWidget(
-                      looping: false, // default is not looping
-                      //firstDate: DateTime(_dateParse.year-18, 01, 01),
-                      lastDate: DateTime(
-                          _dateParse.year, _dateParse.month, _dateParse.day),
+            child:
+                // new Column(
+                //   children: [
+                //     // new Row(
+                //     //   children: [
+                //     //     new Text('Date of birth'),
+                //     //   ],
+                //     // ),
+                //     new Row(
+                //       children: [
+                new DatePickerWidget(
+              looping: true, // default is not looping
+              //firstDate: DateTime(_dateParse.year-18, 01, 01),
+              lastDate:
+                  DateTime(_dateParse.year, _dateParse.month, _dateParse.day),
 
-                      initialDate: DateTime(_dateParse.year - 18, 01, 01),
-                      dateFormat: "dd-MMM-yyyy",
-                      locale: DatePicker.localeFromString('en'),
-                      onChange: (DateTime newDate, _) => _dateOfBirth = newDate,
-                      pickerTheme: DateTimePickerTheme(
-                        itemTextStyle:
-                            TextStyle(color: Colors.black, fontSize: 19),
-                        dividerColor: Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              initialDate: DateTime(_dateParse.year - 18, 01, 01),
+              dateFormat: "dd-MMM-yyyy",
+              locale: DatePicker.localeFromString('en'),
+              onChange: (DateTime newDate, _) {
+                _dateOfBirth = newDate;
+                print(_dateOfBirth);
+              },
+              pickerTheme: DateTimePickerTheme(
+                itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                dividerColor: Colors.blue,
+              ),
             ),
+            //     ],
+            //   ),
+            // ],
+            //   ),
             // child: TextField(
             //   controller: _dateOfBirth,
             //   decoration: new InputDecoration(labelText: 'Date of Birth'),

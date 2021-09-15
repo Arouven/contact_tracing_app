@@ -19,29 +19,37 @@ class MobilePage extends StatefulWidget {
 
 class _MobilePageState extends State<MobilePage> {
   bool _isLoading = true;
+  bool _showReload = false;
+
   int selectedRadioTile;
   int _myMobileId;
-  List<Mobile> users;
+  //List<Mobile> users;
   bool _findSelected = false;
   var _mobiles;
 
   @override
   void initState() {
-    getMyMobileId().whenComplete(() => setState(
-          () {
-            //_isLoading = false;
-            if (_myMobileId != null) {
-              _findSelected = false;
-              selectedRadioTile = _myMobileId;
-            } else {
-              _findSelected = true;
-              selectedRadioTile = 0;
-            }
-          },
-        ));
-    ApiMobile.getMobiles().then((value) => setState(() {
-          _mobiles = value;
+    getMyMobileId().whenComplete(() => setState(() {
+          //_isLoading = false;
+          if (_myMobileId != null) {
+            _findSelected = false;
+            selectedRadioTile = _myMobileId;
+          } else {
+            _findSelected = true;
+            selectedRadioTile = 0;
+          }
+        }));
+    ApiMobile.getMobiles().then((mobileList) => setState(() {
+          _mobiles = mobileList;
           _isLoading = false;
+          print('is loading false');
+
+          final mobileMap = mobileList.asMap();
+          Mobile instance = mobileMap[0];
+          if (instance.mobileId == 0) {
+            _showReload = true;
+            print('show reload is true');
+          }
         }));
     //        var fn = '${username}_geolocatorbest.csv';
     // await prefs.setString("fileName", fn);
@@ -182,6 +190,40 @@ class _MobilePageState extends State<MobilePage> {
     return widgets;
   }
 
+  _body() {
+    if (_isLoading == true) {
+      return Center(child: CircularProgressIndicator());
+    } else if (_showReload == true) {
+      return Center(
+        child: FloatingActionButton(
+            child: Icon(Icons.replay),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (BuildContext context) => MobilePage(),
+              ));
+            }),
+      );
+    } else {
+      return Column(children: buildMobiles(_mobiles));
+    }
+  }
+
+  _floatingActionButton() {
+    if (_isLoading) {
+      return null;
+    } else if (_showReload) {
+      return null;
+    } else {
+      return FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => AddMobilePage(),
+            ));
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //var moblies = ApiMobile.getMobiles();
@@ -197,19 +239,8 @@ class _MobilePageState extends State<MobilePage> {
             backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, MobilePage.route),
-          body: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Column(children: buildMobiles(_mobiles)),
-          floatingActionButton: _isLoading
-              ? null
-              : FloatingActionButton(
-                  child: Icon(Icons.add),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => AddMobilePage(),
-                    ));
-                  } //addItem,
-                  ),
+          body: _body(),
+          floatingActionButton: _floatingActionButton(),
         ),
       ),
     );

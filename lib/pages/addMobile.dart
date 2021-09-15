@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
+import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/globals.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +29,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
   TextEditingController _mobileName = TextEditingController();
   TextEditingController _mobileDescription = TextEditingController();
   TextEditingController _mobileNumber = TextEditingController();
+  Country _selected;
   @override
   void initState() {
     super.initState();
@@ -212,14 +214,6 @@ class _AddMobilePageState extends State<AddMobilePage> {
         child: ListView(
           children: <Widget>[
             _buildTextFields(),
-            // Center(
-            //   child: Text(
-            //     'hello',
-            //     style: TextStyle(
-            //       color: Colors.red,
-            //     ),
-            //   ),
-            // )
           ],
         ),
       ),
@@ -266,10 +260,54 @@ class _AddMobilePageState extends State<AddMobilePage> {
             ),
           ),
           new Container(
-            child: new TextField(
-              controller: _mobileNumber,
-              decoration: new InputDecoration(labelText: 'Mobile Number'),
+            child: new Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  //SizedBox(height: 20.0),
+                  child: CountryPicker(
+                    dense: true,
+                    //displays flag, true by default
+                    showFlag: false,
+                    //displays dialing code, false by default
+                    showDialingCode: true,
+                    //displays country name, true by default
+                    showName: true,
+                    showCurrency: false, //eg. 'British pound'
+                    showCurrencyISO: false,
+                    onChanged: (Country country) {
+                      setState(() {
+                        _selected = country;
+                        print(country.dialingCode);
+                      });
+                      //countryCode = country.dialingCode;
+                    },
+                    selectedCountry: _selected,
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  //SizedBox(height: 20.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Mobile no.',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (val) => val.length != 10
+                        ? 'Enter a mobile number of 10 digits'
+                        : null,
+                    onChanged: (val) {
+                      //setState(() => phone = val);
+                      //phoneno = phone;
+                    },
+                  ),
+                ),
+              ],
             ),
+            // TextField(
+            //   controller: _mobileNumber,
+            //   decoration: new InputDecoration(labelText: 'Mobile Number'),
+            // ),
           )
         ],
       ),
