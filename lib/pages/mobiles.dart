@@ -6,6 +6,7 @@ import 'package:contact_tracing/pages/updateMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:vector_math/vector_math.dart';
 import '../widgets/drawer.dart';
 
 class MobilePage extends StatefulWidget {
@@ -196,6 +197,8 @@ class _MobilePageState extends State<MobilePage> {
     } else if (_showReload == true) {
       return Center(
         child: FloatingActionButton(
+            foregroundColor: Colors.red,
+            backgroundColor: Colors.white,
             child: Icon(Icons.replay),
             onPressed: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -215,7 +218,11 @@ class _MobilePageState extends State<MobilePage> {
       return null;
     } else {
       return FloatingActionButton(
-          child: Icon(Icons.add),
+          //foregroundColor: Colors.red,
+          child: Icon(
+            Icons.add,
+            // color: Colors.red,
+          ),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => AddMobilePage(),
