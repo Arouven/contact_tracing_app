@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
-import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../classes/globals.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class AddMobilePage extends StatefulWidget {
   //final Mobile mobile;
@@ -28,8 +28,13 @@ class _AddMobilePageState extends State<AddMobilePage> {
   bool _isLoading = false;
   TextEditingController _mobileName = TextEditingController();
   TextEditingController _mobileDescription = TextEditingController();
-  TextEditingController _mobileNumber = TextEditingController();
-  Country _selected;
+  String _mobileNumber;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final TextEditingController mobileController = TextEditingController();
+  String initialCountry = 'MU';
+  PhoneNumber number = PhoneNumber(isoCode: 'MU');
+
   @override
   void initState() {
     super.initState();
@@ -100,7 +105,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
               },
             ),
             TextButton(
-              child: const Text('Accept'),
+              child: const Text('Discard'),
               onPressed: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => MobilePage()),
@@ -172,7 +177,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
       "username": username,
       "mobileName": _mobileName.text.toString(),
       "mobileDescription": _mobileDescription.text.toString(),
-      "mobileNumber": _mobileNumber.text.toString()
+      "mobileNumber": _mobileNumber.toString()
     });
     final data = jsonDecode(res.body);
     print(data);
@@ -252,62 +257,42 @@ class _AddMobilePageState extends State<AddMobilePage> {
                 Expanded(
                   child: new TextField(
                     controller: _mobileDescription,
-                    decoration:
-                        new InputDecoration(labelText: 'Mobile Description'),
+                    decoration: new InputDecoration(
+                      //border: OutlineInputBorder(),
+                      labelText: 'Mobile Description',
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           new Container(
-            child: new Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 3,
-                  //SizedBox(height: 20.0),
-                  child: CountryPicker(
-                    dense: true,
-                    //displays flag, true by default
-                    showFlag: false,
-                    //displays dialing code, false by default
-                    showDialingCode: true,
-                    //displays country name, true by default
-                    showName: true,
-                    showCurrency: false, //eg. 'British pound'
-                    showCurrencyISO: false,
-                    onChanged: (Country country) {
-                      setState(() {
-                        _selected = country;
-                        print(country.dialingCode);
-                      });
-                      //countryCode = country.dialingCode;
-                    },
-                    selectedCountry: _selected,
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  //SizedBox(height: 20.0),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Mobile no.',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (val) => val.length != 10
-                        ? 'Enter a mobile number of 10 digits'
-                        : null,
-                    onChanged: (val) {
-                      //setState(() => phone = val);
-                      //phoneno = phone;
-                    },
-                  ),
-                ),
-              ],
+            child: InternationalPhoneNumberInput(
+              onInputChanged: (PhoneNumber number) {
+                print(number.phoneNumber);
+                setState(() {
+                  _mobileNumber = number.phoneNumber;
+                });
+              },
+              onInputValidated: (bool value) {
+                print(value);
+              },
+              selectorConfig: SelectorConfig(
+                selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+              ),
+              ignoreBlank: false,
+              autoValidateMode: AutovalidateMode.disabled,
+              selectorTextStyle: TextStyle(color: Colors.black),
+              initialValue: number,
+              textFieldController: mobileController,
+              formatInput: false,
+              keyboardType:
+                  TextInputType.numberWithOptions(signed: true, decimal: true),
+              // inputBorder: OutlineInputBorder(),
+              // onSaved: (PhoneNumber number) {
+              //   print('On Saved: $number');
+              // },
             ),
-            // TextField(
-            //   controller: _mobileNumber,
-            //   decoration: new InputDecoration(labelText: 'Mobile Number'),
-            // ),
           )
         ],
       ),
@@ -357,5 +342,11 @@ class _AddMobilePageState extends State<AddMobilePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    mobileController?.dispose();
+    super.dispose();
   }
 }

@@ -66,6 +66,7 @@ dependencies:
   cool_alert: ^1.1.0
   flutter_holo_date_picker: ^0.3.4+1
   flutter_country_picker: ^0.1.6
+  intl_phone_number_input: ^0.7.0+2
   #google_fonts:
 
 dev_dependencies:
