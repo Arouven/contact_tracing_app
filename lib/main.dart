@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contact_tracing/pages/Location/filter.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,12 +68,30 @@ void onStart() {
   );
 }
 
+Future<void> _setFilters() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool('showTestingCenters') == null) {
+    await prefs.setBool('showTestingCenters', true);
+  }
+  if (prefs.getBool('showConfirmInfected') == null) {
+    await prefs.setBool('showConfirmInfected', true);
+  }
+  if (prefs.getBool('showCleanUsers') == null) {
+    await prefs.setBool('showCleanUsers', true);
+  }
+  if (prefs.getBool('showContactWithInfected') == null) {
+    await prefs.setBool('showContactWithInfected', true);
+  }
+  if (prefs.getBool('showMyLocation') == null) {
+    await prefs.setBool('showMyLocation', true);
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
-
+  await _setFilters();
   FlutterBackgroundService.initialize(onStart);
-
   runApp(
     MyApp(),
   );
@@ -96,7 +115,7 @@ class MyApp extends StatelessWidget {
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
         AddMobilePage.route: (context) => AddMobilePage(),
-        //UpdateMobilePage.route: (context) => UpdateMobilePage(),
+        FilterPage.route: (context) => FilterPage(),
         NotificationsPage.route: (context) => NotificationsPage(),
         ProfilePage.route: (context) => ProfilePage(),
       },

@@ -17,12 +17,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:grouped_buttons/grouped_buttons.dart';
 
 //import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
+  // final bool downloadUpdatedLocations;
+  // const LiveGeolocatorPage({
+  //   this.downloadUpdatedLocations = true,
+  // }); // : super(key: key);
 
   @override
   _LiveGeolocatorPageState createState() {
@@ -32,57 +37,21 @@ class LiveGeolocatorPage extends StatefulWidget {
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position _currentLocation;
-  //final MapController _mapController = MapController();
   MapController _mapController;
   bool _isLoading = true;
   bool _showReload = false;
-  //String _serviceError = '';
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
   String _lastUpdateFromServer = '0';
 
-  Future<void> _generateMarkers() async {
+  Future<void> _downloadData() async {
     try {
       final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
       // print(latestUpdateLocationsUrl);
-      final data = jsonDecode(res.body);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String myMobileId = prefs.getString("mobileId");
-
-      if (data['status'] == "200") {
-        print(data);
-        await _populateMarkers(data["confirmInfected"], myMobileId,
-            Colors.red[400], Colors.red.shade900);
-        await _populateMarkers(data["contactWithInfected"], myMobileId,
-            Colors.yellow[400], Colors.yellow.shade900);
-        await _populateMarkers(data["cleanUsers"], myMobileId,
-            Colors.green[400], Colors.green.shade900);
-        await _populateCentresMarkers(data["testingcentres"], Colors.blue);
-        // await _addCurrentLocationToMarkers();
-        try {
-          int serverLastUpdated = int.parse(
-              data['lastUpdateFromServer'][0]["MaxDateTime"].toString());
-          _lastUpdateFromServer =
-              (DateTime.fromMillisecondsSinceEpoch(serverLastUpdated * 1000))
-                  .toLocal()
-                  .toString();
-          _lastUpdateFromServer = _lastUpdateFromServer.substring(
-              0, _lastUpdateFromServer.length - 4);
-        } on FormatException {
-          print('problem with conversion');
-
-          setState(() {
-            _showReload = true;
-          });
-        }
-        print("markers populated");
-      } else {
-        print('status not 200 need to redownload');
-        print(data);
-        setState(() {
-          _showReload = true;
-        });
-      }
+      String jsonBody = res.body;
+      await prefs.setString('Locations', jsonBody);
+      _useExistingData(bodyResponse: jsonBody);
     } catch (e) {
       print('json request problem');
       print(e);
@@ -90,6 +59,69 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         _showReload = true;
       });
     }
+  }
+
+  Future<void> _useExistingData({String bodyResponse = ''}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String myMobileId = prefs.getString("mobileId");
+    if (bodyResponse == '') {
+      bodyResponse = prefs.getString('Locations');
+    }
+    final data = jsonDecode(bodyResponse);
+    if (data['status'] == "200") {
+      print(data);
+      if (prefs.getBool('showConfirmInfected')) {
+        await _populateMarkers(data["confirmInfected"], myMobileId,
+            Colors.red[400], Colors.red.shade900);
+      }
+      if (prefs.getBool('showContactWithInfected')) {
+        await _populateMarkers(data["contactWithInfected"], myMobileId,
+            Colors.yellow[400], Colors.yellow.shade900);
+      }
+      if (prefs.getBool('showCleanUsers')) {
+        await _populateMarkers(data["cleanUsers"], myMobileId,
+            Colors.green[400], Colors.green.shade900);
+      }
+      if (prefs.getBool('showTestingCenters')) {
+        await _populateCentresMarkers(data["testingcentres"], Colors.blue);
+      }
+      if (prefs.getBool('showMyLocation')) {
+        await _addCurrentLocationToMarkers();
+      }
+
+      try {
+        int serverLastUpdated = int.parse(
+            data['lastUpdateFromServer'][0]["MaxDateTime"].toString());
+        _lastUpdateFromServer =
+            (DateTime.fromMillisecondsSinceEpoch(serverLastUpdated * 1000))
+                .toLocal()
+                .toString();
+        _lastUpdateFromServer = _lastUpdateFromServer.substring(
+            0, _lastUpdateFromServer.length - 4);
+      } on FormatException {
+        print('problem with conversion');
+
+        setState(() {
+          _showReload = true;
+        });
+      }
+      print("markers populated");
+    } else {
+      print('status not 200 need to redownload');
+      print(data);
+      setState(() {
+        _showReload = true;
+      });
+    }
+  }
+
+  Future<void> _generateMarkers() async {
+    // if (widget.downloadUpdatedLocations) {
+    await _downloadData();
+    // } else {
+    //   await _useExistingData();
+    // }
+
     setState(() {
       _isLoading = false;
     });
@@ -188,8 +220,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         // if (mounted) {
         setState(() {
           _currentLocation = cp;
-          print('this is cp');
-          print(cp);
         });
         _mapController.move(
             LatLng(_currentLocation.latitude, _currentLocation.longitude),
@@ -402,9 +432,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _addCurrentLocationToMarkers() async {
-    print('why it is not working');
     print(_currentLocation);
-
     if (_currentLocation != null) {
       LatLng currentLatLng =
           LatLng(_currentLocation.latitude, _currentLocation.longitude);
@@ -429,7 +457,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       //   setState(() {});
       // }
       // });
-      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddmylocationfunction');
+      print('addmylocationfunction');
     }
   }
 
@@ -442,9 +470,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       setState(() {});
     });
     _generateMarkers().whenComplete(() {
-      _addCurrentLocationToMarkers().whenComplete(() {
-        setState(() {});
-      });
+      setState(() {});
     });
   }
 

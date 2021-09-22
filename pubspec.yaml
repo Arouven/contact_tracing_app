@@ -67,6 +67,7 @@ dependencies:
   flutter_holo_date_picker: ^0.3.4+1
   flutter_country_picker: ^0.1.6
   intl_phone_number_input: ^0.7.0+2
+  grouped_buttons: ^1.0.4
   #google_fonts:
 
 dev_dependencies:

@@ -38,6 +38,20 @@ const String ftpPassword = 'dCSxRI3N1p';
 // prefs.setString("userId", data['userId']);
  // prefs.setString('latestUpdate', time);
 
+//main
+//  prefs.setBool('showTestingCenters', true);
+//  prefs.setBool('showConfirmInfected', true);
+//    prefs.setBool('showCleanUsers', true);
+//   prefs.setBool('showContactWithInfected', true);
+// prefs.setBool('showMyLocation', true);
+  
+//live locator
+//  prefs.setBool('showTestingCenters', true);
+//  prefs.setBool('showConfirmInfected', true);
+//    prefs.setBool('showCleanUsers', true);
+//   prefs.setBool('showContactWithInfected', true);
+// prefs.setBool('showMyLocation', true);
+//  prefs.setString('Locations', jsonResponse);
  
 // class Globals {
 //   main() async {
