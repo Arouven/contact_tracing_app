@@ -1,13 +1,13 @@
 import 'package:contact_tracing/classes/apiMobile.dart';
 import 'package:contact_tracing/classes/mobile.dart';
 
-import 'package:contact_tracing/pages/addMobile.dart';
-import 'package:contact_tracing/pages/updateMobile.dart';
+import 'package:contact_tracing/pages/Mobile/addMobile.dart';
+import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:vector_math/vector_math.dart';
-import '../widgets/drawer.dart';
+import '../../widgets/drawer.dart';
 
 class MobilePage extends StatefulWidget {
   static const String route = '/mobiles';
@@ -57,14 +57,12 @@ class _MobilePageState extends State<MobilePage> {
     super.initState();
   }
 
-  setSelectedRadioTile(int val) {
-    setState(() async {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('mobileId', val.toString());
-
+  setSelectedRadioTile(int val) async {
+    setState(() {
       selectedRadioTile = val;
-      print(val.toString());
     });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('mobileId', val.toString());
   }
 
   Future<void> getMyMobileId() async {
@@ -108,7 +106,7 @@ class _MobilePageState extends State<MobilePage> {
               },
             ),
             TextButton(
-              child: const Text('Accept'),
+              child: const Text('Modify'),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -124,7 +122,7 @@ class _MobilePageState extends State<MobilePage> {
     );
   }
 
-  List<Widget> buildMobiles(List<Mobile> mobiles) {
+  List<Widget> _buildMobiles(List<Mobile> mobiles) {
     List<Widget> widgets = [];
     if (mobiles == null) {
       return widgets;
@@ -136,9 +134,9 @@ class _MobilePageState extends State<MobilePage> {
           RadioListTile(
             groupValue: mobile.mobileId,
             value: mobile.mobileId,
-            onChanged: (val) {
+            onChanged: (val) async {
               print("val = $val, selected tile = $selectedRadioTile");
-              setSelectedRadioTile(val);
+              await setSelectedRadioTile(val);
             },
             title: Text(
               mobile.mobileName,
@@ -188,6 +186,9 @@ class _MobilePageState extends State<MobilePage> {
         );
       }
     }
+    widgets.add(
+      ListTile(),
+    );
     return widgets;
   }
 
@@ -207,7 +208,11 @@ class _MobilePageState extends State<MobilePage> {
             }),
       );
     } else {
-      return Column(children: buildMobiles(_mobiles));
+      return SingleChildScrollView(
+        child: Column(
+          children: _buildMobiles(_mobiles),
+        ),
+      );
     }
   }
 
@@ -224,6 +229,9 @@ class _MobilePageState extends State<MobilePage> {
             // color: Colors.red,
           ),
           onPressed: () {
+            setState(() {
+              _isLoading = true;
+            });
             Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => AddMobilePage(),
             ));

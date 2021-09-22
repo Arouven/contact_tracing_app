@@ -1,5 +1,5 @@
 import 'package:contact_tracing/pages/login.dart';
-import 'package:contact_tracing/pages/mobiles.dart';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/notifications.dart';
 import 'package:contact_tracing/pages/profile.dart';
 import 'package:flutter/material.dart';

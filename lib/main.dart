@@ -5,14 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 import './pages/live_geolocator.dart';
-import './pages/addMobile.dart';
+import 'pages/Mobile/addMobile.dart';
 import './classes/globals.dart';
 import './classes/uploadClass.dart';
 import './classes/write.dart';
 import './pages/register.dart';
 import './pages/login.dart';
 import './pages/splash.dart';
-import './pages/mobiles.dart';
+import 'pages/Mobile/mobiles.dart';
 import './pages/notifications.dart';
 import './pages/profile.dart';
 

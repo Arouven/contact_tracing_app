@@ -4,7 +4,7 @@ import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
+//import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import '../classes/globals.dart';
 import 'dart:convert';

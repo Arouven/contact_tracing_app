@@ -6,8 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import '../pages/login.dart';
-import '../pages/mobiles.dart';
-import 'package:flutter_restart/flutter_restart.dart';
+import 'Mobile/mobiles.dart';
+//import 'package:flutter_restart/flutter_restart.dart';
 
 class SplashPage extends StatefulWidget {
   static const String route = '/splash';
@@ -20,42 +20,42 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   int _latestUpdate = 0;
-  Future<void> _showRestartDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Restart',
-            style: TextStyle(color: Colors.green),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                new Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                          'The app needs to be restarted because it has not gather coordinates in a while. Press OK to restart.'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () async {
-                FlutterRestart.restartApp();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Future<void> _showRestartDialog() async {
+  //   return showDialog<void>(
+  //     context: context,
+  //     barrierDismissible: false, // user must tap button!
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text(
+  //           'Restart',
+  //           style: TextStyle(color: Colors.green),
+  //         ),
+  //         content: SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               new Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: Text(
+  //                         'The app needs to be restarted because it has not gather coordinates in a while. Press OK to restart.'),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('Ok'),
+  //             onPressed: () async {
+  //               FlutterRestart.restartApp();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<Widget> loadFromFuture() async {
     await Future.delayed(const Duration(seconds: 2), () {});
