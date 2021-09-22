@@ -1,10 +1,10 @@
-import 'package:contact_tracing/pages/login.dart';
+import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
-import 'package:contact_tracing/pages/notifications.dart';
-import 'package:contact_tracing/pages/profile.dart';
+import 'package:contact_tracing/pages/Notification/notifications.dart';
+import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:flutter/material.dart';
-import '../pages/live_geolocator.dart';
-import '../pages/login.dart';
+import '../pages/Location/live_geolocator.dart';
+import '../pages/Login/login.dart';
 
 Widget _buildMenuItem(
     BuildContext context, Widget title, String routeName, String currentRoute) {

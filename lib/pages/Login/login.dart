@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:contact_tracing/classes/globals.dart';
-import 'package:contact_tracing/pages/register.dart';
+import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/splash.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';

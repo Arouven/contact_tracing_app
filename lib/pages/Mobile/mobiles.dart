@@ -28,36 +28,7 @@ class _MobilePageState extends State<MobilePage> {
   bool _findSelected = false;
   var _mobiles;
 
-  @override
-  void initState() {
-    getMyMobileId().whenComplete(() => setState(() {
-          //_isLoading = false;
-          if (_myMobileId != null) {
-            _findSelected = false;
-            selectedRadioTile = _myMobileId;
-          } else {
-            _findSelected = true;
-            selectedRadioTile = 0;
-          }
-        }));
-    ApiMobile.getMobiles().then((mobileList) => setState(() {
-          _mobiles = mobileList;
-          _isLoading = false;
-          print('is loading false');
-
-          final mobileMap = mobileList.asMap();
-          Mobile instance = mobileMap[0];
-          if (instance.mobileId == 0) {
-            _showReload = true;
-            print('show reload is true');
-          }
-        }));
-    //        var fn = '${username}_geolocatorbest.csv';
-    // await prefs.setString("fileName", fn);
-    super.initState();
-  }
-
-  setSelectedRadioTile(int val) async {
+  Future<void> _setSelectedRadioTile(int val) async {
     setState(() {
       selectedRadioTile = val;
     });
@@ -65,7 +36,7 @@ class _MobilePageState extends State<MobilePage> {
     await prefs.setString('mobileId', val.toString());
   }
 
-  Future<void> getMyMobileId() async {
+  Future<void> _getMyMobileId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       _myMobileId = int.parse(prefs.getString("mobileId"));
@@ -136,7 +107,7 @@ class _MobilePageState extends State<MobilePage> {
             value: mobile.mobileId,
             onChanged: (val) async {
               print("val = $val, selected tile = $selectedRadioTile");
-              await setSelectedRadioTile(val);
+              await _setSelectedRadioTile(val);
             },
             title: Text(
               mobile.mobileName,
@@ -163,7 +134,7 @@ class _MobilePageState extends State<MobilePage> {
             value: mobile.mobileId,
             onChanged: (val) {
               print("val = $val, selected tile = $selectedRadioTile");
-              setSelectedRadioTile(val);
+              _setSelectedRadioTile(val);
               // setSelectedUser(val);
             },
             title: Text(
@@ -192,7 +163,7 @@ class _MobilePageState extends State<MobilePage> {
     return widgets;
   }
 
-  _body() {
+  Widget _body() {
     if (_isLoading == true) {
       return Center(child: CircularProgressIndicator());
     } else if (_showReload == true) {
@@ -216,7 +187,7 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
-  _floatingActionButton() {
+  Widget _floatingActionButton() {
     if (_isLoading) {
       return null;
     } else if (_showReload) {
@@ -237,6 +208,33 @@ class _MobilePageState extends State<MobilePage> {
             ));
           });
     }
+  }
+
+  @override
+  void initState() {
+    _getMyMobileId().whenComplete(() => setState(() {
+          //_isLoading = false;
+          if (_myMobileId != null) {
+            _findSelected = false;
+            selectedRadioTile = _myMobileId;
+          } else {
+            _findSelected = true;
+            selectedRadioTile = 0;
+          }
+        }));
+    ApiMobile.getMobiles().then((mobileList) => setState(() {
+          _mobiles = mobileList;
+          _isLoading = false;
+          print('is loading false');
+
+          final mobileMap = mobileList.asMap();
+          Mobile instance = mobileMap[0];
+          if (instance.mobileId == 0) {
+            _showReload = true;
+            print('show reload is true');
+          }
+        }));
+    super.initState();
   }
 
   @override

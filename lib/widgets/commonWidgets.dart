@@ -9,6 +9,27 @@ class Aesthetic {
       ),
     );
   }
+  // circleLoader() {
+  //   return Container(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: [
+  //         SizedBox(
+  //           height: MediaQuery.of(context).size.height / 1.3,
+  //           child: Center(
+  //             child: CircularProgressIndicator(),
+  //           ),
+  //         ),
+  //         // Padding(
+  //         //   //padding: EdgeInsets.only(top: 16),
+  //         //   child:
+  //        // Text('Awaiting result...'),
+  //         // )
+  //       ],
+  //     ),
+  //   );
+  // }
 
   static Widget refreshButton({context, route}) {
     return Center(

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../widgets/drawer.dart';
+import '../../widgets/drawer.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';

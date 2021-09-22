@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import '../pages/live_geolocator.dart';
+import 'Location/live_geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import '../pages/login.dart';
+import 'Login/login.dart';
 import 'Mobile/mobiles.dart';
 //import 'package:flutter_restart/flutter_restart.dart';
 
@@ -56,22 +56,30 @@ class _SplashPageState extends State<SplashPage> {
   //     },
   //   );
   // }
-
-  Future<Widget> loadFromFuture() async {
-    await Future.delayed(const Duration(seconds: 2), () {});
+  deleteme() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', 'JamesSmith');
     await prefs.setString('password', '1234');
-    //await prefs.setString("mobileId", '1');
+    await prefs.setString("mobileId", '1');
+  }
+
+  Future<Widget> loadFromFuture() async {
+    await Future.delayed(const Duration(seconds: 2), () {});
+    await deleteme();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('latestUpdate') != null) {
       try {
-        setState(() {
-          _latestUpdate = int.parse(prefs.getString('latestUpdate'));
-        });
+        if (mounted) {
+          setState(() {
+            _latestUpdate = int.parse(prefs.getString('latestUpdate'));
+          });
+        }
       } catch (e) {
-        setState(() {
-          _latestUpdate = 0;
-        });
+        if (mounted) {
+          setState(() {
+            _latestUpdate = 0;
+          });
+        }
       }
     }
 
@@ -95,7 +103,6 @@ class _SplashPageState extends State<SplashPage> {
         prefs.getString("mobileId") != null) {
       var fn = '${prefs.getString("username")}_geolocatorbest.csv';
       await prefs.setString("fileName", fn);
-      //return Future.value(MobilePage());
       return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
@@ -121,8 +128,12 @@ class _SplashPageState extends State<SplashPage> {
         onClick: () => print("Flutter Egypt"),
         loaderColor: Colors.red);
   }
-}
 
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
+}
 // class AfterSplash extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {

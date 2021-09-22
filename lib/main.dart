@@ -4,17 +4,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-import './pages/live_geolocator.dart';
+import 'pages/Location/live_geolocator.dart';
 import 'pages/Mobile/addMobile.dart';
 import './classes/globals.dart';
 import './classes/uploadClass.dart';
 import './classes/write.dart';
-import './pages/register.dart';
-import './pages/login.dart';
+import 'pages/Login/register.dart';
+import 'pages/Login/login.dart';
 import './pages/splash.dart';
 import 'pages/Mobile/mobiles.dart';
-import './pages/notifications.dart';
-import './pages/profile.dart';
+import 'pages/Notification/notifications.dart';
+import 'pages/Profile/profile.dart';
 
 Writefile _wf = new Writefile();
 

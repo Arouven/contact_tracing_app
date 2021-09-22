@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import '../widgets/drawer.dart';
+import '../../widgets/drawer.dart';
 
 class FilterPage extends StatefulWidget {
   static const String route = '/filter';
