@@ -105,8 +105,8 @@ class _SplashPageState extends State<SplashPage> {
         prefs.getString("mobileId") != null) {
       var fn = '${prefs.getString("username")}_geolocatorbest.csv';
       await prefs.setString("fileName", fn);
-      //return Future.value(LiveGeolocatorPage());
-      return Future.value(FilterPage());
+      return Future.value(LiveGeolocatorPage());
+      //return Future.value(FilterPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {

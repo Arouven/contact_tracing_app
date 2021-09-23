@@ -24,10 +24,10 @@ import 'package:cool_alert/cool_alert.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
-  // final bool downloadUpdatedLocations;
-  // const LiveGeolocatorPage({
-  //   this.downloadUpdatedLocations = true,
-  // }); // : super(key: key);
+  final bool downloadUpdatedLocations;
+  const LiveGeolocatorPage({
+    this.downloadUpdatedLocations = true,
+  }); // : super(key: key);
 
   @override
   _LiveGeolocatorPageState createState() {
@@ -116,11 +116,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _generateMarkers() async {
-    // if (widget.downloadUpdatedLocations) {
-    await _downloadData();
-    // } else {
-    //   await _useExistingData();
-    // }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String bodyResponse = prefs.getString('Locations');
+    if (widget.downloadUpdatedLocations ||
+        bodyResponse == null ||
+        bodyResponse == '') {
+      await _downloadData();
+    } else {
+      await _useExistingData();
+    }
 
     setState(() {
       _isLoading = false;
@@ -424,6 +428,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       return FloatingActionButton(
         child: Icon(Icons.search),
         onPressed: () {
+          _markers.clear();
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => FilterPage()));
         },
@@ -458,6 +463,12 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       // }
       // });
       print('addmylocationfunction');
+    } else {
+      print('else part');
+      _currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: geolocatorAccuracy);
+
+      await _addCurrentLocationToMarkers();
     }
   }
 

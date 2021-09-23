@@ -1,3 +1,4 @@
+import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
@@ -15,20 +16,26 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  // SharedPreferences prefs;
+  List<String> _checked = [];
+  SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
 
-    // initCheckboxes().whenComplete(() {
-    //   setState(() {});
-    // });
+    initCheckboxes().whenComplete(() {
+      setState(() {});
+    });
   }
 
-  // initCheckboxes() async {
-  //   prefs = await SharedPreferences.getInstance();
-  // }
+  initCheckboxes() async {
+    prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('showConfirmInfected')) _checked.add("Infected");
+    if (prefs.getBool('showContactWithInfected')) _checked.add("Contacts");
+    if (prefs.getBool('showCleanUsers')) _checked.add("Safe users");
+    if (prefs.getBool('showTestingCenters')) _checked.add("Testing Centers");
+    if (prefs.getBool('showMyLocation')) _checked.add("Me");
+  }
 
   Widget _popCheckboxes() {
     return ListView(
@@ -41,33 +48,35 @@ class _FilterPageState extends State<FilterPage> {
             "Testing Centers",
             "Me",
           ],
-          //  checked: <String>[
-          // prefs.getBool('showConfirmInfected') ? "Infected" : null,
-          // prefs.getBool('showContactWithInfected') ? "Contacts" : null,
-          // prefs.getBool('showCleanUsers') ? "Safe users" : null,
-          // prefs.getBool('showTestingCenters') ? "Testing Centers" : null,
-          // prefs.getBool('showMyLocation') ? "Me" : null,
-          //  ],
+          checked: _checked,
           onChange: (bool isChecked, String label, int index) {
-            // if (label == "Infected") {
-            //   prefs.setBool('showConfirmInfected', isChecked);
-            // }
-            // if (label == "Contacts") {
-            //   prefs.setBool('showContactWithInfected', isChecked);
-            // }
-            // if (label == "Safe users") {
-            //   prefs.setBool('showCleanUsers', isChecked);
-            // }
-            // if (label == "Testing Centers") {
-            //   prefs.setBool('showTestingCenters', isChecked);
-            // }
-            // if (label == "Me") {
-            //   prefs.setBool('showMyLocation', isChecked);
-            // }
+            if (label == "Infected") {
+              prefs.setBool('showConfirmInfected', isChecked);
+              print('showConfirmInfected');
+            }
+            if (label == "Contacts") {
+              prefs.setBool('showContactWithInfected', isChecked);
+              print('showContactWithInfected');
+            }
+            if (label == "Safe users") {
+              prefs.setBool('showCleanUsers', isChecked);
+              print('showCleanUsers');
+            }
+            if (label == "Testing Centers") {
+              prefs.setBool('showTestingCenters', isChecked);
+              print('showTestingCenters');
+            }
+            if (label == "Me") {
+              prefs.setBool('showMyLocation', isChecked);
+              print('showMyLocation');
+            }
+            setState(() {});
             print("isChecked: $isChecked   label: $label  index: $index");
           },
-          onSelected: (List<String> checked) =>
-              print("checked: ${checked.toString()}"),
+          onSelected: (List<String> checked) {
+            print("checked: ${checked.toString()}");
+            _checked = checked;
+          },
         ),
       ],
     );
@@ -77,9 +86,7 @@ class _FilterPageState extends State<FilterPage> {
     return _popCheckboxes();
   }
 
-  void backButton() {
-    Navigator.pop(context);
-  }
+  void backButton() {}
 
   @override
   Widget build(BuildContext context) {
@@ -88,20 +95,25 @@ class _FilterPageState extends State<FilterPage> {
       child: SafeArea(
         top: true,
         bottom: true,
-        child: WillPopScope(
-          onWillPop: backButton,
-          child: Scaffold(
-            appBar: AppBar(
-              leading: BackButton(
-                onPressed: backButton,
-              ),
-              title: Text('Marker Filter'),
-              centerTitle: true,
-              backgroundColor: Colors.blue,
+        child: Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => LiveGeolocatorPage(
+                      downloadUpdatedLocations: false,
+                    ),
+                  ),
+                );
+              },
             ),
-            drawer: buildDrawer(context, FilterPage.route),
-            body: _body(),
+            title: Text('Marker Filter'),
+            centerTitle: true,
+            backgroundColor: Colors.blue,
           ),
+          drawer: buildDrawer(context, FilterPage.route),
+          body: _body(),
         ),
       ),
     );
