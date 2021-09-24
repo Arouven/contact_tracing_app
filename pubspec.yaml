@@ -68,6 +68,10 @@ dependencies:
   flutter_country_picker: ^0.1.6
   intl_phone_number_input: ^0.7.0+2
   grouped_buttons: ^1.0.4
+  firebase_messaging: ^10.0.1
+  #flutter_local_notifications: ^6.0.0
+ # firebase_core: ^1.2.1
+  firebase_core: ^1.6.0
   #google_fonts:
 
 dev_dependencies:

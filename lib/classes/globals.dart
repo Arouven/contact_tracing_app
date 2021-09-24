@@ -1,4 +1,9 @@
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // change as per requirements
 const geolocatorAccuracy = LocationAccuracy.best;
@@ -19,6 +24,11 @@ const String latestUpdateLocationsUrl =
 const String ftpServer = 'ftpupload.net';
 const String ftpUser = 'epiz_28555904';
 const String ftpPassword = 'dCSxRI3N1p';
+
+const String channelId = 'contacttracing';
+const String channelName = 'your channel name';
+const String channelDescription = 'your channel description';
+const String flutterIcon = '@mipmap/ic_launcher';
 // String fileName;
 // String mobileID;
 // String nationalIdNumber;

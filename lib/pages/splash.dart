@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:contact_tracing/classes/notification.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'Location/live_geolocator.dart';
 import 'package:flutter/material.dart';
@@ -22,43 +24,41 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   int _latestUpdate = 0;
-  // Future<void> _showRestartDialog() async {
-  //   return showDialog<void>(
-  //     context: context,
-  //     barrierDismissible: false, // user must tap button!
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text(
-  //           'Restart',
-  //           style: TextStyle(color: Colors.green),
-  //         ),
-  //         content: SingleChildScrollView(
-  //           child: ListBody(
-  //             children: <Widget>[
-  //               new Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: Text(
-  //                         'The app needs to be restarted because it has not gather coordinates in a while. Press OK to restart.'),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('Ok'),
-  //             onPressed: () async {
-  //               FlutterRestart.restartApp();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-  deleteme() async {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Notif().initialize(context);
+
+    ///gives you the message on which user taps
+    ///and it opened the app from terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        final routeFromMessage = message.data["route"];
+        Navigator.of(context).pushNamed(routeFromMessage);
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((message) {
+      print(message.notification.body);
+      print(message.notification.title);
+
+      Notif().display(message);
+    });
+
+    ///When the app is in background but opened and user taps
+    ///on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      final routeFromMessage = message.data["route"];
+
+      Navigator.of(context).pushNamed(routeFromMessage);
+    });
+  }
+
+  Future<void> deleteme() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', 'JamesSmith');
     await prefs.setString('password', '1234');

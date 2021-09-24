@@ -426,7 +426,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       return null;
     } else {
       return FloatingActionButton(
-        child: Icon(Icons.search),
+        child: Icon(Icons.filter_list_alt),
         onPressed: () {
           _markers.clear();
           Navigator.of(context)
@@ -472,11 +472,31 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
+  Future<void> _setFilters() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('showTestingCenters') == null) {
+      await prefs.setBool('showTestingCenters', true);
+    }
+    if (prefs.getBool('showConfirmInfected') == null) {
+      await prefs.setBool('showConfirmInfected', true);
+    }
+    if (prefs.getBool('showCleanUsers') == null) {
+      await prefs.setBool('showCleanUsers', true);
+    }
+    if (prefs.getBool('showContactWithInfected') == null) {
+      await prefs.setBool('showContactWithInfected', true);
+    }
+    if (prefs.getBool('showMyLocation') == null) {
+      await prefs.setBool('showMyLocation', true);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     _mapController = MapController();
+    _setFilters();
     initLocationService().whenComplete(() {
       setState(() {});
     });

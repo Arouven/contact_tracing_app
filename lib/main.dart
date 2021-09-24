@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,8 @@ import './pages/splash.dart';
 import 'pages/Mobile/mobiles.dart';
 import 'pages/Notification/notifications.dart';
 import 'pages/Profile/profile.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 Writefile _wf = new Writefile();
 
@@ -68,29 +71,17 @@ void onStart() {
   );
 }
 
-Future<void> _setFilters() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool('showTestingCenters') == null) {
-    await prefs.setBool('showTestingCenters', true);
-  }
-  if (prefs.getBool('showConfirmInfected') == null) {
-    await prefs.setBool('showConfirmInfected', true);
-  }
-  if (prefs.getBool('showCleanUsers') == null) {
-    await prefs.setBool('showCleanUsers', true);
-  }
-  if (prefs.getBool('showContactWithInfected') == null) {
-    await prefs.setBool('showContactWithInfected', true);
-  }
-  if (prefs.getBool('showMyLocation') == null) {
-    await prefs.setBool('showMyLocation', true);
-  }
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification.title);
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   await Geolocator.requestPermission();
-  await _setFilters();
+  // await _setFilters();
   FlutterBackgroundService.initialize(onStart);
   runApp(
     MyApp(),
@@ -111,11 +102,12 @@ class MyApp extends StatelessWidget {
         //HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
         SplashPage.route: (context) => SplashPage(),
-        RegisterPage.route: (context) => RegisterPage(),
+        //  RegisterPage.route: (context) => RegisterPage(),
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
-        AddMobilePage.route: (context) => AddMobilePage(),
-        FilterPage.route: (context) => FilterPage(),
+        //  AddMobilePage.route: (context) => AddMobilePage(),
+        //  UpdateMobilePage.route: (context) => UpdateMobilePage(),
+        //  FilterPage.route: (context) => FilterPage(),
         NotificationsPage.route: (context) => NotificationsPage(),
         ProfilePage.route: (context) => ProfilePage(),
       },
