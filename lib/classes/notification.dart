@@ -43,7 +43,7 @@ class Notif {
 
   // void display(RemoteMessage message) async {
   //   try {
-  //     final id = DateTime.now().millisecondsSinceEpoch;
+  //     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
   //     final platformChannelSpecifics = await getPlatform();
   //     await flutterLocalNotificationsPlugin.show(
   //       id,
@@ -59,7 +59,7 @@ class Notif {
 
   Future<void> showNotification(
       String notificationTitle, String notificationBody) async {
-    final id = DateTime.now().millisecondsSinceEpoch;
+    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final platformChannelSpecifics = await getPlatform();
     await flutterLocalNotificationsPlugin.show(
         id, notificationTitle, notificationBody, platformChannelSpecifics);

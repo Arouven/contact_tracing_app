@@ -53,18 +53,184 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     setState(() => _currentPosition = _validPosition(position));
   }
 
-  Widget _buildRow(List<Widget> widgets) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: widgets,
-      ),
-    );
-  }
+  // Widget _buildRow(List<Widget> widgets) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 20.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: widgets,
+  //     ),
+  //   );
+  // }
 
   String getCurrentPositionPretty() {
     return (_currentPosition + 1.0).toStringAsPrecision(2);
+  }
+
+  Widget _bottom() {
+    if (_currentPosition == 0.0) {
+      return Container(
+        height: 120,
+        color: Colors.red,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      print('before ' + (_currentPosition.toString()));
+                      _currentPosition = _currentPosition.floorToDouble();
+                      _updatePosition(min(
+                        ++_currentPosition,
+                        _totalDots.toDouble(),
+                      ));
+                      print('after ' + (_currentPosition.toString()));
+                    },
+                  )
+                ],
+              ),
+            ),
+            ListTile(
+              title: new DotsIndicator(
+                dotsCount: _totalDots,
+                position: _currentPosition,
+                decorator: DotsDecorator(
+                  size: const Size.square(9.0),
+                  activeSize: const Size(18.0, 9.0),
+                  activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (_currentPosition == 4.0) {
+      return Container(
+        height: 120,
+        color: Colors.red,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      _submit();
+                      print('Submit the form ');
+                    },
+                  )
+                ],
+              ),
+            ),
+            ListTile(
+              title: new DotsIndicator(
+                dotsCount: _totalDots,
+                position: _currentPosition,
+                decorator: DotsDecorator(
+                  size: const Size.square(9.0),
+                  activeSize: const Size(18.0, 9.0),
+                  activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        height: 120,
+        color: Colors.red,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ListTile(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: Text(
+                      'Previous',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      print('before ' + (_currentPosition.toString()));
+                      _currentPosition = _currentPosition.ceilToDouble();
+                      _updatePosition(max(--_currentPosition, 0));
+                      print('after ' + (_currentPosition.toString()));
+                    },
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      print('before ' + (_currentPosition.toString()));
+                      _currentPosition = _currentPosition.floorToDouble();
+                      _updatePosition(min(
+                        ++_currentPosition,
+                        _totalDots.toDouble(),
+                      ));
+                      print('after ' + (_currentPosition.toString()));
+                    },
+                  )
+                ],
+              ),
+            ),
+            ListTile(
+              title: new DotsIndicator(
+                dotsCount: _totalDots,
+                position: _currentPosition,
+                decorator: DotsDecorator(
+                  size: const Size.square(9.0),
+                  activeSize: const Size(18.0, 9.0),
+                  activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -83,158 +249,88 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     super.initState();
   }
 
-  _bottom() {
-    List<Widget> bottomWidgets = [];
-    // if (_currentPosition == 0.0) {
-    // } else if (_currentPosition == 5.0) {
-    // } else {
-    //   bottomWidgets.add(
-    //     Align(
-    //       alignment: Alignment.bottomCenter,
-    //       child: ListView(
-    //         children: [
-    //           _buildRow([
-    //             FloatingActionButton(
-    //               child: const Icon(Icons.remove),
-    //               onPressed: () {
-    //                 print('before ' + (_currentPosition.toString()));
-    //                 _currentPosition = _currentPosition.ceilToDouble();
-    //                 _updatePosition(max(--_currentPosition, 0));
-    //                 print('after ' + (_currentPosition.toString()));
-    //               },
-    //             ),
-    //             FloatingActionButton(
-    //               child: const Icon(Icons.add),
-    //               onPressed: () {
-    //                 print('before ' + (_currentPosition.toString()));
-    //                 _currentPosition = _currentPosition.floorToDouble();
-    //                 _updatePosition(min(
-    //                   ++_currentPosition,
-    //                   _totalDots.toDouble(),
-    //                 ));
-    //                 print('after ' + (_currentPosition.toString()));
-    //               },
-    //             )
-    //           ]),
-    //           // _buildRow([
-    //           //   Text(
-    //           //     'Vertical',
-    //           //     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
-    //           //   ),
-    //           //   Text(
-    //           //     'Vertical reversed',
-    //           //     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
-    //           //   ),
-    //           // ]),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    //   bottomWidgets.add(
-    //     Align(
-    //       alignment: Alignment.bottomCenter,
-    //       child: new DotsIndicator(
-    //         dotsCount: _totalDots,
-    //         position: _currentPosition,
-    //         decorator: DotsDecorator(
-    //           size: const Size.square(9.0),
-    //           activeSize: const Size(18.0, 9.0),
-    //           activeShape: RoundedRectangleBorder(
-    //             borderRadius: BorderRadius.circular(5.0),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    bottomWidgets.add(
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Stack(
-          children: [
-            ListView(
-              physics: ScrollPhysics.,
-              children: [
-                ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      FloatingActionButton(
-                        child: const Icon(Icons.remove),
-                        onPressed: () {
-                          print('before ' + (_currentPosition.toString()));
-                          _currentPosition = _currentPosition.ceilToDouble();
-                          _updatePosition(max(--_currentPosition, 0));
-                          print('after ' + (_currentPosition.toString()));
-                        },
-                      ),
-                      FloatingActionButton(
-                        child: const Icon(Icons.add),
-                        onPressed: () {
-                          print('before ' + (_currentPosition.toString()));
-                          _currentPosition = _currentPosition.floorToDouble();
-                          _updatePosition(min(
-                            ++_currentPosition,
-                            _totalDots.toDouble(),
-                          ));
-                          print('after ' + (_currentPosition.toString()));
-                        },
-                      )
-                    ],
-                  ),
-                ),
-                // _buildRow([
-                //   Text(
-                //     'Vertical',
-                //     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
-                //   ),
-                //   Text(
-                //     'Vertical reversed',
-                //     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.0),
-                //   ),
-                // ]),
-                // title: Align(
-                //     alignment: Alignment.bottomCenter,
-                //     child: Row(
-                ListTile(
-                  title: new DotsIndicator(
-                    dotsCount: _totalDots,
-                    position: _currentPosition,
-                    decorator: DotsDecorator(
-                      size: const Size.square(9.0),
-                      activeSize: const Size(18.0, 9.0),
-                      activeShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
-          //  ),
-        ),
+  _submit() {}
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  Widget _f1() {
+    return Container(
+      color: Colors.green,
+      height: 225,
+      child: Column(
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+            ),
+          ),
+        ],
       ),
     );
-    // bottomWidgets.add(
-    //   Align(
-    //     alignment: Alignment.bottomCenter,
-    //     child: new DotsIndicator(
-    //       dotsCount: _totalDots,
-    //       position: _currentPosition,
-    //       decorator: DotsDecorator(
-    //         size: const Size.square(9.0),
-    //         activeSize: const Size(18.0, 9.0),
-    //         activeShape: RoundedRectangleBorder(
-    //           borderRadius: BorderRadius.circular(5.0),
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
+  }
 
-    return bottomWidgets;
+  _body() {
+    List<Widget> children = <Widget>[];
+
+    children.add(_f1());
+    children.add(_bottom());
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: Stack(
+        children: [
+          Container(
+            alignment: Alignment.topCenter,
+            width: MediaQuery.of(context).size.width,
+            child: ListView(
+              children: [
+                _f1(),
+              ],
+            ),
+          ),
+          Container(
+            alignment: Alignment.bottomCenter,
+            width: MediaQuery.of(context).size.width,
+            child: _bottom(),
+          ),
+        ],
+      ),
+    );
+
+    // Column(
+    //   //overflow: Overflow.visible,
+    //   children: [
+    //     // Align(
+    //     //   alignment: Alignment.bottomCenter,
+    //     //   child: _bottom(),
+    //     // ),
+    //     Align(
+    //       alignment: Alignment.topCenter,
+    //       child: _f1(),
+    //     ),
+    //     // Positioned(
+    //     //   top: 0,
+    //     //   child: _f1(),
+    //     // ),
+    //     // Align(
+    //     //   alignment: Alignment.bottomCenter,
+    //     //   child: _bottom(),
+    //     // ),
+    //   ],
+    // );
   }
 
   @override
@@ -242,11 +338,10 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Dots indicator example'),
+          title: const Text('Register'),
         ),
-        body: Stack(
-          children: _bottom(),
-        ),
+        body: _body(),
+        //  bottomSheet: _bottom(),
       ),
     );
   }
