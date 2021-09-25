@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:contact_tracing/classes/notification.dart';
-import 'package:contact_tracing/pages/Location/filter.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:contact_tracing/pages/Location/filter.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'Location/live_geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
+import 'Login/dotindicator.dart';
 import 'Login/login.dart';
 import 'Mobile/mobiles.dart';
 //import 'package:flutter_restart/flutter_restart.dart';
@@ -34,28 +35,28 @@ class _SplashPageState extends State<SplashPage> {
 
     ///gives you the message on which user taps
     ///and it opened the app from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        final routeFromMessage = message.data["route"];
-        Navigator.of(context).pushNamed(routeFromMessage);
-      }
-    });
+    // FirebaseMessaging.instance.getInitialMessage().then((message) {
+    //   if (message != null) {
+    //     final routeFromMessage = message.data["route"];
+    //     Navigator.of(context).pushNamed(routeFromMessage);
+    //   }
+    // });
 
     ///forground work
-    FirebaseMessaging.onMessage.listen((message) {
-      print(message.notification.body);
-      print(message.notification.title);
+    // FirebaseMessaging.onMessage.listen((message) {
+    //   print(message.notification.body);
+    //   print(message.notification.title);
 
-      Notif().display(message);
-    });
+    //   Notif().display(message);
+    // });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final routeFromMessage = message.data["route"];
+    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    //   final routeFromMessage = message.data["route"];
 
-      Navigator.of(context).pushNamed(routeFromMessage);
-    });
+    //   Navigator.of(context).pushNamed(routeFromMessage);
+    // });
   }
 
   Future<void> deleteme() async {
@@ -105,8 +106,8 @@ class _SplashPageState extends State<SplashPage> {
         prefs.getString("mobileId") != null) {
       var fn = '${prefs.getString("username")}_geolocatorbest.csv';
       await prefs.setString("fileName", fn);
+      return Future.value(RegisterDotsPage());
       return Future.value(LiveGeolocatorPage());
-      //return Future.value(FilterPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {

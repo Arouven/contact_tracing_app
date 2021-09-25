@@ -1,4 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -41,21 +41,21 @@ class Notif {
     return platformChannelSpecifics;
   }
 
-  void display(RemoteMessage message) async {
-    try {
-      final id = DateTime.now().millisecondsSinceEpoch;
-      final platformChannelSpecifics = await getPlatform();
-      await flutterLocalNotificationsPlugin.show(
-        id,
-        message.notification.title,
-        message.notification.body,
-        platformChannelSpecifics,
-        payload: message.data["route"],
-      );
-    } on Exception catch (e) {
-      print(e);
-    }
-  }
+  // void display(RemoteMessage message) async {
+  //   try {
+  //     final id = DateTime.now().millisecondsSinceEpoch;
+  //     final platformChannelSpecifics = await getPlatform();
+  //     await flutterLocalNotificationsPlugin.show(
+  //       id,
+  //       message.notification.title,
+  //       message.notification.body,
+  //       platformChannelSpecifics,
+  //       payload: message.data["route"],
+  //     );
+  //   } on Exception catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Future<void> showNotification(
       String notificationTitle, String notificationBody) async {

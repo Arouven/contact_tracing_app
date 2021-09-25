@@ -1,24 +1,22 @@
 import 'dart:async';
-import 'package:contact_tracing/pages/Location/filter.dart';
-import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
+// import 'package:contact_tracing/pages/Location/filter.dart';
+// import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/Location/live_geolocator.dart';
-import 'pages/Mobile/addMobile.dart';
+// import 'pages/Mobile/addMobile.dart';
 import './classes/globals.dart';
 import './classes/uploadClass.dart';
 import './classes/write.dart';
-import 'pages/Login/register.dart';
+// import 'pages/Login/register.dart';
 import 'pages/Login/login.dart';
 import './pages/splash.dart';
 import 'pages/Mobile/mobiles.dart';
 import 'pages/Notification/notifications.dart';
 import 'pages/Profile/profile.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 Writefile _wf = new Writefile();
 
@@ -71,15 +69,15 @@ void onStart() {
   );
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {
-  print(message.data.toString());
-  print(message.notification.title);
-}
+// Future<void> backgroundHandler(RemoteMessage message) async {
+//   print(message.data.toString());
+//   print(message.notification.title);
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  //await Firebase.initializeApp();
+  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   await Geolocator.requestPermission();
   // await _setFilters();
   FlutterBackgroundService.initialize(onStart);
