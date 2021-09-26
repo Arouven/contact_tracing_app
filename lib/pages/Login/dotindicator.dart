@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 
 class RegisterDotsPage extends StatefulWidget {
   static const String route = '/registerDots';
@@ -9,16 +10,16 @@ class RegisterDotsPage extends StatefulWidget {
   _RegisterDotsState createState() => _RegisterDotsState();
 }
 
-enum pages {
-  r1, //firstname, lastname, email
-  r2, //country
-  r3, //dob
-  r4, //nic, address
-  r5, //useername, password
-}
+// enum pages {
+//   r1, //firstname, lastname, email
+//   r2, //country
+//   r3, //dob
+//   r4, //nic, address
+//   r5, //useername, password
+// }
 
 class _RegisterDotsState extends State<RegisterDotsPage> {
-  final _totalDots = pages.values.length;
+  final _totalDots = 5; //pages.values.length;
   double _currentPosition = 0.0;
 
   var _firstName = '';
@@ -31,18 +32,17 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   var _username = '';
   var _password = '';
 
-  pages _page = pages.r1;
-  void _formChange() async {
-    setState(() {
-      if (_page == pages.r2) {
-        _page = pages.r1;
-      } else {
-        _page = pages.r2;
-      }
-    });
-  }
+  // pages _page = pages.r1;
+  // void _formChange() async {
+  //   setState(() {
+  //     if (_page == pages.r2) {
+  //       _page = pages.r1;
+  //     } else {
+  //       _page = pages.r2;
+  //     }
+  //   });
+  // }
 
-// if (_form == FormType.login) {
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;
     if (position < 0) return _totalDots - 1.0;
@@ -53,16 +53,6 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     setState(() => _currentPosition = _validPosition(position));
   }
 
-  // Widget _buildRow(List<Widget> widgets) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 20.0),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: widgets,
-  //     ),
-  //   );
-  // }
-
   String getCurrentPositionPretty() {
     return (_currentPosition + 1.0).toStringAsPrecision(2);
   }
@@ -70,10 +60,8 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   Widget _bottom() {
     if (_currentPosition == 0.0) {
       return Container(
-        height: 120,
-        color: Colors.red,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             ListTile(
               title: Row(
@@ -120,15 +108,30 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
       );
     } else if (_currentPosition == 4.0) {
       return Container(
-        height: 120,
-        color: Colors.red,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             ListTile(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: Text(
+                      'Previous',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      print('before ' + (_currentPosition.toString()));
+                      _currentPosition = _currentPosition.ceilToDouble();
+                      _updatePosition(max(--_currentPosition, 0));
+                      print('after ' + (_currentPosition.toString()));
+                    },
+                  ),
                   TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -165,10 +168,8 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
       );
     } else {
       return Container(
-        height: 120,
-        color: Colors.red,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        child: ListView(
+          shrinkWrap: true,
           children: [
             ListTile(
               title: Row(
@@ -233,6 +234,7 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     }
   }
 
+  //var _dateParse;
   @override
   void initState() {
     print(_totalDots);
@@ -246,6 +248,13 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_address);
     print(_username);
     print(_password);
+
+    // var date = new DateTime.now().toString();
+
+    // setState(() {
+    //   _dateParse = DateTime.parse(date);
+    // });
+
     super.initState();
   }
 
@@ -255,9 +264,166 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   TextEditingController _emailController = TextEditingController();
   Widget _f1() {
     return Container(
-      color: Colors.green,
-      height: 225,
-      child: Column(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f2() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f3() {
+    var date = new DateTime.now().toString();
+    var _dateParse = DateTime.parse(date);
+    return new Container(
+      child: new Column(
+        children: [
+          new Row(
+            children: [
+              new Text('Date of birth'),
+            ],
+          ),
+          new Row(
+            children: [
+              new DatePickerWidget(
+                looping: true, // default is not looping
+                //firstDate: DateTime(_dateParse.year-18, 01, 01),
+                lastDate:
+                    DateTime(_dateParse.year, _dateParse.month, _dateParse.day),
+
+                initialDate: DateTime(_dateParse.year - 18, 01, 01),
+                dateFormat: "dd-MMM-yyyy",
+                locale: DatePicker.localeFromString('en'),
+                onChange: (DateTime newDate, _) {
+                  _dateOfBirth = newDate.toString();
+                  print(_dateOfBirth);
+                },
+                pickerTheme: DateTimePickerTheme(
+                  itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                  dividerColor: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      // child: TextField(
+      //   controller: _dateOfBirth,
+      //   decoration: new InputDecoration(labelText: 'Date of Birth'),
+
+      // ),
+    );
+
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f4() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f5() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
         children: [
           ListTile(
             title: TextField(
@@ -283,54 +449,29 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   }
 
   _body() {
-    List<Widget> children = <Widget>[];
+    print(_firstName);
+    print(_lastName);
+    print(_email);
+    print(_country);
+    print(_dateOfBirth);
+    print(_nationalIdNumber);
+    print(_address);
+    print(_username);
+    print(_password);
 
-    children.add(_f1());
-    children.add(_bottom());
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: Stack(
-        children: [
-          Container(
-            alignment: Alignment.topCenter,
-            width: MediaQuery.of(context).size.width,
-            child: ListView(
-              children: [
-                _f1(),
-              ],
-            ),
-          ),
-          Container(
-            alignment: Alignment.bottomCenter,
-            width: MediaQuery.of(context).size.width,
-            child: _bottom(),
-          ),
-        ],
-      ),
-    );
-
-    // Column(
-    //   //overflow: Overflow.visible,
-    //   children: [
-    //     // Align(
-    //     //   alignment: Alignment.bottomCenter,
-    //     //   child: _bottom(),
-    //     // ),
-    //     Align(
-    //       alignment: Alignment.topCenter,
-    //       child: _f1(),
-    //     ),
-    //     // Positioned(
-    //     //   top: 0,
-    //     //   child: _f1(),
-    //     // ),
-    //     // Align(
-    //     //   alignment: Alignment.bottomCenter,
-    //     //   child: _bottom(),
-    //     // ),
-    //   ],
-    // );
+    if (_currentPosition == 0.0) {
+      return _f1(); //firstname, lastname, email
+    } else if (_currentPosition == 1.0) {
+      return _f2(); //country
+    } else if (_currentPosition == 2.0) {
+      return _f3(); //dob
+    } else if (_currentPosition == 3.0) {
+      return _f4(); //nic, address
+    } else if (_currentPosition == 4.0) {
+      return _f5(); //username, password
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -341,7 +482,9 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
           title: const Text('Register'),
         ),
         body: _body(),
-        //  bottomSheet: _bottom(),
+        bottomNavigationBar: Container(
+          child: _bottom(),
+        ),
       ),
     );
   }
