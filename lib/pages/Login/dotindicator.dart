@@ -10,16 +10,8 @@ class RegisterDotsPage extends StatefulWidget {
   _RegisterDotsState createState() => _RegisterDotsState();
 }
 
-// enum pages {
-//   r1, //firstname, lastname, email
-//   r2, //country
-//   r3, //dob
-//   r4, //nic, address
-//   r5, //useername, password
-// }
-
 class _RegisterDotsState extends State<RegisterDotsPage> {
-  final _totalDots = 5; //pages.values.length;
+  final _totalDots = 5;
   double _currentPosition = 0.0;
 
   var _firstName = '';
@@ -32,16 +24,13 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   var _username = '';
   var _password = '';
 
-  // pages _page = pages.r1;
-  // void _formChange() async {
-  //   setState(() {
-  //     if (_page == pages.r2) {
-  //       _page = pages.r1;
-  //     } else {
-  //       _page = pages.r2;
-  //     }
-  //   });
-  // }
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+  TextEditingController _nationalIdNumberController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;
@@ -234,7 +223,19 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     }
   }
 
-  //var _dateParse;
+  DateTime _initialDate(_dateParse) {
+    if (_dateOfBirth == null || _dateOfBirth == '') {
+      return DateTime(_dateParse.year - 18, 01, 01);
+    } else {
+      try {
+        var existing = DateTime.parse(_dateOfBirth);
+        return DateTime(existing.year, existing.month, existing.day);
+      } on Exception {
+        return DateTime(_dateParse.year - 18, 01, 01);
+      }
+    }
+  }
+
   @override
   void initState() {
     print(_totalDots);
@@ -249,19 +250,11 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_username);
     print(_password);
 
-    // var date = new DateTime.now().toString();
-
-    // setState(() {
-    //   _dateParse = DateTime.parse(date);
-    // });
-
     super.initState();
   }
 
   _submit() {}
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+
   Widget _f1() {
     return Container(
       child: ListView(
@@ -322,67 +315,47 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
 
   Widget _f3() {
     var date = new DateTime.now().toString();
+    print(date.toString());
     var _dateParse = DateTime.parse(date);
-    return new Container(
+    if (_dateOfBirth == null || _dateOfBirth == '') {
+      _dateOfBirth = date.toString();
+    }
+    return SingleChildScrollView(
       child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          new Row(
-            children: [
-              new Text('Date of birth'),
-            ],
+          new Container(
+            child: new Text(
+              'Date of birth',
+              style: TextStyle(
+                fontSize: 40.0,
+              ),
+            ),
           ),
-          new Row(
-            children: [
-              new DatePickerWidget(
-                looping: true, // default is not looping
-                //firstDate: DateTime(_dateParse.year-18, 01, 01),
-                lastDate:
-                    DateTime(_dateParse.year, _dateParse.month, _dateParse.day),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2, // / 1.3,
+            child: Center(
+              child: new Container(
+                alignment: Alignment.center,
+                child: new DatePickerWidget(
+                  looping: true, // default is not looping
+                  lastDate: DateTime(
+                      _dateParse.year, _dateParse.month, _dateParse.day),
 
-                initialDate: DateTime(_dateParse.year - 18, 01, 01),
-                dateFormat: "dd-MMM-yyyy",
-                locale: DatePicker.localeFromString('en'),
-                onChange: (DateTime newDate, _) {
-                  _dateOfBirth = newDate.toString();
-                  print(_dateOfBirth);
-                },
-                pickerTheme: DateTimePickerTheme(
-                  itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
-                  dividerColor: Colors.blue,
+                  initialDate: _initialDate(_dateParse),
+                  dateFormat: "dd-MMM-yyyy",
+                  locale: DatePicker.localeFromString('en'),
+                  onChange: (DateTime newDate, _) {
+                    _dateOfBirth = newDate.toString();
+                    print(_dateOfBirth);
+                  },
+                  pickerTheme: DateTimePickerTheme(
+                    itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                    dividerColor: Colors.blue,
+                  ),
                 ),
               ),
-            ],
-          ),
-        ],
-      ),
-      // child: TextField(
-      //   controller: _dateOfBirth,
-      //   decoration: new InputDecoration(labelText: 'Date of Birth'),
-
-      // ),
-    );
-
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          ListTile(
-            title: TextField(
-              controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
             ),
           ),
         ],
@@ -398,20 +371,14 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
         children: [
           ListTile(
             title: TextField(
-              controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
+              controller: _nationalIdNumberController,
+              decoration: new InputDecoration(labelText: 'NIC'),
             ),
           ),
           ListTile(
             title: TextField(
-              controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
+              controller: _addressController,
+              decoration: new InputDecoration(labelText: 'Address'),
             ),
           ),
         ],
@@ -427,14 +394,15 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
         children: [
           ListTile(
             title: TextField(
-              controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
+              controller: _usernameController,
+              decoration: new InputDecoration(labelText: 'Username'),
             ),
           ),
           ListTile(
             title: TextField(
-              controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
+              controller: _passwordController,
+              obscureText: true,
+              decoration: new InputDecoration(labelText: 'Password'),
             ),
           ),
           ListTile(
