@@ -265,18 +265,27 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
             title: TextField(
               controller: _firstNameController,
               decoration: new InputDecoration(labelText: 'First Name'),
+              onChanged: (String _) {
+                _firstName = _firstNameController.text;
+              },
             ),
           ),
           ListTile(
             title: TextField(
               controller: _lastNameController,
               decoration: new InputDecoration(labelText: 'Last Name'),
+              onChanged: (String _) {
+                _lastName = _lastNameController.text;
+              },
             ),
           ),
           ListTile(
             title: TextField(
               controller: _emailController,
               decoration: new InputDecoration(labelText: 'Email'),
+              onChanged: (String _) {
+                _email = _emailController.text;
+              },
             ),
           ),
         ],
@@ -373,12 +382,19 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
             title: TextField(
               controller: _nationalIdNumberController,
               decoration: new InputDecoration(labelText: 'NIC'),
+              onChanged: (String _) {
+                _nationalIdNumber = _nationalIdNumberController.text;
+              },
             ),
           ),
           ListTile(
             title: TextField(
+              maxLines: 2,
               controller: _addressController,
               decoration: new InputDecoration(labelText: 'Address'),
+              onChanged: (String _) {
+                _address = _addressController.text;
+              },
             ),
           ),
         ],
@@ -396,6 +412,9 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
             title: TextField(
               controller: _usernameController,
               decoration: new InputDecoration(labelText: 'Username'),
+              onChanged: (String _) {
+                _username = _usernameController.text;
+              },
             ),
           ),
           ListTile(
@@ -403,12 +422,18 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
               controller: _passwordController,
               obscureText: true,
               decoration: new InputDecoration(labelText: 'Password'),
+              onChanged: (String _) {
+                _password = _passwordController.text;
+              },
             ),
           ),
           ListTile(
             title: TextField(
               controller: _emailController,
               decoration: new InputDecoration(labelText: 'Email'),
+              onChanged: (String _) {
+                _email = _emailController.text;
+              },
             ),
           ),
         ],
@@ -426,7 +451,9 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_address);
     print(_username);
     print(_password);
+// setState(() {
 
+// });
     if (_currentPosition == 0.0) {
       return _f1(); //firstname, lastname, email
     } else if (_currentPosition == 1.0) {
