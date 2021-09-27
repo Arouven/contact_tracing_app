@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:contact_tracing/classes/globals.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:country_list_pick/country_list_pick.dart';
@@ -11,13 +12,13 @@ import 'package:country_code/country_code.dart' as ccode;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 
-class RegisterDotsPage extends StatefulWidget {
-  static const String route = '/registerDots';
+class RegisterPage extends StatefulWidget {
+  static const String route = '/register';
   @override
-  _RegisterDotsState createState() => _RegisterDotsState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _RegisterDotsState extends State<RegisterDotsPage> {
+class _RegisterState extends State<RegisterPage> {
   final _totalDots = 4;
   double _currentPosition = 0.0;
 
@@ -30,7 +31,6 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   var _address = '';
   var _username = '';
   var _password = '';
-
   var _countryCode = '';
 
   TextEditingController _firstNameController = TextEditingController();
@@ -68,31 +68,105 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     }
   }
 
-  Future<void> _getCountry() async {
-    try {
-      if (_country == null || _country == '') {
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: geolocatorAccuracy);
+  // Future<void> _getCountry() async {
+  //   try {
+  //     if (_countryCode == null || _countryCode == '') {
+  //       Position position = await Geolocator.getCurrentPosition(
+  //           desiredAccuracy: geolocatorAccuracy);
 
-        final coordinates =
-            new Coordinates(position.latitude, position.longitude);
+  //       final coordinates =
+  //           new Coordinates(position.latitude, position.longitude);
 
-        final addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        setState(() {
-          _countryCode = addresses.first.countryCode.toString();
-          _country = addresses.first.countryName.toString();
-        });
-      }
-    } on Exception {
-      setState(() {
-        _countryCode = 'MU';
-        _country = 'Mauritius';
-      });
-    }
-  }
+  //       final addresses =
+  //           await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+  //       print(addresses.first.locality);
+  //       print(addresses.first.adminArea);
+  //       setState(() {
+  //         _countryCode = addresses.first.countryCode.toString();
+  //       });
+  //     }
+  //   } on Exception {
+  //     setState(() {
+  //       _countryCode = 'MU';
+  //     });
+  //   }
+  // }
 
   _submit() {}
+  Widget _countryPicker() {
+    print('aaaaaaaaaaaaaaaaaaaaaaaaa ' + _countryCode);
+    return CountryListPick(
+      pickerBuilder: (context, CountryCode countryCode) {
+        return (_countryCode == null || _countryCode == '')
+            ? Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Country',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Container(
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            : Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Image.asset(
+                        countryCode.flagUri,
+                        package: 'country_list_pick',
+                        alignment: Alignment.centerLeft,
+                        height: 40,
+                        width: 50,
+                      ),
+                    ),
+                    Text(
+                      countryCode.name,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Container(
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+      },
+      useSafeArea: true,
+      theme: CountryTheme(
+        isShowFlag: true,
+        isShowTitle: true,
+        isShowCode: false,
+        // isDownIcon: true,
+        showEnglishName: true,
+        initialSelection: _countryCode,
+      ),
+      initialSelection: _countryCode,
+      onChanged: (CountryCode code) {
+        _country = code.name;
+        _countryCode = code.code;
+      },
+    );
+  }
 
   Widget _f1() {
     return Container(
@@ -207,43 +281,7 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
             ),
           ),
           ListTile(
-            title: CountryListPick(
-              pickerBuilder: (context, CountryCode countryCode) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.,
-                  children: [
-                    // Image.asset(
-                    //   countryCode.flagUri,
-                    //   package: 'country_list_pick',
-                    //   height: 20,
-                    // ),
-                    TextField(
-                      controller: _addressController,
-                      decoration: new InputDecoration(labelText: 'Address'),
-                      onChanged: (String _) {
-                        _address = _addressController.text;
-                      },
-                    ),
-                    // Text(countryCode.name),
-                  ],
-                );
-              },
-              useUiOverlay: true,
-              // Whether the country list should be wrapped in a SafeArea
-              useSafeArea: true,
-              // theme: CountryTheme(
-              //   isShowFlag: true,
-              //   isShowTitle: true,
-              //   isShowCode: false,
-              //   isDownIcon: true,
-              //   showEnglishName: true,
-              // ),
-              initialSelection: _countryCode,
-              onChanged: (CountryCode code) {
-                _country = code.name;
-                _countryCode = code.code;
-              },
-            ),
+            title: _countryPicker(),
           ),
         ],
       ),
@@ -289,10 +327,36 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     );
   }
 
+  Future<void> _fillAddresses() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: geolocatorAccuracy);
+
+      final coordinates =
+          new Coordinates(position.latitude, position.longitude);
+      final addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      final instance = addresses.first;
+      setState(() {
+        _countryCode = instance.countryCode;
+
+        _addressController.text =
+            _address = (instance.locality + ', ' + instance.adminArea);
+      });
+    } on Exception {
+      print('problem in try');
+      setState(() {
+        _countryCode = '';
+      });
+    }
+  }
+
   Widget _body() {
+    // _getCountry();
     print(_firstName);
     print(_lastName);
     print(_email);
+    //ccode.CountryCode.tryParse(_countryCode).alpha3;
     print(_country);
     print(_dateOfBirth);
     print(_nationalIdNumber);
@@ -505,7 +569,7 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_address);
     print(_username);
     print(_password);
-    _getCountry();
+    // _getCountry();
     super.initState();
   }
 
@@ -514,8 +578,22 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Register'),
+          title: Text("Register"),
+          centerTitle: true,
+          backgroundColor: Colors.blue,
+          actions: (_currentPosition == 2.0)
+              ? [
+                  IconButton(
+                      onPressed: () async {
+                        await _fillAddresses();
+                        await _countryPicker();
+                        setState(() {});
+                      },
+                      icon: Icon(Icons.location_on))
+                ]
+              : null,
         ),
+        drawer: buildDrawer(context, RegisterPage.route),
         body: _body(),
         bottomNavigationBar: Container(
           child: _bottom(),
