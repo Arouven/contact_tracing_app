@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:dots_indicator/dots_indicator.dart';import 'package:country_list_pick/country_list_pick.dart';
-import 'package:flutter/material.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:country_codes/country_codes.dart';
 
 class RegisterDotsPage extends StatefulWidget {
   static const String route = '/registerDots';
@@ -250,7 +252,7 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_address);
     print(_username);
     print(_password);
-
+    _getCountry();
     super.initState();
   }
 
@@ -373,6 +375,17 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     );
   }
 
+  Future<void> _getCountry() async {
+    await CountryCodes
+        .init(); // Optionally, you may provide a `Locale` to get countrie's localizadName
+
+    final Locale deviceLocale = CountryCodes.getDeviceLocale();
+    var code = deviceLocale.countryCode;
+    if (_country == null || _country == '') {
+      _country = code.toString();
+    }
+  }
+
   Widget _f4() {
     return Container(
       child: ListView(
@@ -398,23 +411,25 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
               },
             ),
           ),
-ListTile(
-          title: CountryListPick(
-            isShowFlag: true,
-            isShowTitle: true,
-            isShowCode: false,
-            isDownIcon: false,
-            initialSelection: 'MU',
-            onChanged: (CountryCode code) {
-              print(code.name);
-              print(code.code);
-              print(code.dialCode);
-              print(code.flagUri);
-            },
+          ListTile(
+            title: CountryListPick(
+              theme: CountryTheme(
+                isShowFlag: true,
+                isShowTitle: true,
+                isShowCode: false,
+                isDownIcon: false,
+                showEnglishName: true,
+              ),
+              initialSelection: _country,
+              onChanged: (CountryCode code) {
+                _country = code.name;
+                print(code.name);
+                print(code.code);
+                print(code.dialCode);
+                print(code.flagUri);
+              },
+            ),
           ),
-        ),
-    
- 
         ],
       ),
     );
