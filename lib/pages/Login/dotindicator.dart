@@ -1,11 +1,15 @@
 import 'dart:math';
 
+import 'package:contact_tracing/classes/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:country_codes/country_codes.dart';
+//import 'package:country_codes/country_codes.dart';
+import 'package:country_code/country_code.dart' as ccode;
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoder/geocoder.dart';
 
 class RegisterDotsPage extends StatefulWidget {
   static const String route = '/registerDots';
@@ -14,7 +18,7 @@ class RegisterDotsPage extends StatefulWidget {
 }
 
 class _RegisterDotsState extends State<RegisterDotsPage> {
-  final _totalDots = 5;
+  final _totalDots = 4;
   double _currentPosition = 0.0;
 
   var _firstName = '';
@@ -26,6 +30,8 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
   var _address = '';
   var _username = '';
   var _password = '';
+
+  var _countryCode = '';
 
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
@@ -47,6 +53,266 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
 
   String getCurrentPositionPretty() {
     return (_currentPosition + 1.0).toStringAsPrecision(2);
+  }
+
+  DateTime _initialDate(_dateParse) {
+    if (_dateOfBirth == null || _dateOfBirth == '') {
+      return DateTime(_dateParse.year - 18, 01, 01);
+    } else {
+      try {
+        var existing = DateTime.parse(_dateOfBirth);
+        return DateTime(existing.year, existing.month, existing.day);
+      } on Exception {
+        return DateTime(_dateParse.year - 18, 01, 01);
+      }
+    }
+  }
+
+  Future<void> _getCountry() async {
+    try {
+      if (_country == null || _country == '') {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: geolocatorAccuracy);
+
+        final coordinates =
+            new Coordinates(position.latitude, position.longitude);
+
+        final addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        setState(() {
+          _countryCode = addresses.first.countryCode.toString();
+          _country = addresses.first.countryName.toString();
+        });
+      }
+    } on Exception {
+      setState(() {
+        _countryCode = 'MU';
+        _country = 'Mauritius';
+      });
+    }
+  }
+
+  _submit() {}
+
+  Widget _f1() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _firstNameController,
+              decoration: new InputDecoration(labelText: 'First Name'),
+              onChanged: (String _) {
+                _firstName = _firstNameController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _lastNameController,
+              decoration: new InputDecoration(labelText: 'Last Name'),
+              onChanged: (String _) {
+                _lastName = _lastNameController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+              onChanged: (String _) {
+                _email = _emailController.text;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f2() {
+    var date = new DateTime.now().toString();
+    print(date.toString());
+    var _dateParse = DateTime.parse(date);
+    if (_dateOfBirth == null || _dateOfBirth == '') {
+      _dateOfBirth = date.toString();
+    }
+    return SingleChildScrollView(
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          new Container(
+            child: new Text(
+              'Date of birth',
+              style: TextStyle(
+                fontSize: 40.0,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2, // / 1.3,
+            child: Center(
+              child: new Container(
+                alignment: Alignment.center,
+                child: new DatePickerWidget(
+                  looping: true, // default is not looping
+                  lastDate: DateTime(
+                      _dateParse.year, _dateParse.month, _dateParse.day),
+
+                  initialDate: _initialDate(_dateParse),
+                  dateFormat: "dd-MMM-yyyy",
+                  locale: DatePicker.localeFromString('en'),
+                  onChange: (DateTime newDate, _) {
+                    _dateOfBirth = newDate.toString();
+                    print(_dateOfBirth);
+                  },
+                  pickerTheme: DateTimePickerTheme(
+                    itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                    dividerColor: Colors.blue,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f3() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _nationalIdNumberController,
+              decoration: new InputDecoration(labelText: 'NIC'),
+              onChanged: (String _) {
+                _nationalIdNumber = _nationalIdNumberController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _addressController,
+              decoration: new InputDecoration(labelText: 'Address'),
+              onChanged: (String _) {
+                _address = _addressController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: CountryListPick(
+              pickerBuilder: (context, CountryCode countryCode) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.,
+                  children: [
+                    // Image.asset(
+                    //   countryCode.flagUri,
+                    //   package: 'country_list_pick',
+                    //   height: 20,
+                    // ),
+                    TextField(
+                      controller: _addressController,
+                      decoration: new InputDecoration(labelText: 'Address'),
+                      onChanged: (String _) {
+                        _address = _addressController.text;
+                      },
+                    ),
+                    // Text(countryCode.name),
+                  ],
+                );
+              },
+              useUiOverlay: true,
+              // Whether the country list should be wrapped in a SafeArea
+              useSafeArea: true,
+              // theme: CountryTheme(
+              //   isShowFlag: true,
+              //   isShowTitle: true,
+              //   isShowCode: false,
+              //   isDownIcon: true,
+              //   showEnglishName: true,
+              // ),
+              initialSelection: _countryCode,
+              onChanged: (CountryCode code) {
+                _country = code.name;
+                _countryCode = code.code;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _f4() {
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: TextField(
+              controller: _usernameController,
+              decoration: new InputDecoration(labelText: 'Username'),
+              onChanged: (String _) {
+                _username = _usernameController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: new InputDecoration(labelText: 'Password'),
+              onChanged: (String _) {
+                _password = _passwordController.text;
+              },
+            ),
+          ),
+          ListTile(
+            title: TextField(
+              controller: _emailController,
+              decoration: new InputDecoration(labelText: 'Email'),
+              onChanged: (String _) {
+                _email = _emailController.text;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _body() {
+    print(_firstName);
+    print(_lastName);
+    print(_email);
+    print(_country);
+    print(_dateOfBirth);
+    print(_nationalIdNumber);
+    print(_address);
+    print(_username);
+    print(_password);
+// setState(() {
+
+// });
+    if (_currentPosition == 0.0) {
+      return _f1(); //firstname, lastname, email
+    } else if (_currentPosition == 1.0) {
+      return _f2(); //dob
+    } else if (_currentPosition == 2.0) {
+      return _f3(); //country, nic, address
+    } else if (_currentPosition == 3.0) {
+      return _f4(); //username, password
+    } else {
+      return null;
+    }
   }
 
   Widget _bottom() {
@@ -98,7 +364,7 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
           ],
         ),
       );
-    } else if (_currentPosition == 4.0) {
+    } else if (_currentPosition == 3.0) {
       return Container(
         child: ListView(
           shrinkWrap: true,
@@ -226,19 +492,6 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     }
   }
 
-  DateTime _initialDate(_dateParse) {
-    if (_dateOfBirth == null || _dateOfBirth == '') {
-      return DateTime(_dateParse.year - 18, 01, 01);
-    } else {
-      try {
-        var existing = DateTime.parse(_dateOfBirth);
-        return DateTime(existing.year, existing.month, existing.day);
-      } on Exception {
-        return DateTime(_dateParse.year - 18, 01, 01);
-      }
-    }
-  }
-
   @override
   void initState() {
     print(_totalDots);
@@ -254,252 +507,6 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
     print(_password);
     _getCountry();
     super.initState();
-  }
-
-  _submit() {}
-
-  Widget _f1() {
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          ListTile(
-            title: TextField(
-              controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
-              onChanged: (String _) {
-                _firstName = _firstNameController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
-              onChanged: (String _) {
-                _lastName = _lastNameController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
-              onChanged: (String _) {
-                _email = _emailController.text;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _f2() {
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          ListTile(
-            title: TextField(
-              controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _f3() {
-    var date = new DateTime.now().toString();
-    print(date.toString());
-    var _dateParse = DateTime.parse(date);
-    if (_dateOfBirth == null || _dateOfBirth == '') {
-      _dateOfBirth = date.toString();
-    }
-    return SingleChildScrollView(
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          new Container(
-            child: new Text(
-              'Date of birth',
-              style: TextStyle(
-                fontSize: 40.0,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 2, // / 1.3,
-            child: Center(
-              child: new Container(
-                alignment: Alignment.center,
-                child: new DatePickerWidget(
-                  looping: true, // default is not looping
-                  lastDate: DateTime(
-                      _dateParse.year, _dateParse.month, _dateParse.day),
-
-                  initialDate: _initialDate(_dateParse),
-                  dateFormat: "dd-MMM-yyyy",
-                  locale: DatePicker.localeFromString('en'),
-                  onChange: (DateTime newDate, _) {
-                    _dateOfBirth = newDate.toString();
-                    print(_dateOfBirth);
-                  },
-                  pickerTheme: DateTimePickerTheme(
-                    itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
-                    dividerColor: Colors.blue,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _getCountry() async {
-    await CountryCodes
-        .init(); // Optionally, you may provide a `Locale` to get countrie's localizadName
-
-    final Locale deviceLocale = CountryCodes.getDeviceLocale();
-    var code = deviceLocale.countryCode;
-    if (_country == null || _country == '') {
-      _country = code.toString();
-    }
-  }
-
-  Widget _f4() {
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          ListTile(
-            title: TextField(
-              controller: _nationalIdNumberController,
-              decoration: new InputDecoration(labelText: 'NIC'),
-              onChanged: (String _) {
-                _nationalIdNumber = _nationalIdNumberController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              maxLines: 2,
-              controller: _addressController,
-              decoration: new InputDecoration(labelText: 'Address'),
-              onChanged: (String _) {
-                _address = _addressController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: CountryListPick(
-              theme: CountryTheme(
-                isShowFlag: true,
-                isShowTitle: true,
-                isShowCode: false,
-                isDownIcon: false,
-                showEnglishName: true,
-              ),
-              initialSelection: _country,
-              onChanged: (CountryCode code) {
-                _country = code.name;
-                print(code.name);
-                print(code.code);
-                print(code.dialCode);
-                print(code.flagUri);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _f5() {
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: AlwaysScrollableScrollPhysics(),
-        children: [
-          ListTile(
-            title: TextField(
-              controller: _usernameController,
-              decoration: new InputDecoration(labelText: 'Username'),
-              onChanged: (String _) {
-                _username = _usernameController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: new InputDecoration(labelText: 'Password'),
-              onChanged: (String _) {
-                _password = _passwordController.text;
-              },
-            ),
-          ),
-          ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
-              onChanged: (String _) {
-                _email = _emailController.text;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _body() {
-    print(_firstName);
-    print(_lastName);
-    print(_email);
-    print(_country);
-    print(_dateOfBirth);
-    print(_nationalIdNumber);
-    print(_address);
-    print(_username);
-    print(_password);
-// setState(() {
-
-// });
-    if (_currentPosition == 0.0) {
-      return _f1(); //firstname, lastname, email
-    } else if (_currentPosition == 1.0) {
-      return _f2(); //country
-    } else if (_currentPosition == 2.0) {
-      return _f3(); //dob
-    } else if (_currentPosition == 3.0) {
-      return _f4(); //nic, address
-    } else if (_currentPosition == 4.0) {
-      return _f5(); //username, password
-    } else {
-      return null;
-    }
   }
 
   @override
