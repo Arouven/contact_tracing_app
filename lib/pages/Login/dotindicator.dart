@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+import 'package:dots_indicator/dots_indicator.dart';import 'package:country_list_pick/country_list_pick.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 
 class RegisterDotsPage extends StatefulWidget {
@@ -397,6 +398,23 @@ class _RegisterDotsState extends State<RegisterDotsPage> {
               },
             ),
           ),
+ListTile(
+          title: CountryListPick(
+            isShowFlag: true,
+            isShowTitle: true,
+            isShowCode: false,
+            isDownIcon: false,
+            initialSelection: 'MU',
+            onChanged: (CountryCode code) {
+              print(code.name);
+              print(code.code);
+              print(code.dialCode);
+              print(code.flagUri);
+            },
+          ),
+        ),
+    
+ 
         ],
       ),
     );
