@@ -4,11 +4,13 @@ import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:country_list_pick/country_list_pick.dart';
+//import 'package:country_list_pick/country_list_pick.dart';
+import 'package:flutter_country_picker/country.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 //import 'package:country_codes/country_codes.dart';
-import 'package:country_code/country_code.dart' as ccode;
+//import 'package:country_code/country_code.dart' as ccode;
+import 'package:csc_picker/csc_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 
@@ -25,13 +27,15 @@ class _RegisterState extends State<RegisterPage> {
   var _firstName = '';
   var _lastName = '';
   var _email = '';
-  var _country = '';
+  //var _countryWithIcon = '';
   var _dateOfBirth = '';
   var _nationalIdNumber = '';
   var _address = '';
   var _username = '';
   var _password = '';
-  var _countryCode = '';
+
+  bool _gatherLocattionFromButton = false;
+  DefaultCountry _defaultCountry;
 
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
@@ -68,104 +72,277 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
-  // Future<void> _getCountry() async {
-  //   try {
-  //     if (_countryCode == null || _countryCode == '') {
-  //       Position position = await Geolocator.getCurrentPosition(
-  //           desiredAccuracy: geolocatorAccuracy);
-
-  //       final coordinates =
-  //           new Coordinates(position.latitude, position.longitude);
-
-  //       final addresses =
-  //           await Geocoder.local.findAddressesFromCoordinates(coordinates);
-
-  //       print(addresses.first.locality);
-  //       print(addresses.first.adminArea);
-  //       setState(() {
-  //         _countryCode = addresses.first.countryCode.toString();
-  //       });
-  //     }
-  //   } on Exception {
-  //     setState(() {
-  //       _countryCode = 'MU';
-  //     });
-  //   }
-  // }
-
   _submit() {}
   Widget _countryPicker() {
-    print('aaaaaaaaaaaaaaaaaaaaaaaaa ' + _countryCode);
-    return CountryListPick(
-      pickerBuilder: (context, CountryCode countryCode) {
-        return (_countryCode == null || _countryCode == '')
-            ? Container(
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Country',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Container(
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black,
-                      ),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                height: 40,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Image.asset(
-                        countryCode.flagUri,
-                        package: 'country_list_pick',
-                        alignment: Alignment.centerLeft,
-                        height: 40,
-                        width: 50,
-                      ),
-                    ),
-                    Text(
-                      countryCode.name,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Container(
-                      child: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-      },
-      useSafeArea: true,
-      theme: CountryTheme(
-        isShowFlag: true,
-        isShowTitle: true,
-        isShowCode: false,
-        // isDownIcon: true,
-        showEnglishName: true,
-        initialSelection: _countryCode,
-      ),
-      initialSelection: _countryCode,
-      onChanged: (CountryCode code) {
-        _country = code.name;
-        _countryCode = code.code;
-      },
-    );
+    print('aaaaaaaaaaaaaaaaaaaaaaaaa ' + _countryWithIcon);
+
+    // String countryValue = "";
+    print(_gatherLocattionFromButton);
+    print(_defaultCountry.toString());
+    String stateValue = "";
+    String cityValue = "";
+    String address = "";
+
+    Widget countrypicker;
+    if (_gatherLocattionFromButton == true) {
+      print('inside');
+      countrypicker = CSCPicker(
+        ///Enable disable state dropdown [OPTIONAL PARAMETER]
+        showStates: false,
+
+        /// Enable disable city drop down [OPTIONAL PARAMETER]
+        showCities: false,
+
+        ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+        flagState: CountryFlag.ENABLE,
+
+        ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+        dropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+        disabledDropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.grey.shade300,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///placeholders for dropdown search field
+        countrySearchPlaceholder: "Country",
+        stateSearchPlaceholder: "State",
+        citySearchPlaceholder: "City",
+
+        ///labels for dropdown
+        countryDropdownLabel: "*Country",
+        stateDropdownLabel: "*State",
+        cityDropdownLabel: "*City",
+
+        // currentCountry: _countryWithIcon,
+
+        ///Default Country
+        defaultCountry: _defaultCountry,
+
+        ///Disable country dropdown (Note: use it with default country)
+        //disableCountry: true,
+
+        ///selected item style [OPTIONAL PARAMETER]
+        selectedItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+        dropdownHeadingStyle: TextStyle(
+            color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+
+        ///DropdownDialog Item style [OPTIONAL PARAMETER]
+        dropdownItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///Dialog box radius [OPTIONAL PARAMETER]
+        dropdownDialogRadius: 10.0,
+
+        ///Search bar radius [OPTIONAL PARAMETER]
+        searchBarRadius: 10.0,
+
+        ///triggers once country selected in dropdown
+        onCountryChanged: (value) {
+          setState(() {
+            ///store value in country variable
+            _countryWithIcon = value;
+          });
+        },
+
+        ///triggers once state selected in dropdown
+        onStateChanged: (value) {
+          setState(() {
+            ///store value in state variable
+            stateValue = value;
+          });
+        },
+
+        ///triggers once city selected in dropdown
+        onCityChanged: (value) {
+          setState(() {
+            //store value in city variable
+            cityValue = value;
+          });
+        },
+      );
+    } else if (_countryWithIcon == null || _countryWithIcon == '') {
+      print('is null');
+
+      return CSCPicker(
+        ///Enable disable state dropdown [OPTIONAL PARAMETER]
+        showStates: false,
+
+        /// Enable disable city drop down [OPTIONAL PARAMETER]
+        showCities: false,
+
+        ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+        flagState: CountryFlag.ENABLE,
+
+        ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+        dropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+        disabledDropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.grey.shade300,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///placeholders for dropdown search field
+        countrySearchPlaceholder: "Country",
+        stateSearchPlaceholder: "State",
+        citySearchPlaceholder: "City",
+
+        ///labels for dropdown
+        countryDropdownLabel: "*Country",
+        stateDropdownLabel: "*State",
+        cityDropdownLabel: "*City",
+
+        ///selected item style [OPTIONAL PARAMETER]
+        selectedItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+        dropdownHeadingStyle: TextStyle(
+            color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+
+        ///DropdownDialog Item style [OPTIONAL PARAMETER]
+        dropdownItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///Dialog box radius [OPTIONAL PARAMETER]
+        dropdownDialogRadius: 10.0,
+
+        ///Search bar radius [OPTIONAL PARAMETER]
+        searchBarRadius: 10.0,
+
+        ///triggers once country selected in dropdown
+        onCountryChanged: (value) {
+          setState(() {
+            ///store value in country variable
+            _countryWithIcon = value;
+          });
+        },
+
+        ///triggers once state selected in dropdown
+        onStateChanged: (value) {
+          setState(() {
+            ///store value in state variable
+            stateValue = value;
+          });
+        },
+
+        ///triggers once city selected in dropdown
+        onCityChanged: (value) {
+          setState(() {
+            //store value in city variable
+            cityValue = value;
+          });
+        },
+      );
+    } else {
+      print('not null');
+
+      return CSCPicker(
+        ///Enable disable state dropdown [OPTIONAL PARAMETER]
+        showStates: false,
+
+        /// Enable disable city drop down [OPTIONAL PARAMETER]
+        showCities: false,
+
+        ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+        flagState: CountryFlag.ENABLE,
+
+        ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+        dropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+        disabledDropdownDecoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.grey.shade300,
+            border: Border.all(color: Colors.grey.shade300, width: 1)),
+
+        ///placeholders for dropdown search field
+        countrySearchPlaceholder: "Country",
+        stateSearchPlaceholder: "State",
+        citySearchPlaceholder: "City",
+
+        ///labels for dropdown
+        countryDropdownLabel: "*Country",
+        stateDropdownLabel: "*State",
+        cityDropdownLabel: "*City",
+
+        currentCountry: _countryWithIcon,
+
+        ///Default Country
+        // defaultCountry: DefaultCountry.india,
+
+        ///Disable country dropdown (Note: use it with default country)
+        //disableCountry: true,
+
+        ///selected item style [OPTIONAL PARAMETER]
+        selectedItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+        dropdownHeadingStyle: TextStyle(
+            color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
+
+        ///DropdownDialog Item style [OPTIONAL PARAMETER]
+        dropdownItemStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+        ),
+
+        ///Dialog box radius [OPTIONAL PARAMETER]
+        dropdownDialogRadius: 10.0,
+
+        ///Search bar radius [OPTIONAL PARAMETER]
+        searchBarRadius: 10.0,
+
+        ///triggers once country selected in dropdown
+        onCountryChanged: (value) {
+          setState(() {
+            ///store value in country variable
+            _countryWithIcon = value;
+          });
+        },
+
+        ///triggers once state selected in dropdown
+        onStateChanged: (value) {
+          setState(() {
+            ///store value in state variable
+            stateValue = value;
+          });
+        },
+
+        ///triggers once city selected in dropdown
+        onCityChanged: (value) {
+          setState(() {
+            //store value in city variable
+            cityValue = value;
+          });
+        },
+      );
+    }
   }
 
   Widget _f1() {
@@ -337,16 +514,22 @@ class _RegisterState extends State<RegisterPage> {
       final addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
       final instance = addresses.first;
+      var countryName = instance.countryName;
+      String withUnderscore = countryName.replaceAll(' ', '_');
       setState(() {
-        _countryCode = instance.countryCode;
-
+        for (DefaultCountry country in DefaultCountry.values) {
+          String countryValue = country.toString().split('.').last;
+          if (countryValue == withUnderscore) {
+            _defaultCountry = country;
+          }
+        }
         _addressController.text =
             _address = (instance.locality + ', ' + instance.adminArea);
       });
     } on Exception {
       print('problem in try');
       setState(() {
-        _countryCode = '';
+        _defaultCountry = null;
       });
     }
   }
@@ -356,8 +539,9 @@ class _RegisterState extends State<RegisterPage> {
     print(_firstName);
     print(_lastName);
     print(_email);
-    //ccode.CountryCode.tryParse(_countryCode).alpha3;
-    print(_country);
+    print(_defaultCountry.toString());
+    //var country = _countryWithIcon.split('    ');
+    //print(country[1]);
     print(_dateOfBirth);
     print(_nationalIdNumber);
     print(_address);
@@ -563,7 +747,7 @@ class _RegisterState extends State<RegisterPage> {
     print(_firstName);
     print(_lastName);
     print(_email);
-    print(_country);
+    print(_defaultCountry.toString());
     print(_dateOfBirth);
     print(_nationalIdNumber);
     print(_address);
@@ -586,8 +770,10 @@ class _RegisterState extends State<RegisterPage> {
                   IconButton(
                       onPressed: () async {
                         await _fillAddresses();
-                        await _countryPicker();
-                        setState(() {});
+                        //  await _countryPicker();
+                        setState(() {
+                          _gatherLocattionFromButton = true;
+                        });
                       },
                       icon: Icon(Icons.location_on))
                 ]
@@ -595,9 +781,7 @@ class _RegisterState extends State<RegisterPage> {
         ),
         drawer: buildDrawer(context, RegisterPage.route),
         body: _body(),
-        bottomNavigationBar: Container(
-          child: _bottom(),
-        ),
+        bottomNavigationBar: _bottom(),
       ),
     );
   }

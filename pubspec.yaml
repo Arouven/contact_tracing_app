@@ -74,6 +74,7 @@ dependencies:
  # country_codes: ^2.0.1
   country_code: ^1.0.0
   geocoder: ^0.2.1
+  csc_picker: ^0.2.6
 
 dev_dependencies:
   flutter_test:

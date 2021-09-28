@@ -10,6 +10,5 @@ class StartApplication {
 
 //todo
 //reset password
-//mobiles screen extra space at the bottom
 //live geolocation - on tap markers
 }
