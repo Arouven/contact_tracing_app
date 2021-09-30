@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-import 'Login/dotindicator.dart';
+//import 'Login/dotindicator.dart';
 import 'Login/login.dart';
+import 'Login/register.dart';
 import 'Mobile/mobiles.dart';
 //import 'package:flutter_restart/flutter_restart.dart';
 

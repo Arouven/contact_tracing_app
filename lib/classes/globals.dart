@@ -1,9 +1,4 @@
-// import 'package:flutter/scheduler.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // change as per requirements
 const geolocatorAccuracy = LocationAccuracy.best;
@@ -18,6 +13,7 @@ const String getMobilesUrl = website + "apis/getMobiles.php";
 const String updateMobileUrl = website + "apis/updateMobile.php";
 const String addMobileUrl = website + "apis/addMobile.php";
 const String registerUrl = website + "flutter_login/register.php";
+const String checkUsernameUrl = website + "flutter_login/checkUsername.php";
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
@@ -29,12 +25,10 @@ const String channelId = 'contacttracing';
 const String channelName = 'your channel name';
 const String channelDescription = 'your channel description';
 const String flutterIcon = '@mipmap/ic_launcher';
-// String fileName;
-// String mobileID;
-// String nationalIdNumber;
 
+
+//global vars
 //in register.dart
-// final SharedPreferences prefs = await SharedPreferences.getInstance();
 // prefs.setString('firstName', firstname);
 // prefs.setString('lastName', lastname);
 // prefs.setString('country', country);
@@ -48,14 +42,14 @@ const String flutterIcon = '@mipmap/ic_launcher';
 // prefs.setString("userId", data['userId']);
  // prefs.setString('latestUpdate', time);
 
-//main
+//in main.dart
 //  prefs.setBool('showTestingCenters', true);
 //  prefs.setBool('showConfirmInfected', true);
 //    prefs.setBool('showCleanUsers', true);
 //   prefs.setBool('showContactWithInfected', true);
 // prefs.setBool('showMyLocation', true);
   
-//live locator
+//in live locator.dart
 //  prefs.setBool('showTestingCenters', true);
 //  prefs.setBool('showConfirmInfected', true);
 //    prefs.setBool('showCleanUsers', true);
@@ -63,11 +57,3 @@ const String flutterIcon = '@mipmap/ic_launcher';
 // prefs.setBool('showMyLocation', true);
 //  prefs.setString('Locations', jsonResponse);
  
-// class Globals {
-//   main() async {
-//     final SharedPreferences prefs = await SharedPreferences.getInstance();
-//     fileName = prefs.getString("fileName");
-//     nationalIdNumber = prefs.getString("nationalIdNumber");
-//     mobileId = prefs.getString("mobileId");
-//   }
-// }
