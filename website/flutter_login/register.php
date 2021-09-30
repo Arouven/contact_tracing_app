@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 	if (isset($_POST['password'])) {
 		$password = mysqli_real_escape_string($conn, $_POST['password']);
 	}
-	$selectquery = "SELECT nationalIdNumber, username FROM User WHERE username = ? AND password = ?;";
+	$selectquery = "SELECT username FROM User WHERE username = ? AND password = ?;";
 
 
 	$selectparamType = "ss";
