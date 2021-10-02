@@ -27,9 +27,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _showReload = false;
 
   bool _usernameInDB;
-
-  var _dateOfBirth = '';
-  //bool _gatherLocattionFromButton = false;
+  String _dateOfBirth = '';
   DefaultCountry _defaultCountry;
 
   TextEditingController _firstNameController = TextEditingController();
@@ -39,6 +37,18 @@ class _RegisterState extends State<RegisterPage> {
   TextEditingController _nationalIdNumberController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _invalidFirstName = false;
+  bool _invalidLastName = false;
+  bool _invalidEmail = false;
+  bool _invalidNIC = false;
+  bool _invalidAddress = false;
+  bool _invalidUserName = false;
+  bool _invalidPassword = false;
+  bool _invalidConfirmPassword = false;
+
+  String _invalidPasswordMessage;
 
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;
@@ -153,6 +163,9 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   _checkUsername() async {
+    setState(() {
+      _usernameInDB = null;
+    });
     String text = _usernameController.text;
     try {
       final res = await http.post(
@@ -239,19 +252,30 @@ class _RegisterState extends State<RegisterPage> {
           ListTile(
             title: TextField(
               controller: _firstNameController,
-              decoration: new InputDecoration(labelText: 'First Name'),
+              decoration: new InputDecoration(
+                labelText: 'First Name',
+                errorText:
+                    _invalidFirstName ? 'First Name Can\'t Be Empty' : null,
+              ),
             ),
           ),
           ListTile(
             title: TextField(
               controller: _lastNameController,
-              decoration: new InputDecoration(labelText: 'Last Name'),
+              decoration: new InputDecoration(
+                labelText: 'Last Name',
+                errorText:
+                    _invalidLastName ? 'Last Name Can\'t Be Empty' : null,
+              ),
             ),
           ),
           ListTile(
             title: TextField(
               controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
+              decoration: new InputDecoration(
+                labelText: 'Email',
+                errorText: _invalidEmail ? 'Please enter a valid Email' : null,
+              ),
             ),
           ),
           ListTile(
@@ -327,13 +351,19 @@ class _RegisterState extends State<RegisterPage> {
           ListTile(
             title: TextField(
               controller: _nationalIdNumberController,
-              decoration: new InputDecoration(labelText: 'NIC'),
+              decoration: new InputDecoration(
+                labelText: 'NIC',
+                errorText: _invalidNIC ? 'NIC Can\'t Be Empty' : null,
+              ),
             ),
           ),
           ListTile(
             title: TextField(
               controller: _addressController,
-              decoration: new InputDecoration(labelText: 'Address'),
+              decoration: new InputDecoration(
+                labelText: 'Address',
+                errorText: _invalidAddress ? 'Address Can\'t Be Empty' : null,
+              ),
             ),
           ),
           ListTile(
@@ -435,6 +465,22 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
+  String validatePassword(String value) {
+    Pattern pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regex = new RegExp(pattern);
+    print(value);
+    if (value.isEmpty) {
+      return 'Please enter password';
+    } else {
+      if (!regex.hasMatch(value)) {
+        return 'Enter valid password';
+      } else {
+        return null;
+      }
+    }
+  }
+
   Widget _f4() {
     _usernameController.text =
         _firstNameController.text + ' ' + _lastNameController.text;
@@ -447,18 +493,36 @@ class _RegisterState extends State<RegisterPage> {
               ? ListTile(
                   title: TextField(
                     controller: _usernameController,
-                    decoration: new InputDecoration(labelText: 'Username'),
-                    onChanged: (String _) {
+                    decoration: new InputDecoration(
+                      labelText: 'Username',
+                      errorText:
+                          _invalidUserName ? 'User Name Can\'t Be Empty' : null,
+                    ),
+                    onChanged: (String s) {
                       _checkUsername();
+                      setState(() {
+                        s.isEmpty
+                            ? _invalidUserName = true
+                            : _invalidUserName = false;
+                      });
                     },
                   ),
                 )
               : ListTile(
                   title: TextField(
                     controller: _usernameController,
-                    decoration: new InputDecoration(labelText: 'Username'),
-                    onChanged: (String _) {
+                    decoration: new InputDecoration(
+                      labelText: 'Username',
+                      errorText:
+                          _invalidUserName ? 'User Name Can\'t Be Empty' : null,
+                    ),
+                    onChanged: (String s) {
                       _checkUsername();
+                      setState(() {
+                        s.isEmpty
+                            ? _invalidUserName = true
+                            : _invalidUserName = false;
+                      });
                     },
                   ),
                   trailing: _buildUsernameTile(),
@@ -467,19 +531,42 @@ class _RegisterState extends State<RegisterPage> {
             title: TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: new InputDecoration(labelText: 'Password'),
-              // onChanged: (String _) {
-              //   _password = _passwordController.text;
-              // },
+              decoration: new InputDecoration(
+                labelText: 'Password',
+                errorText: _invalidPassword ? _invalidPasswordMessage : null,
+              ),
+              onChanged: (String s) {
+                setState(() {
+                  _invalidPasswordMessage = validatePassword(s);
+                  if (s.isEmpty) {
+                    _invalidPassword = true;
+                  } else {
+                    _invalidUserName = false;
+                  }
+                });
+              },
             ),
           ),
           ListTile(
             title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(labelText: 'Email'),
-              // onChanged: (String _) {
-              //   _email = _emailController.text;
-              // },
+              controller: _confirmPasswordController,
+              decoration: new InputDecoration(
+                labelText: 'Confirm Password',
+                errorText:
+                    _invalidConfirmPassword ? 'Password does not match' : null,
+              ),
+              onChanged: (String _) {
+                if (_confirmPasswordController.text !=
+                    _passwordController.text) {
+                  setState(() {
+                    _invalidConfirmPassword = true;
+                  });
+                } else {
+                  setState(() {
+                    _invalidConfirmPassword = false;
+                  });
+                }
+              },
             ),
           ),
           // ListTile(
@@ -490,15 +577,48 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
+  bool isEmail(String string) {
+    // Null or empty string is invalid
+    if (string == null || string.isEmpty) {
+      return false;
+    }
+
+    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    final regExp = RegExp(pattern);
+
+    if (!regExp.hasMatch(string)) {
+      return false;
+    }
+    return true;
+  }
+
   Widget _form() {
     if (_currentPosition == 0.0) {
       return _f1(); //firstname, lastname, email
     } else if (_currentPosition == 1.0) {
+      setState(() {
+        _firstNameController.text.isEmpty
+            ? _invalidFirstName = true
+            : _invalidFirstName = false;
+        _lastNameController.text.isEmpty
+            ? _invalidLastName = true
+            : _invalidLastName = false;
+        (isEmail(_emailController.text))
+            ? _invalidEmail = false
+            : _invalidEmail = true;
+      });
+      if (_invalidFirstName || _invalidLastName || _invalidEmail) {
+        print('before ' + (_currentPosition.toString()));
+        _currentPosition = _currentPosition.ceilToDouble();
+        _updatePosition(max(--_currentPosition, 0));
+        print('after ' + (_currentPosition.toString()));
+        return _f1();
+      }
       return _f2(); //dob
     } else if (_currentPosition == 2.0) {
       return _f3(); //country, nic, address
     } else if (_currentPosition == 3.0) {
-      return _f4(); //username, password
+      return _f4(); //username, password, confirm password
     } else {
       return null;
     }
