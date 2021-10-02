@@ -22,7 +22,7 @@ class _MobilePageState extends State<MobilePage> {
   bool _isLoading = true;
   bool _showReload = false;
 
-  int selectedRadioTile;
+  int _selectedRadioTile;
   int _myMobileId;
   //List<Mobile> users;
   bool _findSelected = false;
@@ -30,7 +30,7 @@ class _MobilePageState extends State<MobilePage> {
 
   Future<void> _setSelectedRadioTile(int val) async {
     setState(() {
-      selectedRadioTile = val;
+      _selectedRadioTile = val;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('mobileId', val.toString());
@@ -106,7 +106,7 @@ class _MobilePageState extends State<MobilePage> {
             groupValue: mobile.mobileId,
             value: mobile.mobileId,
             onChanged: (val) async {
-              print("val = $val, selected tile = $selectedRadioTile");
+              print("val = $val, selected tile = $_selectedRadioTile");
               await _setSelectedRadioTile(val);
             },
             title: Text(
@@ -130,10 +130,10 @@ class _MobilePageState extends State<MobilePage> {
       } else {
         widgets.add(
           RadioListTile(
-            groupValue: selectedRadioTile,
+            groupValue: _selectedRadioTile,
             value: mobile.mobileId,
             onChanged: (val) {
-              print("val = $val, selected tile = $selectedRadioTile");
+              print("val = $val, selected tile = $_selectedRadioTile");
               _setSelectedRadioTile(val);
               // setSelectedUser(val);
             },
@@ -216,10 +216,10 @@ class _MobilePageState extends State<MobilePage> {
           //_isLoading = false;
           if (_myMobileId != null) {
             _findSelected = false;
-            selectedRadioTile = _myMobileId;
+            _selectedRadioTile = _myMobileId;
           } else {
             _findSelected = true;
-            selectedRadioTile = 0;
+            _selectedRadioTile = 0;
           }
         }));
     ApiMobile.getMobiles().then((mobileList) => setState(() {
@@ -227,11 +227,20 @@ class _MobilePageState extends State<MobilePage> {
           _isLoading = false;
           print('is loading false');
 
-          final mobileMap = mobileList.asMap();
-          Mobile instance = mobileMap[0];
-          if (instance.mobileId == 0) {
+          try {
+            final mobileMap = mobileList.asMap();
+            Mobile instance = mobileMap[0];
+
+            if (instance.mobileId == 0) {
+              _showReload = true;
+              print('show reload is true');
+            } else if (mobileList.length == 1) {
+              print('hello');
+              _setSelectedRadioTile(instance.mobileId);
+            }
+          } catch (e) {
+            print(e.toString());
             _showReload = true;
-            print('show reload is true');
           }
         }));
     super.initState();

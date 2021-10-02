@@ -60,16 +60,16 @@ class _SplashPageState extends State<SplashPage> {
     // });
   }
 
-  Future<void> deleteme() async {
+  Future<void> deleteMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', 'JamesSmith');
-    await prefs.setString('password', '1234');
-    await prefs.setString("mobileId", '1');
+    await prefs.setString('username', 'Arouven Poolian');
+    await prefs.setString('password', 'Aa@12345');
+    //  await prefs.setString("mobileId", '1');
   }
 
   Future<Widget> loadFromFuture() async {
     await Future.delayed(const Duration(seconds: 2), () {});
-    await deleteme();
+    await deleteMe();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('latestUpdate') != null) {
       try {
@@ -105,9 +105,11 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
-      var fn = '${prefs.getString("username")}_geolocatorbest.csv';
-      await prefs.setString("fileName", fn);
-      return Future.value(RegisterPage());
+      await prefs.setString(
+        "fileName",
+        '${prefs.getString("username")}_geolocatorbest.csv',
+      );
+      //return Future.value(RegisterPage());
       return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&

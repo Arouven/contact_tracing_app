@@ -48,7 +48,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _invalidPassword = false;
   bool _invalidConfirmPassword = false;
 
-  String _invalidPasswordMessage;
+  String _invalidPasswordMessage = 'Please enter password';
 
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;
@@ -84,64 +84,83 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   void _submit() async {
-    setState(() {
-      _isLoading = true;
-    });
-    var _firstName = _firstNameController.text;
-    var _lastName = _lastNameController.text;
-    var _email = _emailController.text;
-    var _nationalIdNumber = _nationalIdNumberController.text;
-    var _address = _addressController.text;
-    var _username = _usernameController.text;
-    var _password = _passwordController.text;
-    var _country = _defaultCountry.toString().split('.').last;
-
-    try {
-      final res = await http.post(
-        Uri.parse(registerUrl),
-        body: {
-          'firstName': _firstName,
-          'lastName': _lastName,
-          'country': _country,
-          'address': _address,
-          'email': _email,
-          'dateOfBirth': _dateOfBirth,
-          'nationalIdNumber': _nationalIdNumber,
-          'username': _username,
-          'password': _password
-        },
-      );
-      //print(res.body);
-      final data = jsonDecode(res.body);
-
-      if (data['msg'] == 'username already existed') {
-        var msg = 'Username already taken please change the username or login.';
-        DialogBox.showErrorDialog(
-          context: context,
-          title: 'Already Exist',
-          body: msg,
-        );
-        print(msg);
-      } else if (data['msg'] == 'user inserted') {
-        //user inserted
-        //redirect to home
-        print('user inserted');
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-        await prefs.setString('username', _username);
-        await prefs.setString('password', _password);
-
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MobilePage()));
-      }
-    } on Exception {
+    if (_confirmPasswordController.text.isEmpty) {
       setState(() {
-        _showReload = true;
+        _invalidConfirmPassword = true;
+      });
+    } else if (_passwordController.text.isEmpty) {
+      setState(() {
+        _invalidPassword = true;
+      });
+    } else if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        _invalidConfirmPassword = true;
+      });
+    } else if (_usernameController.text.isEmpty || _usernameInDB) {
+      setState(() {
+        _invalidUserName = true;
+      });
+    } else {
+      setState(() {
+        _isLoading = true;
+      });
+      var _firstName = _firstNameController.text.trim();
+      var _lastName = _lastNameController.text.trim();
+      var _email = _emailController.text.trim();
+      var _nationalIdNumber = _nationalIdNumberController.text.trim();
+      var _address = _addressController.text.trim();
+      var _username = _usernameController.text.trim();
+      var _password = _confirmPasswordController.text.trim();
+      var _country = _defaultCountry.toString().split('.').last;
+
+      try {
+        final res = await http.post(
+          Uri.parse(registerUrl),
+          body: {
+            'firstName': _firstName,
+            'lastName': _lastName,
+            'country': _country,
+            'address': _address,
+            'email': _email,
+            'dateOfBirth': _dateOfBirth,
+            'nationalIdNumber': _nationalIdNumber,
+            'username': _username,
+            'password': _password
+          },
+        );
+        //print(res.body);
+        final data = jsonDecode(res.body);
+
+        if (data['msg'] == 'username already existed') {
+          var msg =
+              'Username already taken please change the username or login.';
+          DialogBox.showErrorDialog(
+            context: context,
+            title: 'Already Exist',
+            body: msg,
+          );
+          print(msg);
+        } else if (data['msg'] == 'user inserted') {
+          //user inserted
+          //redirect to home
+          print('user inserted');
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+          await prefs.setString('username', _username);
+          await prefs.setString('password', _password);
+
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => MobilePage()));
+        }
+      } on Exception {
+        setState(() {
+          _showReload = true;
+        });
+      }
+      setState(() {
+        _isLoading = false;
       });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   _buildUsernameTile() {
@@ -157,15 +176,15 @@ class _RegisterState extends State<RegisterPage> {
       );
     } else {
       return CircularProgressIndicator(
-        strokeWidth: 2.0,
-      );
+          // strokeWidth: 2.0,
+          );
     }
   }
 
   _checkUsername() async {
-    setState(() {
-      _usernameInDB = null;
-    });
+    // setState(() {
+    //   _usernameInDB = null;
+    // });
     String text = _usernameController.text;
     try {
       final res = await http.post(
@@ -175,12 +194,12 @@ class _RegisterState extends State<RegisterPage> {
       final data = jsonDecode(res.body);
 
       if (data['msg'] == 'username already in db') {
-        print('username already in db');
+        print(data['msg']);
         setState(() {
           _usernameInDB = true;
         });
       } else if (data['msg'] == 'username not in db') {
-        print('username already in db');
+        print(data['msg']);
         setState(() {
           _usernameInDB = false;
         });
@@ -339,11 +358,14 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   Widget _f3() {
+    setState(() {
+      _isLoading = true;
+    });
     print(_defaultCountry.toString());
     String stateValue = "";
     String cityValue = "";
     String address = "";
-    return Container(
+    Widget out = Container(
       child: ListView(
         shrinkWrap: true,
         physics: AlwaysScrollableScrollPhysics(),
@@ -463,27 +485,15 @@ class _RegisterState extends State<RegisterPage> {
         ],
       ),
     );
-  }
 
-  String validatePassword(String value) {
-    Pattern pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-    RegExp regex = new RegExp(pattern);
-    print(value);
-    if (value.isEmpty) {
-      return 'Please enter password';
-    } else {
-      if (!regex.hasMatch(value)) {
-        return 'Enter valid password';
-      } else {
-        return null;
-      }
-    }
+    // await Future.delayed(const Duration(seconds: 2), () {});
+    setState(() {
+      _isLoading = false;
+    });
+    return out;
   }
 
   Widget _f4() {
-    _usernameController.text =
-        _firstNameController.text + ' ' + _lastNameController.text;
     return Container(
       child: ListView(
         shrinkWrap: true,
@@ -499,8 +509,10 @@ class _RegisterState extends State<RegisterPage> {
                           _invalidUserName ? 'User Name Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
-                      _checkUsername();
+                      print(s);
                       setState(() {
+                        _usernameInDB = null;
+                        _checkUsername();
                         s.isEmpty
                             ? _invalidUserName = true
                             : _invalidUserName = false;
@@ -513,16 +525,21 @@ class _RegisterState extends State<RegisterPage> {
                     controller: _usernameController,
                     decoration: new InputDecoration(
                       labelText: 'Username',
-                      errorText:
-                          _invalidUserName ? 'User Name Can\'t Be Empty' : null,
+                      // errorText:
+                      //     _invalidUserName ? 'User Name Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
-                      _checkUsername();
                       setState(() {
-                        s.isEmpty
-                            ? _invalidUserName = true
-                            : _invalidUserName = false;
+                        _usernameInDB = null;
+                        _checkUsername();
                       });
+                      // _checkUsername();
+                      print(s);
+                      // setState(() {
+                      //   s.isEmpty
+                      //       ? _invalidUserName = true
+                      //       : _invalidUserName = false;
+                      // });
                     },
                   ),
                   trailing: _buildUsernameTile(),
@@ -537,12 +554,12 @@ class _RegisterState extends State<RegisterPage> {
               ),
               onChanged: (String s) {
                 setState(() {
-                  _invalidPasswordMessage = validatePassword(s);
                   if (s.isEmpty) {
                     _invalidPassword = true;
                   } else {
-                    _invalidUserName = false;
+                    _invalidPassword = false;
                   }
+                  _invalidPasswordMessage = _validatePassword(s);
                 });
               },
             ),
@@ -550,6 +567,7 @@ class _RegisterState extends State<RegisterPage> {
           ListTile(
             title: TextField(
               controller: _confirmPasswordController,
+              obscureText: true,
               decoration: new InputDecoration(
                 labelText: 'Confirm Password',
                 errorText:
@@ -569,15 +587,75 @@ class _RegisterState extends State<RegisterPage> {
               },
             ),
           ),
-          // ListTile(
-          //   title: _loginButton(),
-          // ),
         ],
       ),
     );
   }
 
-  bool isEmail(String string) {
+  String _validatePassword(String value) {
+//     r'^
+//   (?=.*[A-Z])       // should contain at least one upper case
+//   (?=.*[a-z])       // should contain at least one lower case
+//   (?=.*?[0-9])      // should contain at least one digit
+//   (?=.*?[!@#\$&*~]) // should contain at least one Special character
+//   .{8,}             // Must be at least 8 characters in length
+// $
+
+    // Pattern pattern =
+    //     r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regexupper = new RegExp(r'^(?=.*?[A-Z])');
+    RegExp regexlower = new RegExp(r'^(?=.*?[a-z])');
+    RegExp regexdigit = new RegExp(r'^(?=.*?[0-9])');
+    RegExp regexspecial = new RegExp(r'^(?=.*?[!@#\$&*~£%^()+-/|<>,.])');
+    RegExp regexlength = new RegExp(r'^.{8,}$');
+    print(value);
+    if (value.isEmpty) {
+      setState(() {
+        _invalidPassword = true;
+      });
+      return 'Please enter password';
+    } else {
+      if (!regexupper.hasMatch(value)) {
+        setState(() {
+          _invalidPassword = true;
+        });
+        print('No Upper case found');
+        return 'No Upper case found';
+      } else if (!regexlower.hasMatch(value)) {
+        setState(() {
+          _invalidPassword = true;
+        });
+        print('No Lower case found');
+        return 'No Lower case found';
+      } else if (!regexdigit.hasMatch(value)) {
+        setState(() {
+          _invalidPassword = true;
+        });
+        print('No digit found');
+        return 'No digit found';
+      } else if (!regexspecial.hasMatch(value)) {
+        setState(() {
+          _invalidPassword = true;
+        });
+        print('No special charactor found');
+        return 'No special charactor found';
+      } else if (!regexlength.hasMatch(value)) {
+        setState(() {
+          _invalidPassword = true;
+        });
+        print('8 char');
+        return 'Password must be at least 8 charactors';
+      } else {
+        setState(() {
+          _invalidPassword = false;
+        });
+        print('good password');
+        return null;
+      }
+    }
+  }
+
+  bool _isEmail(String string) {
     // Null or empty string is invalid
     if (string == null || string.isEmpty) {
       return false;
@@ -592,8 +670,17 @@ class _RegisterState extends State<RegisterPage> {
     return true;
   }
 
+  void _showdialogInvalidCountry() {
+    DialogBox.showErrorDialog(
+      context: context,
+      title: 'Select a country',
+      body: 'Please select a country',
+    );
+  }
+
   Widget _form() {
     if (_currentPosition == 0.0) {
+      //return _f4();
       return _f1(); //firstname, lastname, email
     } else if (_currentPosition == 1.0) {
       setState(() {
@@ -603,7 +690,7 @@ class _RegisterState extends State<RegisterPage> {
         _lastNameController.text.isEmpty
             ? _invalidLastName = true
             : _invalidLastName = false;
-        (isEmail(_emailController.text))
+        (_isEmail(_emailController.text.trim()))
             ? _invalidEmail = false
             : _invalidEmail = true;
       });
@@ -614,10 +701,34 @@ class _RegisterState extends State<RegisterPage> {
         print('after ' + (_currentPosition.toString()));
         return _f1();
       }
+      _usernameController.text = _firstNameController.text.trim() +
+          ' ' +
+          _lastNameController.text.trim();
+      _checkUsername();
       return _f2(); //dob
     } else if (_currentPosition == 2.0) {
       return _f3(); //country, nic, address
     } else if (_currentPosition == 3.0) {
+      setState(() {
+        if (_defaultCountry.toString().isEmpty) {
+          _showdialogInvalidCountry();
+        }
+        _nationalIdNumberController.text.isEmpty
+            ? _invalidNIC = true
+            : _invalidNIC = false;
+        _addressController.text.isEmpty
+            ? _invalidAddress = true
+            : _invalidAddress = false;
+      });
+      if (_defaultCountry.toString().isEmpty ||
+          _invalidNIC ||
+          _invalidAddress) {
+        print('before ' + (_currentPosition.toString()));
+        _currentPosition = _currentPosition.ceilToDouble();
+        _updatePosition(max(--_currentPosition, 0));
+        print('after ' + (_currentPosition.toString()));
+        return _f3();
+      }
       return _f4(); //username, password, confirm password
     } else {
       return null;
