@@ -1,10 +1,17 @@
+import 'dart:async';
+
 import 'package:contact_tracing/classes/apiMobile.dart';
+import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/classes/mobile.dart';
+import 'package:contact_tracing/classes/uploadClass.dart';
+import 'package:contact_tracing/classes/write.dart';
 
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:vector_math/vector_math.dart';
 import '../../widgets/drawer.dart';
@@ -19,6 +26,9 @@ class MobilePage extends StatefulWidget {
 }
 
 class _MobilePageState extends State<MobilePage> {
+  SharedPreferences prefs;
+  Writefile _wf = new Writefile();
+
   bool _isLoading = true;
   bool _showReload = false;
 
@@ -32,7 +42,7 @@ class _MobilePageState extends State<MobilePage> {
     setState(() {
       _selectedRadioTile = val;
     });
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     await prefs.setString('mobileId', val.toString());
   }
 
@@ -210,6 +220,60 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
+  void onStart() {
+    WidgetsFlutterBinding.ensureInitialized();
+    int counter = 0;
+    final service = FlutterBackgroundService();
+    service.onDataReceived.listen((event) {
+      if (event["action"] == "setAsBackground") {
+        service.setForegroundMode(false);
+      }
+
+      if (event["action"] == "stopService") {
+        service.stopBackgroundService();
+      }
+    });
+
+    // bring to foreground
+    service.setForegroundMode(true);
+    Timer.periodic(
+      Duration(minutes: timeToGetLocationPerMinute),
+      (timer) async {
+        if (!(await service.isServiceRunning())) timer.cancel();
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: geolocatorAccuracy,
+        );
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        if (prefs.getString("username") != null) {
+          _wf.writeToFile(
+              '${position.latitude.toString()}',
+              '${position.longitude.toString()}',
+              '${position.accuracy.toString()}');
+          if (counter > timeToUploadPerMinute) {
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.uploadToServer();
+            counter = 0;
+          }
+        }
+        service.setNotificationInfo(
+          title: "Contact tracing",
+          content:
+              "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+        );
+
+        service.sendData(
+          {"current_date": DateTime.now().toIso8601String()},
+        );
+        counter = counter + 1;
+      },
+    );
+  }
+
+// Future<void> backgroundHandler(RemoteMessage message) async {
+//   print(message.data.toString());
+//   print(message.notification.title);
+// }
+
   @override
   void initState() {
     _getMyMobileId().whenComplete(() => setState(() {
@@ -236,6 +300,13 @@ class _MobilePageState extends State<MobilePage> {
               print('show reload is true');
             } else if (mobileList.length == 1) {
               print('hello');
+
+              if (prefs.getString('mobileId') == null ||
+                  prefs.getString('mobileId') == '') {
+                //  start bg services
+                FlutterBackgroundService.initialize(onStart);
+              }
+
               _setSelectedRadioTile(instance.mobileId);
             }
           } catch (e) {

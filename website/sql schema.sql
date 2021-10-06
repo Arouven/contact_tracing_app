@@ -38,11 +38,11 @@ CREATE TABLE `Coordinates` (
 );
 
 CREATE TABLE `AdminParamters` (
-  `searchId` BIGINT NOT NULL AUTO_INCREMENT,
+  `adminParamtersId` BIGINT NOT NULL AUTO_INCREMENT,
   `contactDistance` BIGINT NOT NULL,
   `daysOfTestValidity` BIGINT NOT NULL,
   `daysFromContact` BIGINT NOT NULL,
-  PRIMARY KEY (`searchId`)
+  PRIMARY KEY (`adminParamtersId`)
 );
 
 CREATE TABLE `TestingCentres` (

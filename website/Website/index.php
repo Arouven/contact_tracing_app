@@ -455,7 +455,7 @@
                         <div class="row m-t-25">
                             <div class="col-sm-6 col-lg-3">
                                 <div class="overview-item overview-item--c1">
-                                    <div class="overview__inner">
+                                    <div class="overview__inner" style="height: 200px;">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
                                                 <i class="fas fa-mobile"></i>
@@ -484,7 +484,7 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <div class="overview-item overview-item--c2">
-                                    <div class="overview__inner">
+                                    <div class="overview__inner" style="height: 200px;">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
                                                 <i class="fas fa-users"></i>
@@ -511,7 +511,7 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <div class="overview-item overview-item--c3">
-                                    <div class="overview__inner">
+                                    <div class="overview__inner" style="height: 200px;">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
                                                 <i class="fas fa-viruses"></i>
@@ -540,7 +540,7 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <div class="overview-item overview-item--c4">
-                                    <div class="overview__inner">
+                                    <div class="overview__inner" style="height: 200px;">
                                         <div class="overview-box clearfix">
                                             <div class="icon">
                                                 <i class="fas fa-shield-virus"></i>
