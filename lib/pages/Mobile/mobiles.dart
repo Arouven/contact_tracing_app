@@ -111,6 +111,7 @@ class _MobilePageState extends State<MobilePage> {
 
     for (Mobile mobile in mobiles) {
       if (_findSelected) {
+        _setSelectedRadioTile(mobile.mobileId);
         widgets.add(
           RadioListTile(
             groupValue: mobile.mobileId,
@@ -293,21 +294,27 @@ class _MobilePageState extends State<MobilePage> {
 
           try {
             final mobileMap = mobileList.asMap();
-            Mobile instance = mobileMap[0];
+            Mobile firstMobileInList = mobileMap[0];
 
-            if (instance.mobileId == 0) {
+            if (firstMobileInList.mobileId == 0) {
               _showReload = true;
               print('show reload is true');
             } else if (mobileList.length == 1) {
-              print('hello');
-
-              if (prefs.getString('mobileId') == null ||
-                  prefs.getString('mobileId') == '') {
-                //  start bg services
-                FlutterBackgroundService.initialize(onStart);
-              }
-
-              _setSelectedRadioTile(instance.mobileId);
+              //add the first mobile
+              print('add the first mobile');
+              // if (prefs.getString('mobileId') == null ||
+              //     prefs.getString('mobileId') == '') {
+              //  start bg services
+              FlutterBackgroundService.initialize(onStart);
+              // }
+              _setSelectedRadioTile(firstMobileInList.mobileId);
+            } else if (prefs.getBool('justLogin') == true) {
+              //login and have mobile(s)
+              print('login and have mobile(s)');
+              //  start bg services
+              FlutterBackgroundService.initialize(onStart);
+              prefs.setBool('justLogin', null);
+              _setSelectedRadioTile(firstMobileInList.mobileId);
             }
           } catch (e) {
             print(e.toString());

@@ -1,10 +1,14 @@
 <?php
 require '../database.php';
+require '../encryptDecrypt.php';
+
 $db = new database();
 $conn = $db->getConnection();
 
 
-if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_POST['daysOfTestValidity']) && !empty($_POST['daysFromContact'])) {
+if (!empty($_GET['reset'])) {
+    $ed = new encryptDecrypt($_GET['reset']);
+    $decryptedUsername = $ed->decrypt();
     //if ($_SERVER['REQUEST_METHOD'] == "POST") {
     print 'in if';
     $contactDistance = "";

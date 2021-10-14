@@ -99,6 +99,7 @@ class DialogBox {
       String title = 'Discard',
       String body = 'Are you sure you want to discard changes made?',
       String buttonText = 'Discard',
+      Color titleColor = Colors.red,
       route}) async {
     return showDialog<void>(
       context: context,
@@ -108,7 +109,7 @@ class DialogBox {
           title: Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: titleColor,
             ),
           ),
           content: SingleChildScrollView(
@@ -149,6 +150,7 @@ class DialogBox {
     BuildContext context,
     String title = 'Error',
     String body = 'An Error occur, please reload',
+    Color titleColor = Colors.red,
   }) async {
     return showDialog<void>(
       context: context,
@@ -158,7 +160,7 @@ class DialogBox {
           title: Text(
             title,
             style: TextStyle(
-              color: Colors.red,
+              color: titleColor,
             ),
           ),
           content: SingleChildScrollView(

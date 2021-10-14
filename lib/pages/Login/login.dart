@@ -58,6 +58,7 @@ class _LoginState extends State<LoginPage> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', username);
         await prefs.setString('password', password);
+        await prefs.setBool('justLogin', true);
         setState(() {
           _isLoading = false;
         });
