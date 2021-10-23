@@ -10,24 +10,22 @@ if (!empty($_GET['reset'])) {
     $ed = new encryptDecrypt($_GET['reset']);
     $decryptedUsername = $ed->decrypt();
     //if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    print 'in if';
-    $contactDistance = "";
-    if (isset($_POST['contactDistance'])) {
-        $contactDistance = mysqli_real_escape_string($conn, $_POST['contactDistance']);
+    if (isset($_REQUEST['update'])) {
+        print 'in if';
+        $password = "";
+        if (isset($_POST['password'])) {
+            $password = mysqli_real_escape_string($conn, $_POST['password']);
+        }
+        $confirmPassword = "";
+        if (isset($_POST['confirmPassword'])) {
+            $confirmPassword = mysqli_real_escape_string($conn, $_POST['confirmPassword']);
+        }
+        $executequery = "UPDATE User SET password = ? WHERE username = ?;";
+        $executeparamType = "ss";
+        $executeparamArray = array($confirmPassword, $decryptedUsername);
+        $db->execute($executequery, $executeparamType, $executeparamArray);
+        print 'executed';
     }
-    $daysOfTestValidity = "";
-    if (isset($_POST['daysOfTestValidity'])) {
-        $daysOfTestValidity = mysqli_real_escape_string($conn, $_POST['daysOfTestValidity']);
-    }
-    $daysFromContact = "";
-    if (isset($_POST['daysFromContact'])) {
-        $daysFromContact = mysqli_real_escape_string($conn, $_POST['daysFromContact']);
-    }
-    $executequery = "UPDATE AdminParamters SET contactDistance = ?, daysOfTestValidity = ?, daysFromContact = ?;";
-    $executeparamType = "iii";
-    $executeparamArray = array($contactDistance, $daysOfTestValidity, $daysFromContact);
-    $db->execute($executequery, $executeparamType, $executeparamArray);
-    print 'executed';
     //}
 } else {
     echo 'else';
@@ -478,28 +476,7 @@ if (!empty($_GET['reset'])) {
 
             <!-- MAIN CONTENT-->
             <div class="main-content">
-                <?php
 
-                $data = $db->select("SELECT contactDistance, daysOfTestValidity, daysFromContact FROM AdminParamters;");
-                if (isset($data) && $data != null) { //if there is something in the result
-
-                    //$(window).on("load", function() {
-                    //  $json =  json_encode($data[0]);
-                    $contactDistance = $data[0]['contactDistance'];
-                    $daysOfTestValidity = $data[0]['daysOfTestValidity'];
-                    $daysFromContact = $data[0]['daysFromContact'];
-
-                    print ' 
-                    <script src="vendor/jquery-3.2.1.min.js"></script>
-                    <script>
-                        $(document).ready(function() {
-                            $("#contactDistance").val(' . $contactDistance . ');
-                            $("#daysOfTestValidity").val(' . $daysOfTestValidity . ');
-                            $("#daysFromContact").val(' . $daysFromContact . ');
-                        });
-                    </script>';
-                }
-                ?>
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="row">
@@ -522,23 +499,23 @@ if (!empty($_GET['reset'])) {
                                             </div> -->
                                             <div class="row form-group">
                                                 <div class="col col-md-3">
-                                                    <label for="contactDistance" class=" form-control-label">Contact Distance (meters)</label>
+                                                    <label for="password" class=" form-control-label">Password</label>
                                                 </div>
                                                 <div class="col-12 col-md-9">
-                                                    <input type="text" id="contactDistance" name="contactDistance" placeholder="2" class="form-control">
-                                                    <small class="form-text text-muted">Distance that someone will be treated as contact with an infected.</small>
+                                                    <input type="password" id="password" name="password" class="form-control">
+                                                    <small class="form-text text-muted">Insert a new password.</small>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col col-md-3">
-                                                    <label for="daysOfTestValidity" class=" form-control-label">Test Validity (days)</label>
+                                                    <label for="confirmPassword" class=" form-control-label">Confirm Password</label>
                                                 </div>
                                                 <div class="col-12 col-md-9">
-                                                    <input type="text" id="daysOfTestValidity" name="daysOfTestValidity" placeholder="7" class="form-control">
-                                                    <small class="form-text text-muted">Past these days, the test will be invalid.</small>
+                                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                                                    <small class="form-text text-muted">Confirm your password.</small>
                                                 </div>
                                             </div>
-                                            <div class="row form-group">
+                                            <!-- <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="daysFromContact" class=" form-control-label">Incubation Time (days)</label>
                                                 </div>
@@ -546,7 +523,7 @@ if (!empty($_GET['reset'])) {
                                                     <input type="text" id="daysFromContact" name="daysFromContact" placeholder="14" class="form-control">
                                                     <small class="form-text text-muted">Number of days that the virus can survive.</small>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <!-- <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="email-input" class=" form-control-label">Email Input</label>

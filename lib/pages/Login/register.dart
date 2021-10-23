@@ -28,7 +28,7 @@ class _RegisterState extends State<RegisterPage> {
 
   bool _usernameInDB;
   String _dateOfBirth = '';
-  DefaultCountry _defaultCountry;
+  // DefaultCountry _defaultCountry;
 
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
@@ -111,7 +111,7 @@ class _RegisterState extends State<RegisterPage> {
       var _address = _addressController.text.trim();
       var _username = _usernameController.text.trim();
       var _password = _confirmPasswordController.text.trim();
-      var _country = _defaultCountry.toString().split('.').last;
+      //  var _country = _defaultCountry.toString().split('.').last;
 
       try {
         final res = await http.post(
@@ -119,7 +119,6 @@ class _RegisterState extends State<RegisterPage> {
           body: {
             'firstName': _firstName,
             'lastName': _lastName,
-            'country': _country,
             'address': _address,
             'email': _email,
             'dateOfBirth': _dateOfBirth,
@@ -175,9 +174,7 @@ class _RegisterState extends State<RegisterPage> {
         color: Colors.green,
       );
     } else {
-      return CircularProgressIndicator(
-          // strokeWidth: 2.0,
-          );
+      return CircularProgressIndicator();
     }
   }
 
@@ -225,26 +222,29 @@ class _RegisterState extends State<RegisterPage> {
       final addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
       final instance = addresses.first;
-      var countryName = instance.countryName;
-      String withUnderscore = countryName.replaceAll(' ', '_');
-      DefaultCountry country;
-      for (DefaultCountry c in DefaultCountry.values) {
-        String countryValue = c.toString().split('.').last;
-        if (countryValue == withUnderscore) {
-          country = c;
-          break;
-        }
-      }
+      // var countryName = instance.countryName;
+      // String withUnderscore = countryName.replaceAll(' ', '_');
+      // DefaultCountry country;
+      // for (DefaultCountry c in DefaultCountry.values) {
+      //   String countryValue = c.toString().split('.').last;
+      //   if (countryValue == withUnderscore) {
+      //     country = c;
+      //     break;
+      //   }
+      // }
       setState(() {
-        _defaultCountry = country;
-        _addressController.text =
-            (instance.locality + ', ' + instance.adminArea);
+        // _defaultCountry = country;
+        _addressController.text = (instance.locality +
+            ', ' +
+            instance.adminArea +
+            ', ' +
+            instance.countryName);
       });
     } on Exception {
       print('problem in try');
-      setState(() {
-        _defaultCountry = null;
-      });
+      // setState(() {
+      //   _defaultCountry = null;
+      // });
     }
   }
 
@@ -361,10 +361,10 @@ class _RegisterState extends State<RegisterPage> {
     setState(() {
       _isLoading = true;
     });
-    print(_defaultCountry.toString());
-    String stateValue = "";
-    String cityValue = "";
-    String address = "";
+    // print(_defaultCountry.toString());
+    // String stateValue = "";
+    // String cityValue = "";
+    // String address = "";
     Widget out = Container(
       child: ListView(
         shrinkWrap: true,
@@ -388,97 +388,97 @@ class _RegisterState extends State<RegisterPage> {
               ),
             ),
           ),
-          ListTile(
-            title: CSCPicker(
-              ///Enable disable state dropdown [OPTIONAL PARAMETER]
-              showStates: false,
+          // ListTile(
+          //   title: CSCPicker(
+          //     ///Enable disable state dropdown [OPTIONAL PARAMETER]
+          //     showStates: false,
 
-              /// Enable disable city drop down [OPTIONAL PARAMETER]
-              showCities: false,
+          //     /// Enable disable city drop down [OPTIONAL PARAMETER]
+          //     showCities: false,
 
-              ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-              flagState: CountryFlag.ENABLE,
+          //     ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+          //     flagState: CountryFlag.ENABLE,
 
-              ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-              dropdownDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300, width: 1)),
+          //     ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+          //     dropdownDecoration: BoxDecoration(
+          //         borderRadius: BorderRadius.all(Radius.circular(10)),
+          //         color: Colors.white,
+          //         border: Border.all(color: Colors.grey.shade300, width: 1)),
 
-              ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-              disabledDropdownDecoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.grey.shade300,
-                  border: Border.all(color: Colors.grey.shade300, width: 1)),
+          //     ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+          //     disabledDropdownDecoration: BoxDecoration(
+          //         borderRadius: BorderRadius.all(Radius.circular(10)),
+          //         color: Colors.grey.shade300,
+          //         border: Border.all(color: Colors.grey.shade300, width: 1)),
 
-              ///placeholders for dropdown search field
-              countrySearchPlaceholder: "Country",
-              stateSearchPlaceholder: "State",
-              citySearchPlaceholder: "City",
+          //     ///placeholders for dropdown search field
+          //     countrySearchPlaceholder: "Country",
+          //     stateSearchPlaceholder: "State",
+          //     citySearchPlaceholder: "City",
 
-              ///labels for dropdown
-              countryDropdownLabel: "*Country",
-              stateDropdownLabel: "*State",
-              cityDropdownLabel: "*City",
+          //     ///labels for dropdown
+          //     countryDropdownLabel: "*Country",
+          //     stateDropdownLabel: "*State",
+          //     cityDropdownLabel: "*City",
 
-              defaultCountry: _defaultCountry,
+          //     defaultCountry: _defaultCountry,
 
-              ///selected item style [OPTIONAL PARAMETER]
-              selectedItemStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
+          //     ///selected item style [OPTIONAL PARAMETER]
+          //     selectedItemStyle: TextStyle(
+          //       color: Colors.black,
+          //       fontSize: 14,
+          //     ),
 
-              ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-              dropdownHeadingStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold),
+          //     ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+          //     dropdownHeadingStyle: TextStyle(
+          //         color: Colors.black,
+          //         fontSize: 17,
+          //         fontWeight: FontWeight.bold),
 
-              ///DropdownDialog Item style [OPTIONAL PARAMETER]
-              dropdownItemStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
+          //     ///DropdownDialog Item style [OPTIONAL PARAMETER]
+          //     dropdownItemStyle: TextStyle(
+          //       color: Colors.black,
+          //       fontSize: 14,
+          //     ),
 
-              ///Dialog box radius [OPTIONAL PARAMETER]
-              dropdownDialogRadius: 10.0,
+          //     ///Dialog box radius [OPTIONAL PARAMETER]
+          //     dropdownDialogRadius: 10.0,
 
-              ///Search bar radius [OPTIONAL PARAMETER]
-              searchBarRadius: 10.0,
+          //     ///Search bar radius [OPTIONAL PARAMETER]
+          //     searchBarRadius: 10.0,
 
-              ///triggers once country selected in dropdown
-              onCountryChanged: (countryWithIcon) {
-                var countryName = countryWithIcon.split('    ');
-                String withUnderscore = countryName[1].replaceAll(' ', '_');
-                for (DefaultCountry country in DefaultCountry.values) {
-                  String countryValue = country.toString().split('.').last;
-                  if (countryValue == withUnderscore) {
-                    setState(() {
-                      _defaultCountry = country;
-                    });
-                    break;
-                  }
-                }
-              },
+          //     ///triggers once country selected in dropdown
+          //     onCountryChanged: (countryWithIcon) {
+          //       var countryName = countryWithIcon.split('    ');
+          //       String withUnderscore = countryName[1].replaceAll(' ', '_');
+          //       for (DefaultCountry country in DefaultCountry.values) {
+          //         String countryValue = country.toString().split('.').last;
+          //         if (countryValue == withUnderscore) {
+          //           setState(() {
+          //             _defaultCountry = country;
+          //           });
+          //           break;
+          //         }
+          //       }
+          //     },
 
-              ///triggers once state selected in dropdown
-              onStateChanged: (value) {
-                setState(() {
-                  ///store value in state variable
-                  stateValue = value;
-                });
-              },
+          //     ///triggers once state selected in dropdown
+          //     onStateChanged: (value) {
+          //       setState(() {
+          //         ///store value in state variable
+          //         stateValue = value;
+          //       });
+          //     },
 
-              ///triggers once city selected in dropdown
-              onCityChanged: (value) {
-                setState(() {
-                  //store value in city variable
-                  cityValue = value;
-                });
-              },
-            ),
-          ),
+          //     ///triggers once city selected in dropdown
+          //     onCityChanged: (value) {
+          //       setState(() {
+          //         //store value in city variable
+          //         cityValue = value;
+          //       });
+          //     },
+          //   ),
+          // ),
           ListTile(
             title: _loginButton(),
           ),
@@ -670,13 +670,13 @@ class _RegisterState extends State<RegisterPage> {
     return true;
   }
 
-  void _showdialogInvalidCountry() {
-    DialogBox.showErrorDialog(
-      context: context,
-      title: 'Select a country',
-      body: 'Please select a country',
-    );
-  }
+  // void _showdialogInvalidCountry() {
+  //   DialogBox.showErrorDialog(
+  //     context: context,
+  //     title: 'Select a country',
+  //     body: 'Please select a country',
+  //   );
+  // }
 
   Widget _form() {
     if (_currentPosition == 0.0) {
@@ -710,9 +710,9 @@ class _RegisterState extends State<RegisterPage> {
       return _f3(); //country, nic, address
     } else if (_currentPosition == 3.0) {
       setState(() {
-        if (_defaultCountry.toString().isEmpty) {
-          _showdialogInvalidCountry();
-        }
+        // if (_defaultCountry.toString().isEmpty) {
+        //   _showdialogInvalidCountry();
+        // }
         _nationalIdNumberController.text.isEmpty
             ? _invalidNIC = true
             : _invalidNIC = false;
@@ -720,9 +720,7 @@ class _RegisterState extends State<RegisterPage> {
             ? _invalidAddress = true
             : _invalidAddress = false;
       });
-      if (_defaultCountry.toString().isEmpty ||
-          _invalidNIC ||
-          _invalidAddress) {
+      if (_invalidNIC || _invalidAddress) {
         print('before ' + (_currentPosition.toString()));
         _currentPosition = _currentPosition.ceilToDouble();
         _updatePosition(max(--_currentPosition, 0));

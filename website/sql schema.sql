@@ -3,7 +3,6 @@ CREATE TABLE `User` (
   `userId` BIGINT NOT NULL AUTO_INCREMENT,
   `firstName` VARCHAR(255) NOT NULL,
   `lastName` VARCHAR(255) NOT NULL,
-  `country` VARCHAR(255) NOT NULL,
   `address` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
@@ -114,7 +113,6 @@ INSERT INTO
   `User` (
     firstName,
     lastName,
-    country,
     address,
     email,
     dateOfBirth,
@@ -126,7 +124,6 @@ VALUES
   (
     'John',
     'Smith',
-    'Mauritius',
     'Bambous',
     'JohnSmith@gmail.com',
     '2000-01-13',
@@ -137,7 +134,6 @@ VALUES
   (
     'James',
     'Smith',
-    'Mauritius',
     'Port-Louis',
     'JamesSmith@gmail.com',
     '2000-01-13',

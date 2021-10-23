@@ -1,5 +1,4 @@
 <?php
-
 require '../database.php';
 
 class csvtosql
@@ -13,11 +12,8 @@ class csvtosql
         foreach ($files as $file) {
             //do your work here
             $inserted = array();
-
             $f = fopen($file, "r");
-
             while (($column = fgetcsv($f, 10000, ",")) !== FALSE) {
-
                 $mobileId = "";
                 if (isset($column[0])) {
                     $mobileId = mysqli_real_escape_string($conn, $column[0]);
@@ -55,6 +51,7 @@ class csvtosql
                     $type = "success";
                     $message = "CSV Data Imported into the Database";
                     array_push($inserted, true);
+                    echo " $type, $message:- $insertId. mobileid $mobileId, datetime $dateTime, lat $latitude, lon $longitude, acc $accuracy";
                 } else {
                     $type = "error";
                     $message = "Problem in Importing CSV Data";
@@ -62,10 +59,11 @@ class csvtosql
                 }
             }
             if (in_array(false, $inserted)) {
-                //echo '';
+                echo "$file NOT deleted";
             } //do not delete the file
             else {
                 unlink($file);
+                echo "$file deleted";
             }
         }
     }

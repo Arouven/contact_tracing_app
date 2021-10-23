@@ -30,6 +30,7 @@ class updateDatabase
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$key2]['longitude']);
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact);
                 if ($distanceMetres <= $distanceContact) { //mark contact with infected
+                    print "$mobileIdPossibleContact will be marked as contact, infected by $mobileIdInfected.";
                     $this->markAsContact($mobileIdPossibleContact);
                 }
             }
@@ -39,7 +40,6 @@ class updateDatabase
     {
         $updateStatement = 'UPDATE Mobile SET contactWithInfected = TRUE WHERE mobileId = ' . $mobileIdContact . ';';
         $this->db->execute($updateStatement);
-        print "updated at $mobileIdContact";
     }
     function getAllNonInfectedAtThatTime($datetimeInfected)
     {
@@ -49,7 +49,8 @@ class updateDatabase
 
         if (isset($data) && $data != null) { //if there is something in the result
             $array = $data;
-            print $array;
+            print 'all non infected at time: ' . $datetimeInfected;
+            print_r($array);
         }
         return $array;
     }
@@ -61,7 +62,8 @@ class updateDatabase
 
         if (isset($data) && $data != null) { //if there is something in the result
             $infected = $data;
-            print $infected;
+            print 'confirm infected';
+            print_r($infected);
         }
         return $infected;
     }
@@ -87,14 +89,14 @@ class updateDatabase
         //     where_predicate;
         $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected= FALSE, Mobile.confirmInfected= FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
         $this->db->execute($updateStatement);
-        print "updated";
+        print "outdated test resetted";
     }
     function deleteOudatedCoordinates()
     {
         $deleteFrom = time() - ($this->noDaysOfTestValidity * 24 * 60 * 60); // xx days; 24 hours; 60 mins; 60 secs
         $deleteStatement = 'DELETE FROM Coordinates WHERE dateTimeCoordinates < ' . $deleteFrom . ';';
         $this->db->execute($deleteStatement);
-        print "deleted";
+        print "outdated coordinates deleted";
     }
     function getNumber($no)
     {
@@ -105,7 +107,8 @@ class updateDatabase
 
         if (isset($data) && $data != null) { //if there is something in the result
             $num = $data;
-            print $num;
+            echo $no;
+            print_r($num);
         }
         return $num;
     }
