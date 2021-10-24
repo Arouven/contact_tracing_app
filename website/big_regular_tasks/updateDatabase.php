@@ -31,6 +31,7 @@ class updateDatabase
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact);
                 if ($distanceMetres <= $distanceContact) { //mark contact with infected
                     print "$mobileIdPossibleContact will be marked as contact, infected by $mobileIdInfected.";
+                    //send message to mobile
                     $this->markAsContact($mobileIdPossibleContact);
                 }
             }
@@ -87,7 +88,7 @@ class updateDatabase
         //     [INNER | LEFT] JOIN t2 ON join_predicate
         // WHERE 
         //     where_predicate;
-        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected= FALSE, Mobile.confirmInfected= FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
+        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected = FALSE, Mobile.confirmInfected = FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
         $this->db->execute($updateStatement);
         print "outdated test resetted";
     }
