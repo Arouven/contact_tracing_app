@@ -35,10 +35,14 @@ $markers->getTestingCenters();
     <link href="vendor/slick/slick.css" rel="stylesheet" media="all">
     <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
     <link href="vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
-    <link href="vendor/vector-map/jqvmap.min.css" rel="stylesheet" media="all">
+    <!-- <link href="vendor/vector-map/jqvmap.min.css" rel="stylesheet" media="all"> -->
 
     <!-- Main CSS-->
     <link href="css/theme.css" rel="stylesheet" media="all">
+
+    <!-- map -->
+    <link rel="stylesheet" href="openlayers-2.13.1/examples/style.css" type="text/css">
+    <script src="openlayers-2.13.1/lib/OpenLayers.js"></script>
 
 </head>
 
@@ -522,7 +526,7 @@ $markers->getTestingCenters();
     <script src="vendor/vector-map/jquery.vmap.germany.js"></script>
     <script src="vendor/vector-map/jquery.vmap.russia.js"></script>
     <script src="vendor/vector-map/jquery.vmap.usa.js"></script> -->
-    <script src="https://www.openlayers.org/api/OpenLayers.js"></script>
+    <!-- <script src="https://www.openlayers.org/api/OpenLayers.js"></script> -->
     <!-- <script src="../layout/scripts/myjs.js"></script> -->
 
     <!-- Main JS-->
