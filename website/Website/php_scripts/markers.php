@@ -1,20 +1,23 @@
 <?php
-require '../../database.php';
+require '../database.php';
 
 class markers
 {
     private $markers;
-    private $db = new database();
+    private $db;
 
-
+    function markers()
+    {
+        $this->db = new database();
+    }
 
     //all virus testing centres
     function getTestingCenters()
     {
         $data = $this->db->select("SELECT name, address, latitude, longitude FROM TestingCentres;");
-        $output = array();
         if (isset($data) && $data != null) { //if there is something in the result
             foreach ($data as $key => $value) { //key will return the position in the array
+                // print_r($data[$key]);
                 $name = $data[$key]['name'];
                 $address = $data[$key]['address'];
                 $longitude = $data[$key]['longitude'];

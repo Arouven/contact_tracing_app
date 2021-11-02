@@ -1,3 +1,9 @@
+<?php
+require 'php_scripts/markers.php';
+$markers = new markers();
+$markers->getTestingCenters();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -271,8 +277,7 @@
                     <div class="container-fluid">
                         <div class="header-wrap">
                             <form class="form-header" action="" method="POST">
-                                <input class="au-input au-input--xl" type="text" name="search"
-                                    placeholder="Search for datas &amp; reports..." />
+                                <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />
                                 <button class="au-btn--submit" type="submit">
                                     <i class="zmdi zmdi-search"></i>
                                 </button>
@@ -517,7 +522,7 @@
     <script src="vendor/vector-map/jquery.vmap.germany.js"></script>
     <script src="vendor/vector-map/jquery.vmap.russia.js"></script>
     <script src="vendor/vector-map/jquery.vmap.usa.js"></script> -->
-    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    <script src="https://www.openlayers.org/api/OpenLayers.js"></script>
     <!-- <script src="../layout/scripts/myjs.js"></script> -->
 
     <!-- Main JS-->
