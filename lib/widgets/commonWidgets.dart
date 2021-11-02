@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -187,5 +189,57 @@ class DialogBox {
         );
       },
     );
+  }
+
+  static Future<void> timedDialog({
+    BuildContext context,
+    String title = 'time',
+    String body = 'will automatically close',
+    Color titleColor = Colors.green,
+    Duration autoCloseDuration,
+  }) async {
+    Timer _timer;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        _timer = Timer(autoCloseDuration, () {
+          Navigator.of(context).pop();
+        });
+        return AlertDialog(
+          title: Text(
+            title,
+            style: TextStyle(
+              color: titleColor,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                new Row(
+                  children: [
+                    Expanded(
+                      child: Text(body),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    ).then((val) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    });
   }
 }

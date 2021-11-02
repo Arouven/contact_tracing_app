@@ -20,7 +20,7 @@ import 'package:http/http.dart' as http;
 // import 'package:grouped_buttons/grouped_buttons.dart';
 
 //import 'package:flutter/material.dart';
-import 'package:cool_alert/cool_alert.dart';
+//import 'package:cool_alert/cool_alert.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -148,11 +148,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                 color: colour,
                 iconSize: 25.0,
                 onPressed: () {
-                  CoolAlert.show(
+                  DialogBox.timedDialog(
                     context: context,
-                    type: CoolAlertType.info,
                     title: 'Testing Centre',
-                    text: place['name'],
+                    body: place['name'],
                     autoCloseDuration: Duration(seconds: 5),
                   );
                   //  print(place['name']);
