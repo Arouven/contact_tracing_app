@@ -1,8 +1,8 @@
-<?php
+<!-- <?php
 require 'php_scripts/markers.php';
 $markers = new markers();
 $markers->getTestingCenters();
-?>
+?> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +43,7 @@ $markers->getTestingCenters();
     <!-- map -->
     <link rel="stylesheet" href="openlayers-2.13.1/examples/style.css" type="text/css">
     <script src="openlayers-2.13.1/lib/OpenLayers.js"></script>
+    <script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
 
 </head>
 
@@ -281,7 +282,8 @@ $markers->getTestingCenters();
                     <div class="container-fluid">
                         <div class="header-wrap">
                             <form class="form-header" action="" method="POST">
-                                <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />
+                                <input class="au-input au-input--xl" type="text" name="search"
+                                    placeholder="Search for datas &amp; reports..." />
                                 <button class="au-btn--submit" type="submit">
                                     <i class="zmdi zmdi-search"></i>
                                 </button>
@@ -460,14 +462,14 @@ $markers->getTestingCenters();
                                         <i class="zmdi zmdi-map"></i>map
                                     </h3>
                                     <div class="filters">
-                                        <!-- <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border">
+                                        <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border">
                                             <select class="js-select2" name="property">
                                                 <option selected="selected">All Properties</option>
                                                 <option value="">Products</option>
                                                 <option value="">Services</option>
                                             </select>
                                             <div class="dropDownSelect2"></div>
-                                        </div> -->
+                                        </div>
                                         <!-- <div class="rs-select2--dark rs-select2--sm rs-select2--border">
                                             <select class="js-select2 au-select-dark" name="time">
                                                 <option selected="selected">All Time</option>
@@ -483,6 +485,38 @@ $markers->getTestingCenters();
                                         <div id="mapdiv" style="max-width:100%; height: 600px;"></div>
                                         <!-- <div id="vmap" style="height: 284px;"></div> -->
                                     </div>
+
+                                    <button id="confirmPosition">Confirm Position</button>
+                                    <p>On idle position: <span id="onIdlePositionView"></span></p>
+                                    <p>On click position: <span id="onClickPositionView"></span></p>
+                                    <script>
+                                        // Get element references
+                                        var confirmBtn = document.getElementById('confirmPosition');
+                                        var onClickPositionView = document.getElementById('onClickPositionView');
+                                        var onIdlePositionView = document.getElementById('onIdlePositionView');
+
+                                        // Initialize locationPicker plugin
+                                        var lp = new locationPicker('mapdiv', {
+                                            setCurrentPosition: true, // You can omit this, defaults to true
+                                        }, {
+                                            zoom: 10 // You can set any google map options here, zoom defaults to 15
+                                        });
+
+                                        // Listen to button onclick event
+                                        confirmBtn.onclick = function () {
+                                            // Get current location and show it in HTML
+                                            var location = lp.getMarkerPosition();
+                                            onClickPositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
+                                        };
+
+
+                                        // Listen to map idle event, listening to idle event more accurate than listening to ondrag event
+                                        OpenLayers.maps.event.addListener(lp.map, 'idle', function (event) {
+                                            // Get current location and show it in HTML
+                                            var location = lp.getMarkerPosition();
+                                            onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
+                                        });
+                                    </script>
                                 </div>
                                 <!-- END MAP DATA-->
                             </div>
@@ -495,7 +529,38 @@ $markers->getTestingCenters();
         </div>
 
     </div>
-
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Pick location</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 modal_body_content" id="bodyRow1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 modal_body_map">
+                            <div class="location-map" id="location-map">
+                                <div style="width: 600px; height: 400px;" id="map_canvas">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Pick"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Jquery JS-->
     <script src="vendor/jquery-3.2.1.min.js"></script>
     <!-- Bootstrap JS-->

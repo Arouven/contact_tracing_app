@@ -18,10 +18,14 @@ const String checkUsernameUrl = website + "flutter_login/checkUsername.php";
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
-const String ftpServer = 'ftpupload.net';
-const String ftpUser = 'epiz_28555904';
-const String ftpPassword = 'dCSxRI3N1p';
+// const String ftpServer = 'ftpupload.net';
+// const String ftpUser = 'epiz_28555904';
+// const String ftpPassword = 'dCSxRI3N1p';
+const String ftpServer = 'files.000webhost.com';
+const String ftpUser = 'contact-tracing-utm';
+const String ftpPassword = '12345678';
 
+//notification
 const String channelId = 'contacttracing';
 const String channelName = 'your channel name';
 const String channelDescription = 'your channel description';
