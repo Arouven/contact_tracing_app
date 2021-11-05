@@ -26,12 +26,20 @@ class updateDatabase
             foreach ($nonInfectedAtThatTime as $key2 => $value2) {
                 $datetimePossibleContact = $nonInfectedAtThatTime[$key2]['dateTimeCoordinates'];
                 $mobileIdPossibleContact = $nonInfectedAtThatTime[$key2]['mobileId'];
+                $mobileNumberPossibleContact = $nonInfectedAtThatTime[$key2]['mobileNumber'];
                 $latitudePossibleContact = floatval($nonInfectedAtThatTime[$key2]['latitude']);
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$key2]['longitude']);
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact);
                 if ($distanceMetres <= $distanceContact) { //mark contact with infected
                     print "$mobileIdPossibleContact will be marked as contact, infected by $mobileIdInfected.";
                     //send message to mobile
+                    $message = new message(
+                        $mobileNumberPossibleContact,
+                        "You may be infected practice self-isolation and perform a test"
+                    );
+                    if ($message->sendMessage()) {
+                        echo 'message sent';
+                    }
                     $this->markAsContact($mobileIdPossibleContact);
                 }
             }
@@ -44,7 +52,7 @@ class updateDatabase
     }
     function getAllNonInfectedAtThatTime($datetimeInfected)
     {
-        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude,Mobile.mobileId FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = ' . $datetimeInfected . '  AND Mobile.dateTimeLastTest IS NULL;';
+        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileId, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = ' . $datetimeInfected . '  AND Mobile.dateTimeLastTest IS NULL;';
         $data = $this->db->select($selectquery);
         $array = array();
 

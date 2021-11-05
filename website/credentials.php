@@ -9,3 +9,7 @@ const HOST = 'localhost';
 const USERNAME = 'id16921504_contacttrace';
 const PASSWORD = 'YHn(OuduZ3I)VxQS';
 const DATABASENAME = 'id16921504_contacttracing';
+
+
+// message
+const TOKEN = "62e998e01a5a9dd6ecc863330955bacf";
