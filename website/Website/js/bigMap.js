@@ -33,7 +33,7 @@ function bigMapBuilder() {
     bmap.addLayer(new OpenLayers.Layer.OSM());
     bmap.addLayer(new OpenLayers.Layer.OSM("Wikimedia",
         ["https://maps.wikimedia.org/osm-intl/${z}/${x}/${y}.png"], {
-            attribution: "&copy; <a href='http://www.openstreetmap.org/'>OpenStreetMap</a> and contributors, under an <a href='http://www.openstreetmap.org/copyright' title='ODbL'>open license</a>. <a href='https://www.mediawiki.org/wiki/Maps'>Wikimedia's new style (beta)</a>",
+        attribution: "&copy; <a href='http://www.openstreetmap.org/'>OpenStreetMap</a> and contributors, under an <a href='http://www.openstreetmap.org/copyright' title='ODbL'>open license</a>. <a href='https://www.mediawiki.org/wiki/Maps'>Wikimedia's new style (beta)</a>",
         "tileOptions": { "crossOriginKeyword": null }
     }));
 
@@ -101,43 +101,4 @@ $(document).ready(function () {//build the big map
 });
 //end building big map
 
-
-//start modal map
-$(document).ready(function () {
-    // var map = null;
-
-    // function initializeGMap(lat, lon) {
-    //     var zoom = 5;// set the zoom number from 1 to 19
-    //     var fromProjection = new OpenLayers.Projection("EPSG:4326"); // Transform from WGS 1984
-    //     var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
-    //     var position = new OpenLayers.LonLat(lon, lat).transform(fromProjection, toProjection);
-
-    //     map = new OpenLayers.Map("map_canvas");//get the map id
-    //     var mapnik = new OpenLayers.Layer.OSM();
-    //     map.addLayer(mapnik);
-
-    //     var markers = new OpenLayers.Layer.Markers("Markers");
-    //     map.addLayer(markers);
-    //     markers.addMarker(new OpenLayers.Marker(position));
-
-    //     map.setCenter(position, zoom);// mark the position and center the map on that position
-    // }
-    // // Re-init map before show modal
-    // $('#myModal').on('show.bs.modal', function (event) {
-    //     var button = $(event.relatedTarget);
-    //     initializeGMap(button.data('lat'), button.data('lng'));
-    //     $("#location-map").css("width", "100%");
-    //     $("#map_canvas").css("width", "100%");
-    //     $("#bodyRow1").html("Longitude: " + button.data('lng') + ", Latitude: " + button.data('lat'));
-    // });
-
-    // $('#myModal').on('shown.bs.modal', function () {
-    //     map.updateSize();//resize the map accordingly once open in modal
-    // });
-    // $('#myModal').on('hidden.bs.modal', function () {
-    //     $("#map_canvas").html('');//remove the map from the div
-    // });
-
-});
-//end modal map
 

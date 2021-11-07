@@ -41,9 +41,13 @@
      <link href="css/theme.css" rel="stylesheet" media="all">
 
      <!-- map -->
+     <!-- bigmap -->
      <link rel="stylesheet" href="openlayers-2.13.1/examples/style.css" type="text/css">
      <script src="openlayers-2.13.1/lib/OpenLayers.js"></script>
-     <script src="https://unpkg.com/location-picker/dist/location-picker.min.js"></script>
+     <!-- modalmap -->
+     <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.9.0/css/ol.css" type="text/css">
+     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.9.0/build/ol.js"></script>
+     <!-- <script type="text/javascript" src="js/global.js"></script> -->
 
  </head>
 
@@ -469,6 +473,11 @@
                                              </select>
                                              <div class="dropDownSelect2"></div>
                                          </div>
+                                         <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border">
+                                             <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#largeModal">
+                                                 Large
+                                             </button>
+                                         </div>
                                          <!-- <div class="rs-select2--dark rs-select2--sm rs-select2--border">
                                             <select class="js-select2 au-select-dark" name="time">
                                                 <option selected="selected">All Time</option>
@@ -499,35 +508,27 @@
 
      </div>
      <!-- Modal -->
-     <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+     <!-- modal large -->
+     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
          <div class="modal-dialog modal-lg" role="document">
-             <div class="modal-content">
+             <div class="modal-content" style="width: 550px;">
                  <div class="modal-header">
-                     <h4 class="modal-title" id="myModalLabel">Pick location</h4>
-                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     <h5 class="modal-title" id="largeModalLabel">Select Location</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                     </button>
                  </div>
                  <div class="modal-body">
-                     <div class="row">
-                         <div class="col-md-12 modal_body_content" id="bodyRow1">
-                         </div>
-                     </div>
-                     <div class="row">
-                         <div class="col-md-12 modal_body_map">
-                             <div class="location-map" id="location-map">
-                                 <div style="width: 600px; height: 400px;" id="map_canvas">
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
+                     <div id="map" style="width: 500px; height: 400px; margin: auto;"></div>
                  </div>
                  <div class="modal-footer">
-                     <div class="row">
-                         <button type="button" class="close" data-dismiss="modal" aria-label="Pick"><span aria-hidden="true">&times;</span></button>
-                     </div>
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                     <button type="button" class="btn btn-primary">Confirm</button>
                  </div>
              </div>
          </div>
-     </div> -->
+     </div>
+     <!-- end modal large -->
      <!-- Jquery JS-->
      <script src="vendor/jquery-3.2.1.min.js"></script>
      <!-- Bootstrap JS-->
@@ -566,7 +567,14 @@
      <!-- User defined JS-->
 
      <!-- <script src="js/classes.js"></script> -->
-     <script src="js/userDefined.js"></script>
+     <script src="js/bigMap.js"></script>
+
+     <script type="text/javascript" src="js/global.js"></script>
+
+     <script src="js/modalMap.js"></script>
+     <script>
+
+     </script>
      <script>
          // window.open(url '_blank');
      </script>

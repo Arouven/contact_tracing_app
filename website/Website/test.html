@@ -5,8 +5,7 @@
     <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.9.0/css/ol.css"
         type="text/css">
     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v6.9.0/build/ol.js"></script>
-    <script type="text/javascript" src="js/global.js">
-    </script>
+    <script type="text/javascript" src="js/global.js"></script>
 </head>
 
 <body>
@@ -14,20 +13,16 @@
     <br />
     <div>
 
-        <button id="confirmPosition">Confirm Position</button>
-        <p>On idle position: <span id="onIdlePositionView"></span></p>
-        <p>On click position: <span id="onClickPositionView"></span></p>
+        <!-- <button id="confirmPosition">Confirm Position</button> -->
 
     </div>
 
     <script>
-
-
         var osm_default = new ol.layer.Tile({
             name: 'osm layer',
             source: new ol.source.OSM()
         });
-        var map = new ol.Map({
+        var modalmap = new ol.Map({
             layers: [osm_default],
             target: 'map',
             view: new ol.View({
@@ -38,20 +33,21 @@
         var mousePosition = new ol.control.MousePosition({
             coordinateFormat: ol.coordinate.createStringXY(2),
             projection: 'EPSG:4326',
-            target: document.getElementById('myposition'),
+            //  target: document.getElementById('myposition'),
             undefinedHTML: '&nbsp;'
         });
-        map.addControl(mousePosition);
-        map.on('click', function (evt) {
+        modalmap.addControl(mousePosition);
+        modalmap.on('click', function (evt) {
             var pos = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
             Location.longitude = pos[0];
             Location.latitude = pos[1];
+            console.log(pos);
             addMarker(pos);
         });
         function addMarker(position) {
-            map.getLayers().forEach(function (layer) {
+            modalmap.getLayers().forEach(function (layer) {
                 if (layer.get('name') != undefined && layer.get('name') === 'marker') {
-                    map.removeLayer(layer);
+                    modalmap.removeLayer(layer);
                 }
             });
             var markerlayer = new ol.layer.Vector({
@@ -65,7 +61,7 @@
 
                 })
             });
-            map.addLayer(markerlayer);
+            modalmap.addLayer(markerlayer);
         }
 
         // style: new ol.style.Style({
@@ -85,32 +81,7 @@
         // })
 
 
-        // Get element references
-        // var confirmBtn = document.getElementById('confirmPosition');
-        // var onClickPositionView = document.getElementById('onClickPositionView');
-        // var onIdlePositionView = document.getElementById('onIdlePositionView');
 
-        // // Initialize locationPicker plugin
-        // var lp = new locationPicker('mapdiv', {
-        //     setCurrentPosition: true, // You can omit this, defaults to true
-        // }, {
-        //     zoom: 10 // You can set any google map options here, zoom defaults to 15
-        // });
-
-        // // Listen to button onclick event
-        // confirmBtn.onclick = function () {
-        //     // Get current location and show it in HTML
-        //     var location = lp.getMarkerPosition();
-        //     onClickPositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
-        // };
-
-
-        // // Listen to map idle event, listening to idle event more accurate than listening to ondrag event
-        // OpenLayers.maps.event.addListener(lp.map, 'idle', function (event) {
-        //     // Get current location and show it in HTML
-        //     var location = lp.getMarkerPosition();
-        //     onIdlePositionView.innerHTML = 'The chosen location is ' + location.lat + ',' + location.lng;
-        // });
     </script>
 </body>
 
