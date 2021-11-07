@@ -54,7 +54,8 @@ CREATE TABLE `TestingCentres` (
 );
 
 -- create stored procedure
-DELIMITER / / CREATE PROCEDURE InsertMobile(
+DELIMITER // 
+CREATE PROCEDURE InsertMobile(
   IN username VARCHAR(255),
   IN mobileName VARCHAR(255),
   IN mobileDescription VARCHAR(255),
@@ -76,7 +77,8 @@ SET
   `mobileDescription` = mobileDescription,
   `mobileNumber` = mobileNumber;
 
-END / / DELIMITER;
+END 
+// DELIMITER ;
 
 -- INSERTING TEST DATA INTO TABLES
 INSERT INTO

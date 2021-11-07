@@ -1,12 +1,12 @@
 <?php
-require '../database.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
 
 class markers
 {
     private $markers;
     private $db;
 
-    function markers()
+    function __construct()
     {
         $this->db = new database();
     }

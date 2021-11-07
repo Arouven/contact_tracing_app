@@ -9,7 +9,7 @@ class buildMap {
     this.longi = 8.0;
     this.lati = 50.3;
     this.zoom = 1;
-    getLocation();
+    this.getLocation();
   }
 
   // var longi = 8.0;
@@ -18,7 +18,7 @@ class buildMap {
 
   getLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(this.showPosition);
     } else {
       alert("Geolocation is not supported by this browser.");
     }

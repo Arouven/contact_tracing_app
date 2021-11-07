@@ -1,6 +1,6 @@
 <?php
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
 
-require '../database.php';
 $db = new database();
 $conn = $db->getConnection();
 

@@ -1,6 +1,6 @@
 <?php
-require '../database.php';
-require '../encryptDecrypt.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website//encryptDecrypt.php';
 
 $db = new database();
 $conn = $db->getConnection();

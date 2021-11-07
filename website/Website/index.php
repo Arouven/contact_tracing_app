@@ -463,7 +463,7 @@
                                             <div class="text">
                                                 <h2>
                                                     <?php
-                                                    require '../database.php';
+                                                    require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
                                                     $db = new database();
                                                     $selectquery =
                                                         'SELECT COUNT(*) as active_mobiles FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId;';

@@ -1,5 +1,6 @@
 <?php
-require 'credentials.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
+
 class database
 {
     // PHP 7.1.0 visibility modifiers are allowed for class constants.

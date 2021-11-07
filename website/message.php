@@ -1,5 +1,6 @@
 <?php
-require 'credentials.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
+
 class message
 {
     private $url;
@@ -29,10 +30,10 @@ class message
         $curl_output = curl_exec($curld);
 
         $response = json_decode($curl_output);
-
+        //print strval($response);
         if ($response->success == "true") {
             return true;
-        }
+        }        
         return false;
     }
 }
@@ -42,4 +43,6 @@ $message = new message(
 );
 if ($message->sendMessage()) {
     echo 'message sent';
+}else{
+  echo  'error';
 }
