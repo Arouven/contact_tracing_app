@@ -1,24 +1,19 @@
 
 //start building big mapw
-var longi = 8.0;
-var lati = 50.3;
-var zoom = 6;
+
 
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     } else {
-        longi = 8.0;
-        lati = 50.3;
-        zoom = 6;
         alert("Geolocation is not supported by this browser.");
     }
 }
 
 function showPosition(position) {
-    lati = position.coords.latitude;
-    longi = position.coords.longitude;
-    zoom = 10;
+    Location.latitude = position.coords.latitude;
+    Location.longitude = position.coords.longitude;
+    Location.zoom = 10;
 }
 
 
@@ -47,19 +42,21 @@ function bigMapBuilder() {
     ]);
 
     projectTo = bmap.getProjectionObject(); //The map projection (Spherical Mercator)
-    var lonLat = new OpenLayers.LonLat(longi, lati).transform(epsg4326, projectTo);
+    var lonLat = new OpenLayers.LonLat(Location.longitude, Location.latitude).transform(epsg4326, projectTo);
     if (!bmap.getCenter()) {
-        bmap.setCenter(lonLat, zoom);
+        bmap.setCenter(lonLat, Location.zoom);
     }
 
 
     var colorList = ["red"];
     var layerName = [markers[0][2]];
-    var styleArray = [new OpenLayers.StyleMap({
-        pointRadius: 6,
-        fillColor: colorList[0],
-        fillOpacity: 0.5
-    })];
+    var styleArray = [
+        new OpenLayers.StyleMap({
+            pointRadius: 6,
+            fillColor: colorList[0],
+            fillOpacity: 0.5
+        })
+    ];
     var vectorLayer = [new OpenLayers.Layer.Vector(layerName[0], {
         styleMap: styleArray[0]
     })]; // First element defines first Layer

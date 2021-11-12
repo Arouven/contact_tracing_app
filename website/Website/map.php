@@ -1,5 +1,42 @@
  <?php
+    require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
     require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_scripts/markers.php';
+
+    // if (!empty($_GET['submit'])) {
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        $db = new database();
+        $conn = $db->getConnection();
+        //if (isset($_REQUEST['submit'])) {
+        //print 'in if';
+        $testingCenterName = "";
+        if (isset($_POST['testingCenterName'])) {
+            $testingCenterName = mysqli_real_escape_string($conn, $_POST['testingCenterName']);
+        }
+        $testingCenterAddress = "";
+        if (isset($_POST['testingCenterAddress'])) {
+            $testingCenterAddress = mysqli_real_escape_string($conn, $_POST['testingCenterAddress']);
+        }
+        $longitude = "";
+        if (isset($_POST['longitude'])) {
+            $longitude = mysqli_real_escape_string($conn, $_POST['longitude']);
+        }
+        $latitude = "";
+        if (isset($_POST['latitude'])) {
+            $latitude = mysqli_real_escape_string($conn, $_POST['latitude']);
+        }
+
+        $insertquery = "INSERT INTO TestingCentres (name, address, latitude, longitude) VALUES (?,?,?,?);";
+        $insertparamType = "ssss";
+        $insertparamArray = array($testingCenterName, $testingCenterAddress, $latitude, $longitude);
+        $db->insert($insertquery, $insertparamType, $insertparamArray);
+        unset($db);
+        unset($conn);
+        //  print 'executed';
+        //  }
+        //}
+    } else {
+        // echo 'else';
+    }
     $markers = new markers();
     $markers->getTestingCenters();
     ?>
@@ -465,20 +502,31 @@
                                          <i class="zmdi zmdi-map"></i>map
                                      </h3>
                                      <div class="filters">
-                                         <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border">
-                                             <select class="js-select2" name="property">
-                                                 <option selected="selected">All Properties</option>
-                                                 <option value="">Products</option>
-                                                 <option value="">Services</option>
-                                             </select>
-                                             <div class="dropDownSelect2"></div>
-                                         </div>
-                                         <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border">
-                                             <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#largeModal">
-                                                 Large
-                                             </button>
-                                         </div>
-                                         <!-- <div class="rs-select2--dark rs-select2--sm rs-select2--border">
+                                         <form action="map.php" method="post" id="addTestingCenters">
+                                             <!-- <div class="rs-select2--dark rs-select2--md m-r-10 rs-select2--border"> -->
+                                             <div class="form-group">
+                                                 <input class="au-input au-input--full" type="text" name="testingCenterName" id="testingCenterName" placeholder="Name">
+                                             </div>
+                                             <div class="form-group">
+                                                 <input class="au-input au-input--full" type="text" name="testingCenterAddress" id="testingCenterAddress" placeholder="Address">
+                                             </div>
+
+                                             <div class="form-group">
+                                                 <input class="au-input au-input--full" type="text" readonly name="longitude" id="longitude" placeholder="Longitude">
+                                                 <input class="au-input au-input--full" type="text" readonly name="latitude" id="latitude" placeholder="Latitude">
+                                                 <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#largeModal">
+                                                     <i class="fas fa-map-marker-alt"></i>
+                                                 </button>
+                                             </div>
+                                             <div class="form-group">
+                                                 <button type="submit" name="submit" class="btn btn-primary btn-sm">
+                                                     <i class="fa fa-dot-circle-o"></i> Add Testing Center
+                                                 </button>
+                                             </div>
+                                             <!-- </div> -->
+
+
+                                             <!-- <div class="rs-select2--dark rs-select2--sm rs-select2--border">
                                             <select class="js-select2 au-select-dark" name="time">
                                                 <option selected="selected">All Time</option>
                                                 <option value="">By Month</option>
@@ -486,6 +534,7 @@
                                             </select>
                                             <div class="dropDownSelect2"></div>
                                         </div> -->
+                                         </form>
                                      </div>
 
                                      <!--                                    <div id="mapdiv" style="max-width:100%; height: 600px;"></div> -->
@@ -521,10 +570,10 @@
                  <div class="modal-body">
                      <div id="map" style="width: 500px; height: 400px; margin: auto;"></div>
                  </div>
-                 <div class="modal-footer">
+                 <!-- <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                      <button type="button" class="btn btn-primary">Confirm</button>
-                 </div>
+                 </div> -->
              </div>
          </div>
      </div>
@@ -572,8 +621,26 @@
      <script type="text/javascript" src="js/global.js"></script>
 
      <script src="js/modalMap.js"></script>
+     <script src="js/jquery.additional-methods.min.js"></script>
+     <script src="js/jquery.validate.min.js"></script>
      <script>
-
+         $("#addTestingCenters").validate({
+             rules: {
+                 // compound rule
+                 testingCenterName: {
+                     required: true,
+                 },
+                 testingCenterAddress: {
+                     required: true,
+                 },
+                 longitude: {
+                     required: true,
+                 },
+                 latitude: {
+                     required: true,
+                 },
+             }
+         });
      </script>
      <script>
          // window.open(url '_blank');

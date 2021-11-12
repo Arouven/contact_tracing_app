@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
+//require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
 
 class markers
 {
@@ -32,5 +32,10 @@ class markers
     function getjsMarkers()
     {
         echo "<script>var markers=[$this->markers];</script>";
+    }
+    function __destruct()
+    {
+        unset($this->db);
+        unset($this->markers);
     }
 }

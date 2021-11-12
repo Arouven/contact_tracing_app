@@ -47,7 +47,10 @@ function addMarker(position) {
     modalmap.addLayer(markerlayer);
 }
 
-
+function updatelonlatbox(latitude, longitude) {
+    document.getElementById('latitude').value = latitude;
+    document.getElementById('longitude').value = longitude;
+}
 function initializeMap() {
     var mousePosition = new ol.control.MousePosition({
         coordinateFormat: ol.coordinate.createStringXY(2),
@@ -62,6 +65,7 @@ function initializeMap() {
         Location.latitude = pos[1];
         console.log(pos);
         addMarker(pos);
+        updatelonlatbox(pos[1], pos[0]);
     });
 }
 $(document).ready(function () {
