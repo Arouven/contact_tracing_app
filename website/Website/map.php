@@ -578,6 +578,31 @@
          </div>
      </div>
      <!-- end modal large -->
+     <!-- modal medium -->
+     <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h5 class="modal-title" id="mediumModalLabel">Testing Center</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                     </button>
+                 </div>
+                 <div class="modal-body">
+                     <!-- <p id="modalbody">
+                     </p> -->
+
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                     <button type="submit" name="delete" class="btn btn-primary">Delete</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <!-- end modal medium -->
+
+
      <!-- Jquery JS-->
      <script src="vendor/jquery-3.2.1.min.js"></script>
      <!-- Bootstrap JS-->
@@ -620,27 +645,27 @@
 
      <script type="text/javascript" src="js/global.js"></script>
 
-     <script src="js/modalMap.js"></script>
-     <script src="js/jquery.additional-methods.min.js"></script>
+     <!-- <script src="js/modalMap.js"></script> -->
+     <!-- <script src="js/jquery.additional-methods.min.js"></script> -->
      <script src="js/jquery.validate.min.js"></script>
      <script>
-         $("#addTestingCenters").validate({
-             rules: {
-                 // compound rule
-                 testingCenterName: {
-                     required: true,
-                 },
-                 testingCenterAddress: {
-                     required: true,
-                 },
-                 longitude: {
-                     required: true,
-                 },
-                 latitude: {
-                     required: true,
-                 },
-             }
-         });
+         //  $("#addTestingCenters").validate({
+         //      rules: {
+         //          // compound rule
+         //          testingCenterName: {
+         //              required: true,
+         //          },
+         //          testingCenterAddress: {
+         //              required: true,
+         //          },
+         //          longitude: {
+         //              required: true,
+         //          },
+         //          latitude: {
+         //              required: true,
+         //          },
+         //      }
+         //  });
      </script>
      <script>
          // window.open(url '_blank');
