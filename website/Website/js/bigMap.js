@@ -66,18 +66,15 @@ function bigMapBuilder() {
 };
 function openMediumModal(id, name, address, longitude, latitude) {
     var text = "Name: " + name + "<br>Address: " + address + "<br>(longitude, latitude): (" + longitude + ", " + latitude + ")";
-    $('#mediumModal').on('shown.bs.modal', function () {
-        $('#mediumModal').find('.modal-body').text('');
-        $('#mediumModal').find('.modal-body').append(text);
-        $('#mediumModal').find('#hiddenId').append(id);
-    });
+    $("#mediumModal").modal('hide');
+    $('#mediumModal').find('.modal-body').text('');
+    $('#mediumModal').find('.modal-body').append(text);
+    $('#mediumModal').find('#testingCenterId').val(id);
     $("#mediumModal").modal('show');
 };
 $(document).ready(function () {//build the big map 
     getLocation();
     bigMapBuilder();
-
-
 });
 //end building big map
 
