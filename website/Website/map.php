@@ -1,7 +1,8 @@
 <?php
 require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_scripts/markers.php';
-
+?>
+<?php
 // if (!empty($_GET['submit'])) {
 //if ($_SERVER("REQUEST_METHOD") == "POST") {
 if (isset($_POST['addTestingCenters'])) {
