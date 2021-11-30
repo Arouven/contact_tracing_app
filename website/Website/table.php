@@ -447,210 +447,9 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
             <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
-
                         <div class="row">
                             <div class="col-md-12">
                                 <!-- DATA TABLE -->
-                                <h3 class="title-5 m-b-35">data table</h3>
-                                <div class="table-data__tool">
-                                    <div class="table-data__tool-left">
-                                        <div class="rs-select2--light rs-select2--md">
-                                            <select class="js-select2" name="property">
-                                                <option selected="selected">All Properties</option>
-                                                <option value="">Option 1</option>
-                                                <option value="">Option 2</option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-                                        <div class="rs-select2--light rs-select2--sm">
-                                            <select class="js-select2" name="time">
-                                                <option selected="selected">Today</option>
-                                                <option value="">3 Days</option>
-                                                <option value="">1 Week</option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-                                        <button class="au-btn-filter">
-                                            <i class="zmdi zmdi-filter-list"></i>filters</button>
-                                    </div>
-                                    <div class="table-data__tool-right">
-                                        <button class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                            <i class="zmdi zmdi-plus"></i>add item</button>
-                                        <div class="rs-select2--dark rs-select2--sm rs-select2--dark2">
-                                            <select class="js-select2" name="type">
-                                                <option selected="selected">Export</option>
-                                                <option value="">Option 1</option>
-                                                <option value="">Option 2</option>
-                                            </select>
-                                            <div class="dropDownSelect2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="table-responsive table-responsive-data2">
-                                    <table class="table table-data2">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <label class="au-checkbox">
-                                                        <input type="checkbox">
-                                                        <span class="au-checkmark"></span>
-                                                    </label>
-                                                </th>
-                                                <th>name</th>
-                                                <th>email</th>
-                                                <th>description</th>
-                                                <th>date</th>
-                                                <th>status</th>
-                                                <th>price</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="tr-shadow">
-                                                <td>
-                                                    <label class="au-checkbox">
-                                                        <input type="checkbox">
-                                                        <span class="au-checkmark"></span>
-                                                    </label>
-                                                </td>
-                                                <td>Lori Lynch</td>
-                                                <td>
-                                                    <span class="block-email">lori@example.com</span>
-                                                </td>
-                                                <td class="desc">Samsung S8 Black</td>
-                                                <td>2018-09-27 02:12</td>
-                                                <td>
-                                                    <span class="status--process">Processed</span>
-                                                </td>
-                                                <td>$679.00</td>
-                                                <td>
-                                                    <div class="table-data-feature">
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                                            <i class="zmdi zmdi-mail-send"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                            <i class="zmdi zmdi-edit"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                                            <i class="zmdi zmdi-more"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="spacer"></tr>
-                                            <tr class="tr-shadow">
-                                                <td>
-                                                    <label class="au-checkbox">
-                                                        <input type="checkbox">
-                                                        <span class="au-checkmark"></span>
-                                                    </label>
-                                                </td>
-                                                <td>Lori Lynch</td>
-                                                <td>
-                                                    <span class="block-email">john@example.com</span>
-                                                </td>
-                                                <td class="desc">iPhone X 64Gb Grey</td>
-                                                <td>2018-09-29 05:57</td>
-                                                <td>
-                                                    <span class="status--process">Processed</span>
-                                                </td>
-                                                <td>$999.00</td>
-                                                <td>
-                                                    <div class="table-data-feature">
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                                            <i class="zmdi zmdi-mail-send"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                            <i class="zmdi zmdi-edit"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                                            <i class="zmdi zmdi-more"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="spacer"></tr>
-                                            <tr class="tr-shadow">
-                                                <td>
-                                                    <label class="au-checkbox">
-                                                        <input type="checkbox">
-                                                        <span class="au-checkmark"></span>
-                                                    </label>
-                                                </td>
-                                                <td>Lori Lynch</td>
-                                                <td>
-                                                    <span class="block-email">lyn@example.com</span>
-                                                </td>
-                                                <td class="desc">iPhone X 256Gb Black</td>
-                                                <td>2018-09-25 19:03</td>
-                                                <td>
-                                                    <span class="status--denied">Denied</span>
-                                                </td>
-                                                <td>$1199.00</td>
-                                                <td>
-                                                    <div class="table-data-feature">
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                                            <i class="zmdi zmdi-mail-send"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                            <i class="zmdi zmdi-edit"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                                            <i class="zmdi zmdi-more"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="spacer"></tr>
-                                            <tr class="tr-shadow">
-                                                <td>
-                                                    <label class="au-checkbox">
-                                                        <input type="checkbox">
-                                                        <span class="au-checkmark"></span>
-                                                    </label>
-                                                </td>
-                                                <td>Lori Lynch</td>
-                                                <td>
-                                                    <span class="block-email">doe@example.com</span>
-                                                </td>
-                                                <td class="desc">Camera C430W 4k</td>
-                                                <td>2018-09-24 19:10</td>
-                                                <td>
-                                                    <span class="status--process">Processed</span>
-                                                </td>
-                                                <td>$699.00</td>
-                                                <td>
-                                                    <div class="table-data-feature">
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                                            <i class="zmdi zmdi-mail-send"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                            <i class="zmdi zmdi-edit"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                        <button class="item" data-toggle="tooltip" data-placement="top" title="More">
-                                                            <i class="zmdi zmdi-more"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div> -->
-                                <!-- END DATA TABLE -->
-
-
                                 <h3 class="title-5 m-b-35">data table</h3>
                                 <div class="table-data__tool">
                                     <div class="table-data__tool-left">
@@ -727,19 +526,26 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content" style="width: 550px;">
-                <!-- <div class="modal-header">
-                    <h5 class="modal-title" id="largeModalLabel">Select Location</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="largeModalLabel">Mobiles Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="map" style="width: 500px; height: 400px; margin: auto;"></div>
-                </div> -->
+                    <div class="table-responsive table-responsive-data2">
+                        <table class="table table-data2">
+                            <thead id="tableHead">
+                            </thead>
+                            <tbody id=tableBody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <!-- <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                     <button type="button" class="btn btn-primary">Confirm</button>
-                 </div> -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Confirm</button>
+                </div> -->
             </div>
         </div>
     </div>
@@ -774,57 +580,159 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
         $(document).ready(function() {
             $('#myTable').DataTable();
         });
-        $(document).on('click', 'button[name^="edituser"]', function(e) {
-            var userid = this.dataset.userid;
+        // $(document).on('click', 'button[name^="edituser"]', function(e) {
+        //     var userid = this.dataset.userid;
+        //     // $('#tableHead').children = "";
+
+        //     $('#largeModal').find('#tableHead').text('');
+        //     $('#largeModal').find('#tableBody').text('');
+        //     var i = 1;
+        //     $('#tableHead').append(
+        //         '<tr>' +
+        //         '<th>#</th>' +
+        //         '<th>Name</th>' +
+        //         '<th>Number</td>' +
+        //         '<th>Contact</th>' +
+        //         '<th>Infected</th>' +
+        //         '<th>Last Test</th>' +
+        //         '<th>Mark Infected</th>' +
+        //         '</tr>'
+        //     );
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "php_scripts/getmobiles.php?userid=" + userid,
+        //         dataType: "JSON",
+        //         success: function(data) {
+        //             $(data).each(
+        //                 function() {
+        //                     var mobileId = this.mobileId;
+        //                     var userId = this.userId;
+        //                     var mobileName = this.mobileName;
+        //                     var mobileDescription = this.mobileDescription;
+        //                     var mobileNumber = this.mobileNumber;
+        //                     var contactWithInfected = this.contactWithInfected;
+        //                     var confirmInfected = this.confirmInfected;
+        //                     var dateTimeLastTest = this.dateTimeLastTest;
+
+        //                     $('#tableBody').append(
+        //                         '<tr class="tr-shadow">' +
+        //                         '<td>' + i + '</td>' +
+        //                         '<td>' + mobileName + '</td>' +
+        //                         '<td>' + mobileNumber + '</td>' +
+        //                         '<td>' + (Boolean(Number(contactWithInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
+        //                         '<td>' + (Boolean(Number(confirmInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
+        //                         '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
+        //                         '<td>' + ((Boolean(Number(confirmInfected))) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ')">Reset</button>' : '<button class="btn btn-danger">Infected</button>') + '</td>' +
+        //                         '</tr>'
+        //                     );
+        //                     i++;
+        //                 });
+        //         },
+        //         error: function(data) {
+        //             alert("error happen please reload");
+        //         }
+        //     });
+        // });
+
+        function mobileDetail(userId) {
+            $('#largeModal').find('#tableHead').text('');
+            $('#largeModal').find('#tableBody').text('');
+            var i = 1;
+            $('#tableHead').append(
+                '<tr>' +
+                '<th>#</th>' +
+                '<th>Name</th>' +
+                '<th>Number</td>' +
+                '<th>Contact</th>' +
+                '<th>Infected</th>' +
+                '<th>Last Test</th>' +
+                '<th>Mark Infected</th>' +
+                '</tr>'
+            );
             $.ajax({
                 type: "GET",
-                url: "php_scripts/getmobiles.php?userid=" + userid,
+                url: "php_scripts/getmobiles.php?userid=" + userId,
                 dataType: "JSON",
                 success: function(data) {
-                    alert("3");
                     $(data).each(
+
                         function() {
-                            $('#tbody').append(
-                                '<tr><td>' + this.id +
-                                '</td><td>' +
-                                this.question +
-                                '</td><td>' +
-                                this.course +
-                                '</td><td>' +
-                                this.answerEntities +
-                                '</td><td>' +
-                                this.ans +
-                                '</td><td>' +
-                                this.status +
-                                '</td></tr>')
+                            var mobileId = this.mobileId;
+                            var mobileName = this.mobileName;
+                            var mobileDescription = this.mobileDescription;
+                            var mobileNumber = this.mobileNumber;
+                            var contactWithInfected = this.contactWithInfected;
+                            var confirmInfected = this.confirmInfected;
+                            var dateTimeLastTest = this.dateTimeLastTest;
+
+                            $('#tableBody').append(
+                                '<tr class="tr-shadow">' +
+                                '<td>' + i + '</td>' +
+                                '<td>' + mobileName + '</td>' +
+                                '<td>' + mobileNumber + '</td>' +
+                                '<td>' + (Boolean(Number(contactWithInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
+                                '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ',\'' + "reset" + '\',' + userId + ')">Reset</button>' : '<button class="btn btn-danger">Infected</button>') + '</td>' +
+                                '</tr>'
+                            );
+                            i++;
                         });
                 },
                 error: function(data) {
-                    alert("4");
+                    alert("error happen please reload");
                 }
-                //  success: function(data) {
-                //    console.log(data);
-                //  $("#table-container").html(data);
-
-                // }
             });
-        });
+            $('#largeModal').modal('show');
+
+        }
+
+        function updateDB(mobileid, request, userId) {
+            // alert(mobileid);
+            //var x = "1";
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "php_scripts/updateMobile.php",
+                data: {
+                    mobileId: mobileid,
+                    req: request
+                },
+                cache: false,
+                success: function(Record) {
+                    // alert("1");
+                    console.log(Record);
+                    if (Record.inserted == true) {
+                        // $('#largeModal').modal('hide');
+                        //alert("2" + req);
+                        mobileDetail(userId);
+                    } else {
+                        alert("An Error happened. Please Retry");
+                    }
+                },
+                Error: function(textMsg) {
+                    // alert('2');
+                    console.log(Error);
+                }
+            });
+
+        }
     </script>
     <script type="text/javascript">
-        $(document).ready(
-            function() {
-                alert("1");
-                var data = $("#employee").val();
-                alert("2");
-                $.ajax({
+        // $(document).ready(
+        //     function() {
+        //         alert("1");
+        //         var data = $("#employee").val();
+        //         alert("2");
+        //         $.ajax({
 
-                    url: 'http://localhost:8080/online/fecthcourse',
-                    type: 'GET',
-                    dataType: 'JSON',
+        //             url: 'http://localhost:8080/online/fecthcourse',
+        //             type: 'GET',
+        //             dataType: 'JSON',
 
 
-                });
-            });
+        //         });
+        //     });
     </script>
 
 </body>

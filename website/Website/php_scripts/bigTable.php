@@ -30,8 +30,9 @@ class bigTable
                 $nationalIdNumber = $data[$trkey]['nationalIdNumber'];
                 $email = $data[$trkey]['email'];
                 $Mobiles = $data[$trkey]['Mobiles'];
-                // <div class='table-data-feature'><button class='item' data-toggle='tooltip' data-placement='top' title='Edit'><i class='zmdi zmdi-edit'></i></button></div>
-                $button = "<button class='item' data-toggle='modal' name='edituser$userId' title='Edit' data-target='#largeModal' data-userid='$userId'><i class='zmdi zmdi-edit'></i></button>";
+
+                //  $button = "<button class='item' data-toggle='modal' name='edituser$userId' title='Edit' data-target='#largeModal' data-userid='$userId'><i class='zmdi zmdi-edit'></i></button>";
+                $button = "<button class='item' onclick='mobileDetail($userId)'><i class='zmdi zmdi-edit'></i></button>";
 
                 echo ($trCss == "" || $trCss == null) ? "<tr>" : "<tr class='$trCss'>";
                 echo ($tdCss == "" || $tdCss == null) ? "<td>$firstName</td>" : "<td class='$tdCss'>$firstName</td>";
