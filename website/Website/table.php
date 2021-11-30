@@ -580,59 +580,6 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
         $(document).ready(function() {
             $('#myTable').DataTable();
         });
-        // $(document).on('click', 'button[name^="edituser"]', function(e) {
-        //     var userid = this.dataset.userid;
-        //     // $('#tableHead').children = "";
-
-        //     $('#largeModal').find('#tableHead').text('');
-        //     $('#largeModal').find('#tableBody').text('');
-        //     var i = 1;
-        //     $('#tableHead').append(
-        //         '<tr>' +
-        //         '<th>#</th>' +
-        //         '<th>Name</th>' +
-        //         '<th>Number</td>' +
-        //         '<th>Contact</th>' +
-        //         '<th>Infected</th>' +
-        //         '<th>Last Test</th>' +
-        //         '<th>Mark Infected</th>' +
-        //         '</tr>'
-        //     );
-        //     $.ajax({
-        //         type: "GET",
-        //         url: "php_scripts/getmobiles.php?userid=" + userid,
-        //         dataType: "JSON",
-        //         success: function(data) {
-        //             $(data).each(
-        //                 function() {
-        //                     var mobileId = this.mobileId;
-        //                     var userId = this.userId;
-        //                     var mobileName = this.mobileName;
-        //                     var mobileDescription = this.mobileDescription;
-        //                     var mobileNumber = this.mobileNumber;
-        //                     var contactWithInfected = this.contactWithInfected;
-        //                     var confirmInfected = this.confirmInfected;
-        //                     var dateTimeLastTest = this.dateTimeLastTest;
-
-        //                     $('#tableBody').append(
-        //                         '<tr class="tr-shadow">' +
-        //                         '<td>' + i + '</td>' +
-        //                         '<td>' + mobileName + '</td>' +
-        //                         '<td>' + mobileNumber + '</td>' +
-        //                         '<td>' + (Boolean(Number(contactWithInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
-        //                         '<td>' + (Boolean(Number(confirmInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
-        //                         '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
-        //                         '<td>' + ((Boolean(Number(confirmInfected))) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ')">Reset</button>' : '<button class="btn btn-danger">Infected</button>') + '</td>' +
-        //                         '</tr>'
-        //                     );
-        //                     i++;
-        //                 });
-        //         },
-        //         error: function(data) {
-        //             alert("error happen please reload");
-        //         }
-        //     });
-        // });
 
         function mobileDetail(userId) {
             $('#largeModal').find('#tableHead').text('');
@@ -655,7 +602,6 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
                 dataType: "JSON",
                 success: function(data) {
                     $(data).each(
-
                         function() {
                             var mobileId = this.mobileId;
                             var mobileName = this.mobileName;
@@ -673,7 +619,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ',\'' + "reset" + '\',' + userId + ')">Reset</button>' : '<button class="btn btn-danger">Infected</button>') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ',\'' + "reset" + '\',' + userId + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileId + ',\'' + "infected" + '\',' + userId + ')">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
                             i++;
@@ -701,7 +647,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
                 cache: false,
                 success: function(Record) {
                     // alert("1");
-                    console.log(Record);
+                    //  console.log(Record);
                     if (Record.inserted == true) {
                         // $('#largeModal').modal('hide');
                         //alert("2" + req);
