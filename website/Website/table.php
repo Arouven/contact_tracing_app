@@ -616,8 +616,8 @@ require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_script
                                 '<td>' + i + '</td>' +
                                 '<td>' + mobileName + '</td>' +
                                 '<td>' + mobileNumber + '</td>' +
-                                '<td>' + (Boolean(Number(contactWithInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<input type="checkbox" checked />' : '<input type="checkbox" />') + '</td>' +
+                                '<td>' + (Boolean(Number(contactWithInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ',\'' + "reset" + '\',' + userId + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileId + ',\'' + "infected" + '\',' + userId + ')">Infected</button>') + '</td>' +
                                 '</tr>'
