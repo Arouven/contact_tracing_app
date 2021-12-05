@@ -16,7 +16,10 @@ class AddMobilePage extends StatefulWidget {
   static const String route = '/addMobile';
 
   @override
-  _AddMobilePageState createState() => _AddMobilePageState();
+  _AddMobilePageState createState() {
+    print("in addMobile");
+    return _AddMobilePageState();
+  }
 }
 
 class _AddMobilePageState extends State<AddMobilePage> {

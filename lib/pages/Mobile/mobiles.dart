@@ -21,6 +21,7 @@ class MobilePage extends StatefulWidget {
 
   @override
   _MobilePageState createState() {
+    print("in mobiles");
     return _MobilePageState();
   }
 }
@@ -47,10 +48,12 @@ class _MobilePageState extends State<MobilePage> {
   }
 
   Future<void> _getMyMobileId() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     try {
       _myMobileId = int.parse(prefs.getString("mobileId"));
-    } catch (exception) {}
+    } catch (exception) {
+      print(exception);
+    }
   }
 
   Future<void> _showEditDialog(Mobile mobile) {
@@ -221,54 +224,55 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
-  void onStart() {
-    WidgetsFlutterBinding.ensureInitialized();
-    int counter = 0;
-    final service = FlutterBackgroundService();
-    service.onDataReceived.listen((event) {
-      if (event["action"] == "setAsBackground") {
-        service.setForegroundMode(false);
-      }
+  // void onStart() {
+  //   // WidgetsFlutterBinding.ensureInitialized();
+  //   print("start running service in mobiles.dart");
+  //   int counter = 0;
+  //   final service = FlutterBackgroundService();
+  //   service.onDataReceived.listen((event) {
+  //     if (event["action"] == "setAsBackground") {
+  //       service.setForegroundMode(false);
+  //     }
 
-      if (event["action"] == "stopService") {
-        service.stopBackgroundService();
-      }
-    });
+  //     if (event["action"] == "stopService") {
+  //       service.stopBackgroundService();
+  //     }
+  //   });
 
-    // bring to foreground
-    service.setForegroundMode(true);
-    Timer.periodic(
-      Duration(minutes: timeToGetLocationPerMinute),
-      (timer) async {
-        if (!(await service.isServiceRunning())) timer.cancel();
-        Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: geolocatorAccuracy,
-        );
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        if (prefs.getString("username") != null) {
-          _wf.writeToFile(
-              '${position.latitude.toString()}',
-              '${position.longitude.toString()}',
-              '${position.accuracy.toString()}');
-          if (counter > timeToUploadPerMinute) {
-            UploadFile uploadFile = new UploadFile();
-            uploadFile.uploadToServer();
-            counter = 0;
-          }
-        }
-        service.setNotificationInfo(
-          title: "Contact tracing",
-          content:
-              "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-        );
+  //   // bring to foreground
+  //   service.setForegroundMode(true);
+  //   Timer.periodic(
+  //     Duration(minutes: timeToGetLocationPerMinute),
+  //     (timer) async {
+  //       if (!(await service.isServiceRunning())) timer.cancel();
+  //       Position position = await Geolocator.getCurrentPosition(
+  //         desiredAccuracy: geolocatorAccuracy,
+  //       );
+  //       final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       if (prefs.getString("username") != null) {
+  //         _wf.writeToFile(
+  //             '${position.latitude.toString()}',
+  //             '${position.longitude.toString()}',
+  //             '${position.accuracy.toString()}');
+  //         if (counter > timeToUploadPerMinute) {
+  //           UploadFile uploadFile = new UploadFile();
+  //           uploadFile.uploadToServer();
+  //           counter = 0;
+  //         }
+  //       }
+  //       service.setNotificationInfo(
+  //         title: "Contact tracing",
+  //         content:
+  //             "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+  //       );
 
-        service.sendData(
-          {"current_date": DateTime.now().toIso8601String()},
-        );
-        counter = counter + 1;
-      },
-    );
-  }
+  //       service.sendData(
+  //         {"current_date": DateTime.now().toIso8601String()},
+  //       );
+  //       counter = counter + 1;
+  //     },
+  //   );
+  // }
 
 // Future<void> backgroundHandler(RemoteMessage message) async {
 //   print(message.data.toString());
@@ -295,27 +299,29 @@ class _MobilePageState extends State<MobilePage> {
           try {
             final mobileMap = mobileList.asMap();
             Mobile firstMobileInList = mobileMap[0];
-
             if (firstMobileInList.mobileId == 0) {
               _showReload = true;
               print('show reload is true');
-            } else if (mobileList.length == 1) {
+            } else if ((mobileList.length == 1) ||
+                (prefs.getBool('justLogin') == true)) {
               //add the first mobile
-              print('add the first mobile');
-              // if (prefs.getString('mobileId') == null ||
-              //     prefs.getString('mobileId') == '') {
-              //  start bg services
-              FlutterBackgroundService.initialize(onStart);
-              // }
+              print(
+                  'add the first mobile and start service || logged in and have mobile(s), start services and remove justLogin');
               _setSelectedRadioTile(firstMobileInList.mobileId);
-            } else if (prefs.getBool('justLogin') == true) {
-              //login and have mobile(s)
-              print('login and have mobile(s)');
+              prefs.remove('justLogin');
               //  start bg services
-              FlutterBackgroundService.initialize(onStart);
-              prefs.setBool('justLogin', null);
-              _setSelectedRadioTile(firstMobileInList.mobileId);
+              FlutterBackgroundService().sendData({"action": "startService"});
             }
+            // else if  {
+            //   //login and have mobile(s)
+            //   print(
+            //       '');
+            //   //  start bg services
+
+            //   _setSelectedRadioTile(firstMobileInList.mobileId);
+            //   FlutterBackgroundService().sendData({"action": "startService"});
+            // }
+            // }
           } catch (e) {
             print(e.toString());
             _showReload = true;

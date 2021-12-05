@@ -6,6 +6,7 @@ import 'mobile.dart';
 
 class ApiMobile {
   static Future<List<Mobile>> getMobiles() async {
+    print("in apiMobile, getMobiles");
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String username = prefs.getString('username');

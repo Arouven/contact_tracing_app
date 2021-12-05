@@ -17,7 +17,10 @@ import 'package:contact_tracing/widgets/commonWidgets.dart';
 class RegisterPage extends StatefulWidget {
   static const String route = '/register';
   @override
-  _RegisterState createState() => _RegisterState();
+  _RegisterState createState() {
+    print("in register");
+    return _RegisterState();
+  }
 }
 
 class _RegisterState extends State<RegisterPage> {

@@ -1,6 +1,11 @@
 import 'dart:async';
 
+import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/classes/notification.dart';
+import 'package:contact_tracing/classes/uploadClass.dart';
+import 'package:contact_tracing/classes/write.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:contact_tracing/pages/Location/filter.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -20,13 +25,14 @@ class SplashPage extends StatefulWidget {
 
   @override
   _SplashPageState createState() {
+    print("in splash");
     return _SplashPageState();
   }
 }
 
 class _SplashPageState extends State<SplashPage> {
   int _latestUpdate = 0;
-
+  Writefile _wf = new Writefile();
   @override
   void initState() {
     // TODO: implement initState
@@ -62,8 +68,8 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> deleteMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', 'Arouven Poolian');
-    await prefs.setString('password', 'Aa@12345');
+    //await prefs.setString('username', 'Arouven Poolian');
+    //await prefs.setString('password', 'Aa@12345');
     //  await prefs.setString("mobileId", '1');
   }
 
@@ -105,17 +111,21 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
-      await prefs.setString(
-        "fileName",
-        '${prefs.getString("username")}_geolocatorbest.csv',
-      );
+      // await prefs.setString(
+      //   "fileName",
+      //   '${prefs.getString("username")}_geolocatorbest.csv',
+      // );
       //return Future.value(RegisterPage());
+      //FlutterBackgroundService.initialize(onStart);
+      print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {
+      print("MobilePage");
       return Future.value(MobilePage());
     } else {
+      print("LoginPage");
       return Future.value(LoginPage());
     }
   }

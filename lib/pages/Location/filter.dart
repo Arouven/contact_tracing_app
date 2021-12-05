@@ -21,6 +21,7 @@ class _FilterPageState extends State<FilterPage> {
 
   @override
   void initState() {
+    print("in filter");
     super.initState();
 
     initCheckboxes().whenComplete(() {

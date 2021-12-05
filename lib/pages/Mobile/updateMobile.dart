@@ -20,7 +20,10 @@ class UpdateMobilePage extends StatefulWidget {
     @required this.mobile,
   }) : super(key: key);
   @override
-  _UpdateMobilePageState createState() => _UpdateMobilePageState();
+  _UpdateMobilePageState createState() {
+    print("in updateMobile");
+    return _UpdateMobilePageState();
+  }
 }
 
 class _UpdateMobilePageState extends State<UpdateMobilePage> {

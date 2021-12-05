@@ -23,50 +23,66 @@ Writefile _wf = new Writefile();
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
+  Timer myTimer;
   final service = FlutterBackgroundService();
   service.onDataReceived.listen((event) {
     if (event["action"] == "setAsBackground") {
+      print("event action == setAsBackground");
       service.setForegroundMode(false);
     }
 
     if (event["action"] == "stopService") {
+      print("event action == stopService");
+      myTimer.cancel();
       service.stopBackgroundService();
     }
+
+    if (event["action"] == "startService") {
+      print("event = startService and start timer too");
+      // bring to foreground
+      service.setForegroundMode(true);
+      myTimer = Timer.periodic(
+        Duration(minutes: timeToGetLocationPerMinute),
+        (timer) async {
+          print("in timer");
+          if (!(await service.isServiceRunning())) {
+            print("cancel timer");
+            timer.cancel();
+            myTimer.cancel();
+          }
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: geolocatorAccuracy,
+          );
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          if ((prefs.getString("username") != null) &&
+              (prefs.getString("mobileId") != null)) {
+            print("username and mobileid not null at start of service");
+            _wf.writeToFile(
+              '${position.latitude.toString()}',
+              '${position.longitude.toString()}',
+              '${position.accuracy.toString()}',
+            );
+            if (counter > timeToUploadPerMinute) {
+              UploadFile uploadFile = new UploadFile();
+              uploadFile.uploadToServer();
+              print("file uploaded and counter set to 0");
+              counter = 0;
+            }
+
+            service.setNotificationInfo(
+              title: "Contact tracing",
+              content:
+                  "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+            );
+          }
+          // service.sendData(
+          //   {"current_date": DateTime.now().toIso8601String()},
+          // );
+          counter = counter + 1;
+        },
+      );
+    }
   });
-
-  // bring to foreground
-  service.setForegroundMode(true);
-  Timer.periodic(
-    Duration(minutes: timeToGetLocationPerMinute),
-    (timer) async {
-      if (!(await service.isServiceRunning())) timer.cancel();
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: geolocatorAccuracy,
-      );
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      if (prefs.getString("username") != null) {
-        _wf.writeToFile(
-            '${position.latitude.toString()}',
-            '${position.longitude.toString()}',
-            '${position.accuracy.toString()}');
-        if (counter > timeToUploadPerMinute) {
-          UploadFile uploadFile = new UploadFile();
-          uploadFile.uploadToServer();
-          counter = 0;
-        }
-      }
-      service.setNotificationInfo(
-        title: "Contact tracing",
-        content:
-            "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-      );
-
-      service.sendData(
-        {"current_date": DateTime.now().toIso8601String()},
-      );
-      counter = counter + 1;
-    },
-  );
 }
 
 // Future<void> backgroundHandler(RemoteMessage message) async {

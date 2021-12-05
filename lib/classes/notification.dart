@@ -11,6 +11,7 @@ class Notif {
   final importance = Importance.max;
 
   void initialize(BuildContext context) {
+    print("in Notif");
     final InitializationSettings initializationSettings =
         InitializationSettings(
             android: AndroidInitializationSettings(flutterIcon));
@@ -24,6 +25,7 @@ class Notif {
   }
 
   Future<NotificationDetails> getPlatform() async {
+    print("in Notif");
     var android = new AndroidInitializationSettings(flutterIcon);
     var iOS = new IOSInitializationSettings();
     var initializationSettings =
@@ -58,7 +60,10 @@ class Notif {
   // }
 
   Future<void> showNotification(
-      String notificationTitle, String notificationBody) async {
+    String notificationTitle,
+    String notificationBody,
+  ) async {
+    print("in Notif");
     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final platformChannelSpecifics = await getPlatform();
     await flutterLocalNotificationsPlugin.show(

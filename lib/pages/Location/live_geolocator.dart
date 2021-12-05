@@ -31,6 +31,7 @@ class LiveGeolocatorPage extends StatefulWidget {
 
   @override
   _LiveGeolocatorPageState createState() {
+    print("in live_geolocator");
     return _LiveGeolocatorPageState();
   }
 }
@@ -171,8 +172,11 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       //print(mobiles);
       for (var mobile in mobiles) {
         try {
+          // print(mobile['mobileId'].toString());
           int firstInt = int.parse(mobile['mobileId'].toString());
-          int secondInt = int.parse(myMobileId.toString());
+          int secondInt =
+              (myMobileId != null) ? int.parse(myMobileId.toString()) : 0;
+          print(myMobileId.toString());
           if (firstInt != secondInt) {
             Marker marker = new Marker(
               width: 25,
@@ -196,8 +200,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           } else {
             _myMarkerColour = myMarkerColour;
           }
-        } on FormatException {
-          print("FormatException for firstInt");
+        } catch (e) {
+          print(e.toString());
+          //print("FormatException for firstInt");
 
           setState(() {
             _showReload = true;

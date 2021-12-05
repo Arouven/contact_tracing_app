@@ -9,6 +9,7 @@ class Writefile {
   }
 
   Future get _localFile async {
+    print("in Writefile");
     // Application documents directory: /data/user/0/{package_name}/{app_name}
     //final applicationDirectory = await getApplicationDocumentsDirectory();
 
@@ -18,7 +19,8 @@ class Writefile {
     final fullPath = externalDirectory.path;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var fullFilePath = '$fullPath/${prefs.getString("fileName")}';
+    var fullFilePath =
+        '$fullPath/${prefs.getString("username")}_geolocatorbest.csv';
     await prefs.setString("fileDirectory", '$fullPath/');
 //Retrive different types of data
 
@@ -29,6 +31,7 @@ class Writefile {
   }
 
   Future writeToFile(String latitude, String longitude, String accuracy) async {
+    print("in Writefile");
     final file = await _localFile;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String time = (new DateTime.now().millisecondsSinceEpoch).toString();

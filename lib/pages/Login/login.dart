@@ -15,9 +15,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
+  final username;
+  final password;
+  const LoginPage({
+    this.username,
+    this.password,
+  });
 
   @override
   _LoginState createState() {
+    print("in login");
     return _LoginState();
   }
 }
@@ -40,9 +47,13 @@ class _LoginState extends State<LoginPage> {
         "username": username,
         "password": password,
       });
+      print("urlparse");
       final data = jsonDecode(res.body);
+      print(data);
+      print("jsondecode");
 
       if (data['msg'] == "data does not exist") {
+        print(data['msg']);
         print("Wrong Credentials!");
         setState(() {
           _isLoading = false;
@@ -55,25 +66,32 @@ class _LoginState extends State<LoginPage> {
         );
       } else {
         //"User logged in";
+        print(data['msg']);
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', username);
         await prefs.setString('password', password);
         await prefs.setBool('justLogin', true);
+        print("credential save");
         setState(() {
           _isLoading = false;
         });
-        if (prefs.getString('mobileId') != '' ||
-            prefs.getString('mobileId') != null) {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => LiveGeolocatorPage()),
-              (e) => false);
-        } else {
+        print("mobileid is " + prefs.getString('mobileId').toString());
+        if (prefs.getString('mobileId') == '' ||
+            prefs.getString('mobileId') == null) {
+          print("mobile id is null");
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => MobilePage()),
               (e) => false);
+        } else {
+          print("mobile id is not null");
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LiveGeolocatorPage()),
+              (e) => false);
         }
       }
-    } on Exception {
+    } catch (e) {
+      print("exception in login");
+      print(e);
       setState(() {
         _isLoading = false;
         _showReload = true;
@@ -83,11 +101,13 @@ class _LoginState extends State<LoginPage> {
   }
 
   void _createAccountPressed() {
+    print("_createAccountPressed function");
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RegisterPage()));
   }
 
   void _passwordReset() {
+    print("_passwordReset function");
     // print("The user wants a password reset request sent to $_email");
   }
 
@@ -101,7 +121,12 @@ class _LoginState extends State<LoginPage> {
           backgroundColor: Colors.white,
           child: Icon(Icons.replay),
           onPressed: () {
-            _loginPressed();
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => LoginPage(
+                        username: _username.text.trim(),
+                        password: _password.text.trim())),
+                (e) => false);
           },
         ),
       );
@@ -131,7 +156,7 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new TextButton(
-              child: new Text('Dont have an account? Tap here to register.'),
+              child: new Text("Don\'t have an account? Tap here to register."),
               onPressed: _createAccountPressed,
             ),
           ),
@@ -175,6 +200,14 @@ class _LoginState extends State<LoginPage> {
   //     ),
   //   );
   // }
+  @override
+  void initState() {
+    _username.text =
+        (widget.username != null) ? widget.username.toString() : null;
+    _password.text =
+        (widget.password != null) ? widget.password.toString() : null;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -194,5 +227,12 @@ class _LoginState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _password?.dispose();
+    _username?.dispose();
+    super.dispose();
   }
 }
