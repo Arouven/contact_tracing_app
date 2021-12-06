@@ -5,10 +5,17 @@
 // $databasename = 'test';
 
 
+////home
+//const HOST = 'localhost';
+// const USERNAME = 'root';
+// const PASSWORD = '';
+// const DATABASENAME = 'contacttracing';
+
+//online
 const HOST = 'localhost';
-const USERNAME = 'root';//'id16921504_contacttrace';
-const PASSWORD = '';//'YHn(OuduZ3I)VxQS';
-const DATABASENAME = 'contacttracing';//'id16921504_contacttracing';
+const USERNAME = 'id16921504_contacttrace';
+const PASSWORD = 'YHn(OuduZ3I)VxQS';
+const DATABASENAME = 'id16921504_contacttracing';
 
 
 // message

@@ -36,8 +36,6 @@ class UploadFile {
       print('$fileName file deleted');
 
       await Notif().showNotification('File Uploaded', '$fileName was uploaded');
-      // await notification.showNotification('File Uploaded',
-      //     '${time}_${prefs.getString("username")} was uploaded');
     } catch (e) {
       print('Error: ${e.toString()}');
     } finally {

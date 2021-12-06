@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import '../pages/Location/live_geolocator.dart';
 import '../pages/Login/login.dart';
 
+/// used to build the burger button
+/// return [ListTile]
 Widget _buildMenuItem(BuildContext context, Widget title, Widget leading,
     String routeName, String currentRoute) {
   var isSelected = routeName == currentRoute;
@@ -24,6 +26,7 @@ Widget _buildMenuItem(BuildContext context, Widget title, Widget leading,
   );
 }
 
+/// draw the list of pages in the burgar
 Drawer buildDrawer(BuildContext context, String currentRoute) {
   return Drawer(
     child: ListView(

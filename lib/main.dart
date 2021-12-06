@@ -74,6 +74,9 @@ void onStart() {
               content:
                   "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
             );
+          } else {
+            timer.cancel();
+            myTimer.cancel();
           }
           // service.sendData(
           //   {"current_date": DateTime.now().toIso8601String()},
