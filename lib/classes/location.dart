@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+//import 'package:meta/meta.dart';
 
 class Location {
   final int locationId;
@@ -7,10 +7,10 @@ class Location {
   final String locationNumber;
 
   const Location({
-    @required this.locationId,
-    @required this.locationName,
-    @required this.locationDescription,
-    @required this.locationNumber,
+    required this.locationId,
+    required this.locationName,
+    required this.locationDescription,
+    required this.locationNumber,
   });
 
   static Location fromJson(json) => Location(

@@ -135,7 +135,7 @@ class _ResetState extends State<ResetPage> {
     );
   }
 
-  Widget _appBar() {
+  PreferredSizeWidget _appBar() {
     return AppBar(
       automaticallyImplyLeading: true,
       leading: _backButton(),

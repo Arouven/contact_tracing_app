@@ -29,7 +29,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _isLoading = true;
   bool _showReload = false;
 
-  bool _usernameInDB;
+  late bool? _usernameInDB;
   String _dateOfBirth = '';
   // DefaultCountry _defaultCountry;
 
@@ -99,7 +99,7 @@ class _RegisterState extends State<RegisterPage> {
       setState(() {
         _invalidConfirmPassword = true;
       });
-    } else if (_usernameController.text.isEmpty || _usernameInDB) {
+    } else if (_usernameController.text.isEmpty || _usernameInDB!) {
       setState(() {
         _invalidUserName = true;
       });
@@ -562,7 +562,7 @@ class _RegisterState extends State<RegisterPage> {
                   } else {
                     _invalidPassword = false;
                   }
-                  _invalidPasswordMessage = _validatePassword(s);
+                  _invalidPasswordMessage = _validatePassword(s)!;
                 });
               },
             ),
@@ -595,7 +595,7 @@ class _RegisterState extends State<RegisterPage> {
     );
   }
 
-  String _validatePassword(String value) {
+  String? _validatePassword(String value) {
 //     r'^
 //   (?=.*[A-Z])       // should contain at least one upper case
 //   (?=.*[a-z])       // should contain at least one lower case
@@ -732,7 +732,7 @@ class _RegisterState extends State<RegisterPage> {
       }
       return _f4(); //username, password, confirm password
     } else {
-      return null;
+      return Container();
     }
   }
 

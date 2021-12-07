@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+//import 'package:meta/meta.dart';
 
 class Mobile {
   final int mobileId;
@@ -7,10 +7,10 @@ class Mobile {
   final String mobileNumber;
 
   const Mobile({
-    @required this.mobileId,
-    @required this.mobileName,
-    @required this.mobileDescription,
-    @required this.mobileNumber,
+    required this.mobileId,
+    required this.mobileName,
+    required this.mobileDescription,
+    required this.mobileNumber,
   });
 
   static Mobile fromJson(json) => Mobile(

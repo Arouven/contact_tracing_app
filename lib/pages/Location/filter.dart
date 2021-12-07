@@ -17,7 +17,7 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   List<String> _checked = [];
-  SharedPreferences prefs;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -31,11 +31,13 @@ class _FilterPageState extends State<FilterPage> {
 
   initCheckboxes() async {
     prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('showConfirmInfected')) _checked.add("Infected");
-    if (prefs.getBool('showContactWithInfected')) _checked.add("Contacts");
-    if (prefs.getBool('showCleanUsers')) _checked.add("Safe users");
-    if (prefs.getBool('showTestingCenters')) _checked.add("Testing Centers");
-    if (prefs.getBool('showMyLocation')) _checked.add("Me");
+    if (prefs.getBool('showConfirmInfected') == true) _checked.add("Infected");
+    if (prefs.getBool('showContactWithInfected') == true)
+      _checked.add("Contacts");
+    if (prefs.getBool('showCleanUsers') == true) _checked.add("Safe users");
+    if (prefs.getBool('showTestingCenters') == true)
+      _checked.add("Testing Centers");
+    if (prefs.getBool('showMyLocation') == true) _checked.add("Me");
   }
 
   Widget _popCheckboxes() {

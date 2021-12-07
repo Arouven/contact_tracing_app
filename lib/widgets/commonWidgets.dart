@@ -149,7 +149,7 @@ class DialogBox {
   }
 
   static Future<void> showErrorDialog({
-    BuildContext context,
+    required BuildContext context,
     String title = 'Error',
     String body = 'An Error occur, please reload',
     Color titleColor = Colors.red,
@@ -192,13 +192,13 @@ class DialogBox {
   }
 
   static Future<void> timedDialog({
-    BuildContext context,
+    required BuildContext context,
     String title = 'time',
     String body = 'will automatically close',
     Color titleColor = Colors.green,
-    Duration autoCloseDuration,
+    required Duration autoCloseDuration,
   }) async {
-    Timer _timer;
+    late Timer _timer;
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!

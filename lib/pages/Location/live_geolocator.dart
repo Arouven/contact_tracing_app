@@ -37,8 +37,8 @@ class LiveGeolocatorPage extends StatefulWidget {
 }
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
-  Position _currentLocation;
-  MapController _mapController;
+  late Position _currentLocation;
+  late MapController _mapController;
   bool _isLoading = true;
   bool _showReload = false;
   List<Marker> _markers = [];
@@ -64,29 +64,29 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   Future<void> _useExistingData({String bodyResponse = ''}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String myMobileId = prefs.getString("mobileId");
+    String? myMobileId = prefs.getString("mobileId");
     if (bodyResponse == '') {
-      bodyResponse = prefs.getString('Locations');
+      bodyResponse = prefs.getString('Locations')!;
     }
     final data = jsonDecode(bodyResponse);
     if (data['status'] == "200") {
       print(data);
-      if (prefs.getBool('showConfirmInfected')) {
+      if (prefs.getBool('showConfirmInfected') == true) {
         await _populateMarkers(data["confirmInfected"], myMobileId,
             Colors.red[400], Colors.red.shade900);
       }
-      if (prefs.getBool('showContactWithInfected')) {
+      if (prefs.getBool('showContactWithInfected') == true) {
         await _populateMarkers(data["contactWithInfected"], myMobileId,
             Colors.yellow[400], Colors.yellow.shade900);
       }
-      if (prefs.getBool('showCleanUsers')) {
+      if (prefs.getBool('showCleanUsers') == true) {
         await _populateMarkers(data["cleanUsers"], myMobileId,
             Colors.green[400], Colors.green.shade900);
       }
-      if (prefs.getBool('showTestingCenters')) {
+      if (prefs.getBool('showTestingCenters') == true) {
         await _populateCentresMarkers(data["testingcentres"], Colors.blue);
       }
-      if (prefs.getBool('showMyLocation')) {
+      if (prefs.getBool('showMyLocation') == true) {
         await _addCurrentLocationToMarkers();
       }
 
@@ -118,7 +118,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   Future<void> _generateMarkers() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String bodyResponse = prefs.getString('Locations');
+    String? bodyResponse = prefs.getString('Locations');
     if (widget.downloadUpdatedLocations ||
         bodyResponse == null ||
         bodyResponse == '') {
@@ -425,7 +425,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  Widget _floatingActionButton() {
+  Widget? _floatingActionButton() {
     if (_isLoading || _showReload) {
       return null;
     } else {

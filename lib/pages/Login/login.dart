@@ -43,6 +43,8 @@ class _LoginState extends State<LoginPage> {
     String username = _username.text.trim();
     String password = _password.text.trim();
     try {
+      print(username);
+      print(password);
       final res = await http.post(Uri.parse(loginUrl), body: {
         "username": username,
         "password": password,
@@ -202,10 +204,12 @@ class _LoginState extends State<LoginPage> {
   // }
   @override
   void initState() {
+    // _username.text = widget.username!.toString();
+    //_password.text = widget.password!.toString();
     _username.text =
-        (widget.username != null) ? widget.username.toString() : null;
+        ((widget.username != null) ? widget.username.toString() : '');
     _password.text =
-        (widget.password != null) ? widget.password.toString() : null;
+        ((widget.password != null) ? widget.password.toString() : '');
     super.initState();
   }
 
@@ -231,8 +235,8 @@ class _LoginState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _password?.dispose();
-    _username?.dispose();
+    _password.dispose();
+    _username.dispose();
     super.dispose();
   }
 }

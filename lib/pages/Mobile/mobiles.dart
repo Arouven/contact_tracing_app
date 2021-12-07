@@ -23,11 +23,11 @@ class MobilePage extends StatefulWidget {
 
 class _MobilePageState extends State<MobilePage> {
   //declaring variables
-  SharedPreferences prefs;
+  late SharedPreferences prefs;
   bool _isLoading = true;
   bool _showReload = false;
-  int _selectedRadioTile;
-  int _myMobileId;
+  late int _selectedRadioTile;
+  late int _myMobileId;
   bool _findSelected = false;
   var _mobiles;
 
@@ -46,8 +46,8 @@ class _MobilePageState extends State<MobilePage> {
   Future<void> _getMyMobileId() async {
     prefs = await SharedPreferences.getInstance();
     try {
-      _myMobileId = int.parse(prefs.getString(
-          "mobileId")); //convert to integer and send it to _myMobileId
+      //convert to integer and send it to _myMobileId
+      _myMobileId = int.parse(prefs.getString("mobileId") as String);
     } catch (exception) {
       print(exception); //print the errors
     }
@@ -125,7 +125,7 @@ class _MobilePageState extends State<MobilePage> {
             value: mobile.mobileId,
             onChanged: (val) async {
               print("val = $val, selected tile = $_selectedRadioTile");
-              await _setSelectedRadioTile(val);
+              await _setSelectedRadioTile(val as int);
             },
             title: Text(
               mobile.mobileName,
@@ -150,7 +150,7 @@ class _MobilePageState extends State<MobilePage> {
             value: mobile.mobileId,
             onChanged: (val) {
               print("val = $val, selected tile = $_selectedRadioTile");
-              _setSelectedRadioTile(val);
+              _setSelectedRadioTile(val as int);
             },
             title: Text(
               mobile.mobileName,
@@ -202,7 +202,7 @@ class _MobilePageState extends State<MobilePage> {
 
   /// display the add button
   /// if is not loading and has not encounter error
-  Widget _floatingActionButton() {
+  Widget? _floatingActionButton() {
     if (_isLoading) {
       return null;
     } else if (_showReload) {
@@ -243,8 +243,8 @@ class _MobilePageState extends State<MobilePage> {
           print('is loading false');
 
           try {
-            final mobileMap = mobileList.asMap();
-            Mobile firstMobileInList = mobileMap[0];
+            final mobileMap = mobileList!.asMap();
+            Mobile firstMobileInList = mobileMap[0] as Mobile;
             if (firstMobileInList.mobileId == 0) {
               _showReload = true;
               print('show reload is true');

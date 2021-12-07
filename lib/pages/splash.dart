@@ -81,7 +81,8 @@ class _SplashPageState extends State<SplashPage> {
       try {
         if (mounted) {
           setState(() {
-            _latestUpdate = int.parse(prefs.getString('latestUpdate'));
+            _latestUpdate =
+                int.parse(prefs.getString('latestUpdate') as String);
           });
         }
       } catch (e) {

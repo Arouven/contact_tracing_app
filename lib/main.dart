@@ -1,11 +1,16 @@
 import 'dart:async';
 // import 'package:contact_tracing/pages/Location/filter.dart';
 // import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
+import 'package:contact_tracing/classes/notification.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
 // import 'pages/Mobile/addMobile.dart';
 import './classes/globals.dart';
@@ -23,10 +28,10 @@ Writefile _wf = new Writefile();
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
-  Timer myTimer;
+  late Timer myTimer;
   final service = FlutterBackgroundService();
   service.onDataReceived.listen((event) {
-    if (event["action"] == "setAsBackground") {
+    if (event!["action"] == "setAsBackground") {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
     }
@@ -88,21 +93,79 @@ void onStart() {
   });
 }
 
-// Future<void> backgroundHandler(RemoteMessage message) async {
-//   print(message.data.toString());
-//   print(message.notification.title);
-// }
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+late AndroidNotificationChannel channel;
+late NotificationSettings settings;
+late FirebaseMessaging _messaging;
+
+Future<void> setFirebase() async {
+  channel = Notif().androidNotificationChannel();
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  await Firebase.initializeApp();
+  _messaging = FirebaseMessaging.instance;
+
+  // 3. On iOS, this helps to take the user permissions
+  settings = await _messaging.requestPermission(
+    alert: true,
+    badge: true,
+    provisional: false,
+    sound: true,
+  );
+}
+
+void openAppMessage() {
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Parse the message received
+      sendMsg(message);
+    });
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
+
+Future<void> _messageHandler(RemoteMessage message) async {
+  print('background message ${message.notification!.body}');
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+    // Parse the message received
+    sendMsg(message);
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
+
+Future<void> sendMsg(RemoteMessage message) async {
+  PushNotification notification = PushNotification(
+    title: message.notification?.title,
+    body: message.notification?.body,
+  );
+  NotificationDetails notificationDetails = await Notif().getPlatform();
+  flutterLocalNotificationsPlugin.show(
+    notification.hashCode,
+    notification.title,
+    notification.body,
+    notificationDetails,
+  );
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
-  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   await Geolocator.requestPermission();
-  // await _setFilters();
+  await setFirebase();
+  openAppMessage();
+  FirebaseMessaging.onBackgroundMessage(_messageHandler);
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    print('Message clicked!');
+  });
   FlutterBackgroundService.initialize(onStart);
-  runApp(
-    MyApp(),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -148,3 +211,119 @@ const MaterialColor mapBoxBlue = MaterialColor(
     900: Color(0xFF172EF6),
   },
 );
+////////////////////////////////////////////////////
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:flutter/material.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+// class PushNotification {
+//   PushNotification({
+//     this.title,
+//     this.body,
+//   });
+//   String? title;
+//   String? body;
+// }
+
+// /// Initialize the [FlutterLocalNotificationsPlugin] package.
+// late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+// late AndroidNotificationChannel channel;
+// late NotificationSettings settings;
+// late FirebaseMessaging _messaging;
+
+// Future<void> setFirebase() async {
+//   channel = const AndroidNotificationChannel(
+//     'high_importance_channel', // id
+//     'High Importance Notifications', // title
+//     description:
+//         'This channel is used for important notifications.', // description
+//     importance: Importance.high,
+//   );
+//   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<
+//           AndroidFlutterLocalNotificationsPlugin>()
+//       ?.createNotificationChannel(channel);
+//   await Firebase.initializeApp();
+//   _messaging = FirebaseMessaging.instance;
+
+//   // 3. On iOS, this helps to take the user permissions
+//   settings = await _messaging.requestPermission(
+//     alert: true,
+//     badge: true,
+//     provisional: false,
+//     sound: true,
+//   );
+// }
+
+// void openAppMessage() {
+//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+//     print('User granted permission');
+//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+//       // Parse the message received
+//       sendMsg(message);
+//     });
+//   } else {
+//     print('User declined or has not accepted permission');
+//   }
+// }
+
+// Future<void> _messageHandler(RemoteMessage message) async {
+//   print('background message ${message.notification!.body}');
+//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+//     print('User granted permission');
+//     // Parse the message received
+//     sendMsg(message);
+//   } else {
+//     print('User declined or has not accepted permission');
+//   }
+// }
+
+// void sendMsg(RemoteMessage message) {
+//   PushNotification notification = PushNotification(
+//     title: message.notification?.title,
+//     body: message.notification?.body,
+//   );
+
+//   flutterLocalNotificationsPlugin.show(
+//     notification.hashCode,
+//     notification.title,
+//     notification.body,
+//     NotificationDetails(
+//       android: AndroidNotificationDetails(
+//         'id',
+//         'channel.name',
+//         channelDescription: 'channel.description',
+//         // TODO add a proper drawable resource to android, for now using
+//         //      one that already exists in example app.
+//         icon: '@mipmap/ic_launcher',
+//       ),
+//     ),
+//   );
+// }
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await setFirebase();
+//   openAppMessage();
+//   FirebaseMessaging.onBackgroundMessage(_messageHandler);
+//   FirebaseMessaging.onMessageOpenedApp.listen((message) {
+//     print('Message clicked!');
+//   });
+//   runApp(MyHomePage());
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   GeeksForGeeksState createState() => GeeksForGeeksState();
+// }
+
+// class GeeksForGeeksState extends State<MyHomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Center(child: Text('Hello World')),
+//     );
+//   }
+// }

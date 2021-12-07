@@ -17,11 +17,21 @@ class Notif {
             android: AndroidInitializationSettings(flutterIcon));
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String route) async {
+        onSelectNotification: (String? route) async {
       if (route != null) {
         Navigator.of(context).pushNamed(route);
       }
     });
+  }
+
+  AndroidNotificationChannel androidNotificationChannel() {
+    return const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
   }
 
   Future<NotificationDetails> getPlatform() async {
@@ -33,13 +43,20 @@ class Notif {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(channelId, channelName, channelDescription,
-            importance: importance, priority: priority);
+        AndroidNotificationDetails(
+      channelId,
+      channelName,
+      channelDescription: channelDescription,
+      importance: importance,
+      priority: priority,
+    );
     final IOSNotificationDetails iOSNotificationDetails =
         IOSNotificationDetails();
 
     final NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics, iOS: iOSNotificationDetails);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSNotificationDetails,
+    );
     return platformChannelSpecifics;
   }
 

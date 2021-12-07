@@ -205,9 +205,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
                             _validateNumber ? 'Number Can\'t Be Empty' : null,
                       ),
                       onInputChanged: (PhoneNumber number) {
-                        String pn = number.phoneNumber;
+                        String? pn = number.phoneNumber;
                         _numwithoutcode =
-                            (pn.substring(number.dialCode.length, pn.length));
+                            (pn!.substring(number.dialCode!.length, pn.length));
                         print(_numwithoutcode);
                         setState(() {
                           _numwithoutcode.length == 0
@@ -323,9 +323,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
 
   @override
   void dispose() {
-    _mobileNumberController?.dispose();
-    _mobileName?.dispose();
-    _mobileDescription?.dispose();
+    _mobileNumberController.dispose();
+    _mobileName.dispose();
+    _mobileDescription.dispose();
     super.dispose();
   }
 }

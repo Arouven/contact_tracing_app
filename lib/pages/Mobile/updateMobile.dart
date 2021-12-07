@@ -16,8 +16,8 @@ class UpdateMobilePage extends StatefulWidget {
   final Mobile mobile;
   static const String route = '/updateMobile';
   const UpdateMobilePage({
-    Key key,
-    @required this.mobile,
+    Key? key,
+    required this.mobile,
   }) : super(key: key);
   @override
   _UpdateMobilePageState createState() {
@@ -198,9 +198,9 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
                             _validateNumber ? 'Number Can\'t Be Empty' : null,
                       ),
                       onInputChanged: (PhoneNumber number) {
-                        String pn = number.phoneNumber;
+                        String? pn = number.phoneNumber;
                         _numwithoutcode =
-                            (pn.substring(number.dialCode.length, pn.length));
+                            (pn!.substring(number.dialCode!.length, pn.length));
                         print('hhhhhhhhhhhhhhhhhhhhhhhhh');
                         print(_numwithoutcode);
                         print(number);
@@ -320,9 +320,9 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
 
   @override
   void dispose() {
-    _mobileName?.dispose();
-    _mobileDescription?.dispose();
-    _mobileNumberController?.dispose();
+    _mobileName.dispose();
+    _mobileDescription.dispose();
+    _mobileNumberController.dispose();
     super.dispose();
   }
 }

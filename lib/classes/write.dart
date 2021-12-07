@@ -16,7 +16,7 @@ class Writefile {
     // External storage directory: /storage/emulated/0
     final externalDirectory = await getExternalStorageDirectory();
 
-    final fullPath = externalDirectory.path;
+    final fullPath = externalDirectory!.path;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var fullFilePath =

@@ -17,8 +17,8 @@ class UploadFile {
 
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String currentFilePath = prefs.getString("fileDirectory") +
-          prefs.getString("username") +
+      String? currentFilePath = prefs.getString("fileDirectory")! +
+          prefs.getString("username")! +
           "_geolocatorbest.csv";
       File file = File(currentFilePath);
       String time = (new DateTime.now().millisecondsSinceEpoch).toString();

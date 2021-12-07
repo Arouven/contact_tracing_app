@@ -29,10 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $outputArray['msg'] = "data exist";
         $outputArray['nationalIdNumber'] = $data[0]['nationalIdNumber'];
         $outputArray['username'] = $data[0]['username'];
-
+        header("Content-Type:application/json");
         print json_encode($outputArray);
     } else {
         $outputArray['msg'] = "data does not exist";
+        header("Content-Type:application/json");
         print json_encode($outputArray);
     }
 }
