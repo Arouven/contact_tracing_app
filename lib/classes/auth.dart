@@ -22,7 +22,7 @@
 //   Future signInUsernamePassword(String email, String password) async {
 //     try {
 //       UserCredential userCredential =
-//           await FirebaseAuth.instance.createUserWithEmailAndPassword(
+//           await _firebaseAuth.createUserWithEmailAndPassword(
 //         email: "$email",
 //         password: "$password",
 //       );

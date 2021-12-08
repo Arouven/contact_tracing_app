@@ -68,9 +68,9 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> deleteMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //await prefs.setString('username', 'Arouven Poolian');
-    //await prefs.setString('password', 'Aa@12345');
-    //  await prefs.setString("mobileId", '1');
+    // await prefs.setString('username', 'Arouven Poolian');
+    // await prefs.setString('password', 'Aa@12345');
+    // await prefs.setString("mobileId", '1');
   }
 
   Future<Widget> loadFromFuture() async {
@@ -112,12 +112,6 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getString('username') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
-      // await prefs.setString(
-      //   "fileName",
-      //   '${prefs.getString("username")}_geolocatorbest.csv',
-      // );
-      //return Future.value(RegisterPage());
-      //FlutterBackgroundService.initialize(onStart);
       print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('username') != null &&

@@ -49,7 +49,10 @@ class _LoginState extends State<LoginPage> {
         "username": username,
         "password": password,
       });
+      print(loginUrl);
       print("urlparse");
+      print(res);
+      print(res.body.toString());
       final data = jsonDecode(res.body);
       print(data);
       print("jsondecode");

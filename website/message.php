@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
 
 class message
 {
@@ -33,7 +33,7 @@ class message
         //print strval($response);
         if ($response->success == "true") {
             return true;
-        }        
+        }
         return false;
     }
 }
@@ -43,6 +43,6 @@ $message = new message(
 );
 if ($message->sendMessage()) {
     echo 'message sent';
-}else{
-  echo  'error';
+} else {
+    echo  'error';
 }

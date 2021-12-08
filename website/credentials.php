@@ -14,7 +14,7 @@
 //online
 const HOST = 'localhost';
 const USERNAME = 'id16921504_contacttrace';
-const PASSWORD = 'YHn(OuduZ3I)VxQS';
+const PASSWORD = 'kFpT4}=}PDV|j=18';
 const DATABASENAME = 'id16921504_contacttracing';
 
 

@@ -1,5 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
+
 
 class database
 {

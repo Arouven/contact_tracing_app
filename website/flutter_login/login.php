@@ -1,6 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
-
+require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 
 $db = new database();
 $conn = $db->getConnection();
@@ -37,3 +36,37 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         print json_encode($outputArray);
     }
 }
+
+// $db = new database();
+// $conn = $db->getConnection();
+
+// $username = "";
+// if (isset($_Get['username'])) {
+//     $username = mysqli_real_escape_string($conn, $_GET['username']);
+// }
+// $password = "";
+// if (isset($_GET['password'])) {
+//     $password = mysqli_real_escape_string($conn, $_GET['password']);
+// }
+// $selectquery = "SELECT nationalIdNumber, username FROM User WHERE username = ? AND password = ?;";
+
+
+// $selectparamType = "ss";
+// $selectparamArray = array(
+//     $username,
+//     $password
+// );
+// $data = $db->select($selectquery, $selectparamType, $selectparamArray);
+// $outputArray = array();
+
+// if (isset($data) && $data != null) { //if there is something in the result
+//     $outputArray['msg'] = "data exist";
+//     $outputArray['nationalIdNumber'] = $data[0]['nationalIdNumber'];
+//     $outputArray['username'] = $data[0]['username'];
+//     header("Content-Type:application/json");
+//     print json_encode($outputArray);
+// } else {
+//     $outputArray['msg'] = "data does not exist";
+//     header("Content-Type:application/json");
+//     print json_encode($outputArray);
+// }

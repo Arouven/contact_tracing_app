@@ -1,6 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/database.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/Website/php_scripts/bigTable.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
