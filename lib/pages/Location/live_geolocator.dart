@@ -17,7 +17,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
 import 'package:http/http.dart' as http;
-// import 'package:grouped_buttons/grouped_buttons.dart';
+//import 'package:grouped_buttons/grouped_buttons.dart';
 
 //import 'package:flutter/material.dart';
 //import 'package:cool_alert/cool_alert.dart';
@@ -37,7 +37,7 @@ class LiveGeolocatorPage extends StatefulWidget {
 }
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
-  late Position _currentLocation;
+  Position? _currentLocation;
   late MapController _mapController;
   bool _isLoading = true;
   bool _showReload = false;
@@ -213,6 +213,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> initLocationService() async {
+    //  final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await
+
+    //_currentLocation = (await Geolocator.getLastKnownPosition())!;
     bool serviceEnabled;
     bool serviceRequestResult;
     try {
@@ -226,13 +230,19 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         //   _currentLocation = cp;
         // });
         // if (mounted) {
-        setState(() {
-          _currentLocation = cp;
-        });
-        _mapController.move(
-            LatLng(_currentLocation.latitude, _currentLocation.longitude),
-            _mapController.zoom);
-        //}
+        if (_currentLocation != null) {
+          setState(() {
+            print('my late');
+            print(cp.toString());
+            _currentLocation = cp;
+          });
+          if (_mapController != null) {
+            _mapController.move(
+                LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
+                _mapController.zoom);
+          }
+          //}
+        }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
@@ -360,7 +370,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       return Aesthetic.displayCircle();
     } else if (_showReload) {
       return Aesthetic.refreshButton(
-          context: context, route: LiveGeolocatorPage());
+        context: context,
+        route: LiveGeolocatorPage(),
+      );
     } else {
       return Padding(
         padding: EdgeInsets.all(8.0),
@@ -443,8 +455,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Future<void> _addCurrentLocationToMarkers() async {
     print(_currentLocation);
     if (_currentLocation != null) {
-      LatLng currentLatLng =
-          LatLng(_currentLocation.latitude, _currentLocation.longitude);
+      LatLng currentLatLng = LatLng(
+        _currentLocation!.latitude,
+        _currentLocation!.longitude,
+      );
       Marker marker = new Marker(
         width: 30,
         height: 30,
@@ -495,18 +509,49 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
+  Future<Position?> initPrefs() async {
+    //final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // double lastlat = prefs.getDouble("lastlat");
+    ///double lastlng = prefs.getDouble("lastlng");
+    //prefs.getDouble("lastlng");
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+
+    Position? position = await Geolocator.getLastKnownPosition();
+    print(position);
+    return position;
+  }
+
+  Future<void> ssss() async {
+    try {
+      Position? position = await initPrefs();
+      while (position == null) {
+        position = await Geolocator.getCurrentPosition();
+        _currentLocation = position;
+        break;
+      }
+      _currentLocation = position;
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
-    _mapController = MapController();
-    _setFilters();
-    initLocationService().whenComplete(() {
-      setState(() {});
-    });
-    _generateMarkers().whenComplete(() {
-      setState(() {});
-    });
+    try {
+      ssss().whenComplete(() {
+        _mapController = MapController();
+        _setFilters();
+        initLocationService().whenComplete(() {
+          setState(() {});
+        });
+        _generateMarkers().whenComplete(() {
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -516,8 +561,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     // Until currentLocation is initially updated, Widget can locate to 0, 0
     // by default or store previous location value to show.
     if (_currentLocation != null) {
-      currentLatLng =
-          LatLng(_currentLocation.latitude, _currentLocation.longitude);
+      currentLatLng = LatLng(
+        _currentLocation!.latitude,
+        _currentLocation!.longitude,
+      );
       //locationAccuracy = _currentLocation.accuracy;
     } else {
       currentLatLng = LatLng(0, 0);

@@ -8,7 +8,7 @@ import 'globals.dart';
 
 class UploadFile {
   //String fileToUpload;
-  final String directoryToUpload = '/htdocs/csv/csvFiles/';
+  final String directoryToUpload = '/public_html/csv_to_sql/csvFiles/';
 
   void uploadToServer() async {
     print("in UploadFile");
