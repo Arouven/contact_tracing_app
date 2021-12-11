@@ -42,8 +42,9 @@ class FirebaseAuthenticate {
         password: "$password",
       );
       // print(FirebaseAuth.instance.currentUser!.uid);
-      String? token = userCredential.user!.uid;
-      print(token);
+      // String? userid = userCredential.user!.uid;
+      // print(userid);
+
     } on FirebaseAuthException catch (e) {
       print(e.message);
       // if (e.code == 'weak-password') {
@@ -54,6 +55,10 @@ class FirebaseAuthenticate {
     } catch (e) {
       print('error in firebase');
       print(e);
+    } finally {
+      FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+      String? token = await _firebaseMessaging.getToken();
+      print(token);
     }
   }
 //   User _user(FirebaseUser firebaseUser) {

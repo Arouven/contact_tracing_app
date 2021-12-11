@@ -4,11 +4,9 @@ CREATE TABLE `User` (
   `firstName` VARCHAR(255) NOT NULL,
   `lastName` VARCHAR(255) NOT NULL,
   `address` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
-  `nationalIdNumber` VARCHAR(255) NOT NULL,
-  `username` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `firebaseuid` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`userId`)
 );
 
@@ -18,6 +16,7 @@ CREATE TABLE `Mobile` (
   `mobileName` VARCHAR(255) NOT NULL,
   `mobileDescription` VARCHAR(255) NOT NULL,
   `mobileNumber` VARCHAR(255) NOT NULL,
+  `fcmtoken` VARCHAR(255) NOT NULL,
   `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
@@ -54,8 +53,7 @@ CREATE TABLE `TestingCentres` (
 );
 
 -- create stored procedure
-DELIMITER // 
-CREATE PROCEDURE InsertMobile(
+DELIMITER / / CREATE PROCEDURE InsertMobile(
   IN username VARCHAR(255),
   IN mobileName VARCHAR(255),
   IN mobileDescription VARCHAR(255),
@@ -77,8 +75,7 @@ SET
   `mobileDescription` = mobileDescription,
   `mobileNumber` = mobileNumber;
 
-END 
-// DELIMITER ;
+END / / DELIMITER;
 
 -- INSERTING TEST DATA INTO TABLES
 INSERT INTO
