@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+import 'classes/auth.dart';
 import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
 // import 'pages/Mobile/addMobile.dart';
@@ -207,6 +208,7 @@ void main() async {
     print('Message clicked!');
   });
   FlutterBackgroundService.initialize(onStart);
+
   runApp(MyApp());
 }
 

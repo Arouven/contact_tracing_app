@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:contact_tracing/classes/auth.dart';
 import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/classes/notification.dart';
 import 'package:contact_tracing/classes/uploadClass.dart';
@@ -121,6 +122,7 @@ class _SplashPageState extends State<SplashPage> {
       return Future.value(MobilePage());
     } else {
       print("LoginPage");
+      FirebaseAuthenticate().firebaseSignIn();
       return Future.value(LoginPage());
     }
   }
