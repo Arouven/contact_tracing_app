@@ -5,9 +5,9 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $email = "";
-    if (isset($_POST['email'])) {
-        $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $firebaseuid = "";
+    if (isset($_POST['firebaseuid'])) {
+        $firebaseuid = mysqli_real_escape_string($conn, $_POST['firebaseuid']);
     }
     $mobileName = "";
     if (isset($_POST['mobileName'])) {
@@ -21,14 +21,27 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['mobileNumber'])) {
         $mobileNumber = mysqli_real_escape_string($conn, $_POST['mobileNumber']);
     }
+    $fcmtoken = "";
+    if (isset($_POST['fcmtoken'])) {
+        $fcmtoken = mysqli_real_escape_string($conn, $_POST['fcmtoken']);
+    }
 
-    $executequery = "CALL InsertMobile(?,?,?,?);";
-    $executeparamType = "ssss";
+
+    // -- create stored procedure
+    // DELIMITER / / CREATE PROCEDURE InsertMobile(
+    //   IN firebaseuid TEXT,
+    //   IN mobileName VARCHAR(255),
+    //   IN mobileDescription VARCHAR(255),
+    //   IN mobileNumber VARCHAR(255),
+    //   IN fcmtoken TEXT
+    $executequery = "CALL InsertMobile(?,?,?,?,?);";
+    $executeparamType = "sssss";
     $executeparamArray = array(
-        $email,
+        $firebaseuid,
         $mobileName,
         $mobileDescription,
-        $mobileNumber
+        $mobileNumber,
+        $fcmtoken,
     );
     $db->execute($executequery, $executeparamType, $executeparamArray);
 

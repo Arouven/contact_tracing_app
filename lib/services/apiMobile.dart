@@ -9,13 +9,14 @@ class ApiMobile {
   static Future<List<Mobile>?> getMobiles() async {
     print("in apiMobile, getMobiles");
     try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      // final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      String? firebaseuid = FirebaseAuth.instance.currentUser!.uid;
+      String? firebaseuid = await FirebaseAuth.instance.currentUser!.uid;
       print(firebaseuid);
       final res = await http
           .post(Uri.parse(getMobilesUrl), body: {"firebaseuid": firebaseuid});
       final body = json.decode(res.body);
+      print(body);
       final mobiles = body['mobiles'];
       print(mobiles);
       if (mobiles != null) {

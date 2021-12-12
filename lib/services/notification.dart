@@ -84,8 +84,11 @@ class Notif {
     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final platformChannelSpecifics = await getPlatform();
     await flutterLocalNotificationsPlugin.show(
-        id, notificationTitle, notificationBody, platformChannelSpecifics);
-
+      id,
+      notificationTitle,
+      notificationBody,
+      platformChannelSpecifics,
+    );
     print('notified');
   }
 }

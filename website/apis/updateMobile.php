@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
     $executequery = "UPDATE Mobile SET Mobile.mobileName = ?, Mobile.mobileDescription = ?, Mobile.mobileNumber = ?, Mobile.fcmtoken = ? WHERE Mobile.mobileId = ?;";
-    $executeparamType = "sssi";
+    $executeparamType = "ssssi";
     $executeparamArray = array(
         $mobileName,
         $mobileDescription,

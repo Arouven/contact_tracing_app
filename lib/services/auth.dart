@@ -82,7 +82,7 @@ class FirebaseAuthenticate {
     return firebaseuid;
   }
 
-  Future<String?> getfirebasetoken() async {
+  Future<String?> getfirebasefcmtoken() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     String? token = await _firebaseMessaging.getToken();
     print(token);

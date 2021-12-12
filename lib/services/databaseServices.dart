@@ -4,12 +4,12 @@ import 'package:http/http.dart' as http;
 
 class DatabaseServices {
   Future registerUser({
-    String firstName = '',
-    String lastName = '',
-    String address = '',
-    String dateOfBirth = '',
-    String email = '',
-    String firebaseuid = '',
+    required String firstName,
+    required String lastName,
+    required String address,
+    required String dateOfBirth,
+    required String email,
+    required String firebaseuid,
   }) async {
     try {
       final res = await http.post(
@@ -31,7 +31,7 @@ class DatabaseServices {
     }
   }
 
-  Future emailExist(String email) async {
+  Future emailExist({required String email}) async {
     // setState(() {
     //   _emailInDB = null;
     // });
@@ -67,11 +67,11 @@ class DatabaseServices {
   }
 
   Future addMobile({
-    String firebaseuid = '',
-    String mobileName = '',
-    String mobileDescription = '',
-    String mobileNumber = '',
-    String fcmtoken = '',
+    required String firebaseuid,
+    required String mobileName,
+    required String mobileDescription,
+    required String mobileNumber,
+    required String fcmtoken,
   }) async {
     try {
       final res = await http.post(Uri.parse(addMobileUrl), body: {
@@ -89,11 +89,11 @@ class DatabaseServices {
   }
 
   Future updateMobile({
-    String mobileId = '',
-    String mobileName = '',
-    String mobileDescription = '',
-    String mobileNumber = '',
-    String fcmtoken = '',
+    required String mobileId,
+    required String mobileName,
+    required String mobileDescription,
+    required String mobileNumber,
+    required String fcmtoken,
   }) async {
     try {
       final res = await http.post(
@@ -103,6 +103,25 @@ class DatabaseServices {
           "mobileName": mobileName,
           "mobileDescription": mobileDescription,
           "mobileNumber": mobileNumber,
+          "fcmtoken": fcmtoken,
+        },
+      );
+      return jsonDecode(res.body);
+    } catch (e) {
+      print(e.toString());
+      return 'Error';
+    }
+  }
+
+  Future updateMobilefmcToken({
+    required String mobileId,
+    required String fcmtoken,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse(updateMobilefmcTokenUrl),
+        body: {
+          "mobileId": mobileId,
           "fcmtoken": fcmtoken,
         },
       );

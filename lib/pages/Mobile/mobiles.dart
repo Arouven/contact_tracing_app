@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:contact_tracing/services/apiMobile.dart';
+import 'package:contact_tracing/services/auth.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -40,6 +42,9 @@ class _MobilePageState extends State<MobilePage> {
       'mobileId',
       val.toString(),
     ); //update new mobileid in shared pref
+    String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    await DatabaseServices()
+        .updateMobilefmcToken(mobileId: val.toString(), fcmtoken: fcmtoken!);
   }
 
   /// get the mobile id of the user and set it in [_myMobileId]
@@ -229,12 +234,12 @@ class _MobilePageState extends State<MobilePage> {
           //if mobileid in database not matches users current mobileid.
           //set the radio button to 0.
           // means that we have to find
-          if (_myMobileId != null) {
-            _findSelected = false;
-            _selectedRadioTile = _myMobileId;
-          } else {
+          if (_myMobileId == 0) {
             _findSelected = true;
             _selectedRadioTile = 0;
+          } else {
+            _findSelected = false;
+            _selectedRadioTile = _myMobileId;
           }
         }));
     ApiMobile.getMobiles().then((mobileList) => setState(() {

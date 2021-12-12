@@ -1,5 +1,6 @@
 //import 'dart:convert';
 import 'dart:io';
+import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 //import 'package:contact_tracing/services/globals.dart';
 import 'package:device_info/device_info.dart';
@@ -62,6 +63,42 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     });
   }
 
+  _updateButtonPressed() async {
+    Navigator.of(context).pop();
+    setState(() {
+      _isLoading = true;
+    });
+    String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    final data = await DatabaseServices().updateMobile(
+      mobileId: widget.mobile.mobileId.toString(),
+      mobileName: _mobileName.text.toString(),
+      mobileDescription: _mobileDescription.text.toString(),
+      mobileNumber: _mobileNumber.toString(),
+      fcmtoken: fcmtoken!,
+    );
+    print(data);
+    if (data != 'Error') {
+      try {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => MobilePage(),
+          ),
+          (e) => false,
+        );
+      } catch (e) {
+        print(e.toString());
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+        _showReload = true;
+      });
+    }
+  }
+
   Future<void> _showAcceptDialog() async {
     if (!_validateDescription && !_validateName && !_validateNumber) {
       return showDialog<void>(
@@ -97,28 +134,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
               TextButton(
                 child: const Text('Accept'),
                 onPressed: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  Navigator.of(context).pop();
-                  final data = await DatabaseServices().updateMobile(
-                    mobileId: widget.mobile.mobileId.toString(),
-                    mobileName: _mobileName.text.toString(),
-                    mobileDescription: _mobileDescription.text.toString(),
-                    mobileNumber: _mobileNumber.toString(),
-                  );
-                  print(data);
-                  if (data != 'Error') {
-                    if (data['msg'] == "success") {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => MobilePage()),
-                          (e) => false);
-                    }
-                  } else {
-                    setState(() {
-                      _showReload = true;
-                    });
-                  }
+                  await _updateButtonPressed();
                 },
               ),
             ],
@@ -129,8 +145,8 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
       setState(() {
         _isLoading = false;
       });
-      return null;
     }
+    return null;
   }
 
   Widget _displayMobile() {
@@ -196,7 +212,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
                         String? pn = number.phoneNumber;
                         _numwithoutcode =
                             (pn!.substring(number.dialCode!.length, pn.length));
-                        print('hhhhhhhhhhhhhhhhhhhhhhhhh');
+                        //print('hhhhhhhhhhhhhhhhhhhhhhhhh');
                         print(_numwithoutcode);
                         print(number);
                         print(number.phoneNumber);

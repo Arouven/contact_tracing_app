@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
         bottom: true,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Profiles'),
+            title: Text('Profile'),
             centerTitle: true,
             backgroundColor: Colors.blue,
           ),

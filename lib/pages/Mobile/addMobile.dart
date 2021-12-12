@@ -1,11 +1,11 @@
-import 'dart:convert';
+//import 'dart:convert';
 import 'dart:io';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
-import 'package:contact_tracing/services/globals.dart';
+//import 'package:contact_tracing/services/globals.dart';
 import 'package:device_info/device_info.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 //import '../../classes/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +60,45 @@ class _AddMobilePageState extends State<AddMobilePage> {
     });
   }
 
+  _addButtonPressed() async {
+    print('add button pressed');
+    setState(() {
+      _isLoading = true;
+    });
+    Navigator.of(context).pop();
+
+    String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
+    String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    final data = await DatabaseServices().addMobile(
+      firebaseuid: firebaseuid!,
+      mobileName: _mobileName.text.toString(),
+      mobileDescription: _mobileDescription.text.toString(),
+      mobileNumber: _mobileNumber.toString(),
+      fcmtoken: fcmtoken!,
+    );
+    if (data != 'Error') {
+      print(data);
+      try {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => MobilePage(),
+          ),
+          (e) => false,
+        );
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        print(e.toString());
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+        _showReload = true;
+      });
+    }
+  }
+
   Future<void> _showAcceptDialog() async {
     print(_validateName);
     print(_validateDescription);
@@ -99,34 +138,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
               TextButton(
                 child: const Text('Add'),
                 onPressed: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  Navigator.of(context).pop();
-
-                  final SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
-                  String? fcmtoken =
-                      await FirebaseAuthenticate().getfirebasetoken();
-                  final data = await DatabaseServices().addMobile(
-                      firebaseuid: firebaseuid!,
-                      mobileName: _mobileName.text.toString(),
-                      mobileDescription: _mobileDescription.text.toString(),
-                      mobileNumber: _mobileNumber.toString(),
-                      fcmtoken: fcmtoken!);
-                  if (data != 'Error') {
-                    print(data);
-                    if (data['msg'] == "added") {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => MobilePage()),
-                          (e) => false);
-                    } else {
-                      setState(() {
-                        _showReload = true;
-                      });
-                    }
-                  }
+                  await _addButtonPressed();
                 },
               ),
             ],

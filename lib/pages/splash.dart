@@ -1,30 +1,13 @@
 import 'dart:async';
 
-// import 'package:contact_tracing/classes/auth.dart';
-// import 'package:contact_tracing/classes/globals.dart';
-// import 'package:contact_tracing/classes/notification.dart';
-// import 'package:contact_tracing/classes/uploadClass.dart';
-// import 'package:contact_tracing/classes/write.dart';
-// import 'package:flutter_background_service/flutter_background_service.dart';
-// import 'package:geolocator/geolocator.dart';
-// import 'package:contact_tracing/pages/Location/filter.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-
-import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/notification.dart';
-//import 'package:contact_tracing/services/write.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import 'Location/live_geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:splashscreen/splashscreen.dart';
-
-//import 'Login/dotindicator.dart';
 import 'Login/login.dart';
-//import 'Login/register.dart';
 import 'Mobile/mobiles.dart';
-//import 'package:flutter_restart/flutter_restart.dart';
 
 class SplashPage extends StatefulWidget {
   static const String route = '/splash';
@@ -74,7 +57,7 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> deleteMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.setString('username', 'Arouven Poolian');
+    // await prefs.setString('email', 'Arouven Poolian');
     // await prefs.setString('password', 'Aa@12345');
     // await prefs.setString("mobileId", '1');
   }
@@ -115,12 +98,12 @@ class _SplashPageState extends State<SplashPage> {
       print(exception);
     }
 
-    if (prefs.getString('username') != null &&
+    if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
       print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());
-    } else if (prefs.getString('username') != null &&
+    } else if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {
       print("MobilePage");
