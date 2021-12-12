@@ -5,20 +5,20 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	$username = "";
-	if (isset($_POST['username'])) {
-		$username = mysqli_real_escape_string($conn, $_POST['username']);
+	$email = "";
+	if (isset($_POST['email'])) {
+		$email = mysqli_real_escape_string($conn, $_POST['email']);
 	}
-	$selectquery = "SELECT username FROM User WHERE username = ?;";
+	$selectquery = "SELECT email FROM User WHERE email = ?;";
 	$selectparamType = "s";
-	$selectparamArray = array($username);
+	$selectparamArray = array($email);
 	$sqlData = $db->select($selectquery, $selectparamType, $selectparamArray);
 
 	$data = array();
 	if (isset($sqlData)) { // already exist
-		$data['msg'] = 'username already in db';
+		$data['msg'] = 'email already in db';
 	} else {
-		$data['msg'] = 'username not in db';
+		$data['msg'] = 'email not in db';
 	}
 	print json_encode($data);
 }

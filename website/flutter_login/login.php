@@ -5,20 +5,16 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $username = "";
-    if (isset($_POST['username'])) {
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
+
+    $firebaseuid = "";
+    if (isset($_POST['firebaseuid'])) {
+        $firebaseuid = mysqli_real_escape_string($conn, $_POST['firebaseuid']);
     }
-    $password = "";
-    if (isset($_POST['password'])) {
-        $password = mysqli_real_escape_string($conn, $_POST['password']);
-    }
-    $selectquery = "SELECT nationalIdNumber, username FROM User WHERE username = ? AND password = ?;";
+    $selectquery = "SELECT UNIQUE * FROM User WHERE firebaseuid = ?;";
 
 
-    $selectparamType = "ss";
+    $selectparamType = "s";
     $selectparamArray = array(
-        $username,
         $password
     );
     $data = $db->select($selectquery, $selectparamType, $selectparamArray);
@@ -26,8 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     if (isset($data) && $data != null) { //if there is something in the result
         $outputArray['msg'] = "data exist";
-        $outputArray['nationalIdNumber'] = $data[0]['nationalIdNumber'];
-        $outputArray['username'] = $data[0]['username'];
+        $outputArray['email'] = $data[0]['email'];
         header("Content-Type:application/json");
         print json_encode($outputArray);
     } else {
@@ -40,20 +35,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 // $db = new database();
 // $conn = $db->getConnection();
 
-// $username = "";
-// if (isset($_Get['username'])) {
-//     $username = mysqli_real_escape_string($conn, $_GET['username']);
+// $email = "";
+// if (isset($_Get['email'])) {
+//     $email = mysqli_real_escape_string($conn, $_GET['email']);
 // }
 // $password = "";
 // if (isset($_GET['password'])) {
 //     $password = mysqli_real_escape_string($conn, $_GET['password']);
 // }
-// $selectquery = "SELECT nationalIdNumber, username FROM User WHERE username = ? AND password = ?;";
+// $selectquery = "SELECT nationalIdNumber, email FROM User WHERE email = ? AND password = ?;";
 
 
 // $selectparamType = "ss";
 // $selectparamArray = array(
-//     $username,
+//     $email,
 //     $password
 // );
 // $data = $db->select($selectquery, $selectparamType, $selectparamArray);
@@ -62,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 // if (isset($data) && $data != null) { //if there is something in the result
 //     $outputArray['msg'] = "data exist";
 //     $outputArray['nationalIdNumber'] = $data[0]['nationalIdNumber'];
-//     $outputArray['username'] = $data[0]['username'];
+//     $outputArray['email'] = $data[0]['email'];
 //     header("Content-Type:application/json");
 //     print json_encode($outputArray);
 // } else {

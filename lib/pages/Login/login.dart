@@ -1,24 +1,19 @@
-import 'dart:convert';
-
-import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
-import 'package:contact_tracing/pages/splash.dart';
+import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-//import 'dotindicator.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
-  final username;
+  final email;
   final password;
   const LoginPage({
-    this.username,
+    this.email,
     this.password,
   });
 
@@ -33,75 +28,79 @@ class _LoginState extends State<LoginPage> {
   bool _isLoading = false;
   bool _showReload = false;
 
-  TextEditingController _username = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  bool _invalidPassword = false;
+  bool _invalidemail = false;
 
   void _loginPressed() async {
     setState(() {
       _isLoading = true;
     });
-    String username = _username.text.trim();
-    String password = _password.text.trim();
-    try {
-      print(username);
-      print(password);
-      final res = await http.post(Uri.parse(loginUrl), body: {
-        "username": username,
-        "password": password,
-      });
-      print(loginUrl);
-      print("urlparse");
-      print(res);
-      print(res.body.toString());
-      final data = jsonDecode(res.body);
-      print(data);
-      print("jsondecode");
-
-      if (data['msg'] == "data does not exist") {
-        print(data['msg']);
-        print("Wrong Credentials!");
-        setState(() {
-          _isLoading = false;
-        });
-        DialogBox.showErrorDialog(
-          context: context,
-          title: 'Wrong Credentials!',
-          body:
-              'Your credentials are not found in our database. Please register or insert correct credentials',
-        );
-      } else {
-        //"User logged in";
-        print(data['msg']);
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('username', username);
-        await prefs.setString('password', password);
-        await prefs.setBool('justLogin', true);
-        print("credential save");
-        setState(() {
-          _isLoading = false;
-        });
-        print("mobileid is " + prefs.getString('mobileId').toString());
-        if (prefs.getString('mobileId') == '' ||
-            prefs.getString('mobileId') == null) {
-          print("mobile id is null");
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => MobilePage()),
-              (e) => false);
-        } else {
-          print("mobile id is not null");
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => LiveGeolocatorPage()),
-              (e) => false);
-        }
-      }
-    } catch (e) {
-      print("exception in login");
-      print(e);
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    if (_passwordController.text.isEmpty) {
       setState(() {
-        _isLoading = false;
-        _showReload = true;
+        _invalidPassword = true;
       });
     }
+    if (_emailController.text.isEmpty) {
+      setState(() {
+        _invalidemail = true;
+      });
+    }
+    if ((_emailController.text.isEmpty == false) &&
+        (_passwordController.text.isEmpty == false)) {
+      try {
+        bool firebaseLoggedIn = await FirebaseAuthenticate().firebaseLoginUser(
+          email: email,
+          password: password,
+        );
+        if (firebaseLoggedIn == true) {
+          print(email);
+          print(password);
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', email);
+          await prefs.setString('password', password);
+          await prefs.setBool('justLogin', true);
+          print("credential save");
+          print("mobileid is " + prefs.getString('mobileId').toString());
+          if (prefs.getString('mobileId') == '' ||
+              prefs.getString('mobileId') == null) {
+            print("mobile id is null");
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => MobilePage()),
+                (e) => false);
+          } else {
+            print("mobile id is not null");
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LiveGeolocatorPage()),
+                (e) => false);
+          }
+        } else {
+          //firebase login fail
+          setState(() {
+            _isLoading = false;
+          });
+          DialogBox.showErrorDialog(
+            context: context,
+            title: FirebaseAuthenticate().geterrors().code,
+            body: FirebaseAuthenticate().geterrors().message!,
+          );
+        }
+      } catch (e) {
+        print("exception in login");
+        print(e);
+        setState(() {
+          _isLoading = false;
+          _showReload = true;
+        });
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
     //redirect to home
   }
 
@@ -111,9 +110,58 @@ class _LoginState extends State<LoginPage> {
         .push(MaterialPageRoute(builder: (context) => RegisterPage()));
   }
 
-  void _passwordReset() {
+  _checkEmail(String email) async {
+    // Null or empty string is invalid
+    if (email == null || email.isEmpty) {
+      return false;
+    }
+    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    final regExp = RegExp(pattern);
+    if (!regExp.hasMatch(email)) {
+      //not good mail
+      return false;
+    } else {
+      //good mail
+      bool? emailExist = await FirebaseAuthenticate().emailExist(
+        email: email,
+      );
+      if (emailExist != null) {
+        return emailExist;
+      }
+      return false;
+    }
+  }
+
+  Future<void> _passwordReset() async {
+    final email = _emailController.text.trim();
+    bool isEmailGood = await _checkEmail(email);
+
     print("_passwordReset function");
-    // print("The user wants a password reset request sent to $_email");
+    if (isEmailGood == true) {
+      bool isReset = await FirebaseAuthenticate().firebaseResetPassword(
+        email: email,
+      );
+      if (isReset == true) {
+        DialogBox.showErrorDialog(
+          context: context,
+          title: 'Password Reset',
+          body: 'Please verify your email for password new password!',
+          titleColor: Colors.green,
+        );
+      } else {
+        DialogBox.showErrorDialog(
+          context: context,
+          title: FirebaseAuthenticate().geterrors().code,
+          body: FirebaseAuthenticate().geterrors().message!,
+        );
+      }
+    } else {
+      DialogBox.showErrorDialog(
+        context: context,
+        title: 'Wrong email',
+        body: 'Your email is not valid or not in the database',
+      );
+    }
   }
 
   Widget _body() {
@@ -127,11 +175,14 @@ class _LoginState extends State<LoginPage> {
           child: Icon(Icons.replay),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) => LoginPage(
-                        username: _username.text.trim(),
-                        password: _password.text.trim())),
-                (e) => false);
+              MaterialPageRoute(
+                builder: (context) => LoginPage(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
+                ),
+              ),
+              (e) => false,
+            );
           },
         ),
       );
@@ -148,14 +199,33 @@ class _LoginState extends State<LoginPage> {
         children: <Widget>[
           ListTile(
             title: new TextField(
-              controller: _username,
-              decoration: new InputDecoration(labelText: 'Username'),
+              controller: _emailController,
+              //decoration: new InputDecoration(labelText: 'email'),
+              decoration: new InputDecoration(
+                labelText: 'Email',
+                errorText: _invalidemail ? 'Email Can\'t Be Empty' : null,
+              ),
+              onChanged: (String s) {
+                print(s);
+                setState(() {
+                  _invalidemail = s.isEmpty ? true : false;
+                });
+              },
             ),
           ),
           ListTile(
             title: new TextField(
-              controller: _password,
-              decoration: new InputDecoration(labelText: 'Password'),
+              controller: _passwordController,
+              decoration: new InputDecoration(
+                labelText: 'Password',
+                errorText: _invalidPassword ? 'Password Can\'t Be Empty' : null,
+              ),
+              onChanged: (String s) {
+                print(s);
+                setState(() {
+                  _invalidPassword = s.isEmpty ? true : false;
+                });
+              },
               obscureText: true,
             ),
           ),
@@ -167,9 +237,10 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new TextButton(
-              child: new Text('Forgot Password?'),
-              onPressed: _passwordReset,
-            ),
+                child: new Text('Forgot Password?'),
+                onPressed: () {
+                  _passwordReset();
+                }),
           ),
           ListTile(
             title: new ElevatedButton(
@@ -207,11 +278,11 @@ class _LoginState extends State<LoginPage> {
   // }
   @override
   void initState() {
-    // _username.text = widget.username!.toString();
+    // _email.text = widget.email!.toString();
     //_password.text = widget.password!.toString();
-    _username.text =
-        ((widget.username != null) ? widget.username.toString() : '');
-    _password.text =
+    _emailController.text =
+        ((widget.email != null) ? widget.email.toString() : '');
+    _passwordController.text =
         ((widget.password != null) ? widget.password.toString() : '');
     super.initState();
   }
@@ -238,8 +309,8 @@ class _LoginState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _password.dispose();
-    _username.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 }

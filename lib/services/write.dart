@@ -20,7 +20,7 @@ class Writefile {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var fullFilePath =
-        '$fullPath/${prefs.getString("username")}_geolocatorbest.csv';
+        '$fullPath/${prefs.getString("firebaseuid")}_geolocatorbest.csv';
     await prefs.setString("fileDirectory", '$fullPath/');
 //Retrive different types of data
 

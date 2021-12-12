@@ -22,14 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (isset($_POST['mobileNumber'])) {
         $mobileNumber = mysqli_real_escape_string($conn, $_POST['mobileNumber']);
     }
+    $fcmtoken = "";
+    if (isset($_POST['fcmtoken'])) {
+        $fcmtoken = mysqli_real_escape_string($conn, $_POST['fcmtoken']);
+    }
 
-    $executequery = "UPDATE Mobile SET Mobile.mobileName = ?, Mobile.mobileDescription = ?, Mobile.mobileNumber = ? WHERE Mobile.mobileId = ?;";
+    $executequery = "UPDATE Mobile SET Mobile.mobileName = ?, Mobile.mobileDescription = ?, Mobile.mobileNumber = ?, Mobile.fcmtoken = ? WHERE Mobile.mobileId = ?;";
     $executeparamType = "sssi";
     $executeparamArray = array(
         $mobileName,
         $mobileDescription,
         $mobileNumber,
-        $mobileId
+        $fcmtoken,
+        $mobileId,
     );
     $db->execute($executequery, $executeparamType, $executeparamArray);
 

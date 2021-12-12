@@ -1,12 +1,10 @@
 import 'dart:async';
+import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:contact_tracing/classes/apiMobile.dart';
-import 'package:contact_tracing/classes/mobile.dart';
-import 'package:contact_tracing/classes/write.dart';
+import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import '../../widgets/drawer.dart';
@@ -27,9 +25,9 @@ class _MobilePageState extends State<MobilePage> {
   bool _isLoading = true;
   bool _showReload = false;
   late int _selectedRadioTile;
-  late int _myMobileId;
+  int _myMobileId = 0;
   bool _findSelected = false;
-  var _mobiles;
+  late var _mobiles;
 
   /// set the shared pref
   /// mark the radio button with [val]
@@ -39,7 +37,9 @@ class _MobilePageState extends State<MobilePage> {
     });
     prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        'mobileId', val.toString()); //update new mobileid in shared pref
+      'mobileId',
+      val.toString(),
+    ); //update new mobileid in shared pref
   }
 
   /// get the mobile id of the user and set it in [_myMobileId]
@@ -243,21 +243,23 @@ class _MobilePageState extends State<MobilePage> {
           print('is loading false');
 
           try {
-            final mobileMap = mobileList!.asMap();
-            Mobile firstMobileInList = mobileMap[0] as Mobile;
-            if (firstMobileInList.mobileId == 0) {
-              _showReload = true;
-              print('show reload is true');
-            } else if ((mobileList.length == 1) ||
-                (prefs.getBool('justLogin') == true)) {
-              //add the first mobile
-              print(
-                  'add the first mobile and start service || logged in and have mobile(s), start services and remove justLogin');
-              _setSelectedRadioTile(firstMobileInList.mobileId);
-              prefs.remove('justLogin');
-              //  start bg services
-              FlutterBackgroundService().sendData({"action": "startService"});
-            }
+            if (mobileList != null) {
+              final mobileMap = mobileList.asMap();
+              Mobile firstMobileInList = mobileMap[0] as Mobile;
+              if (firstMobileInList.mobileId == 0) {
+                _showReload = true;
+                print('show reload is true');
+              } else if ((mobileList.length == 1) ||
+                  (prefs.getBool('justLogin') == true)) {
+                //add the first mobile
+                print(
+                    'add the first mobile and start service || logged in and have mobile(s), start services and remove justLogin');
+                _setSelectedRadioTile(firstMobileInList.mobileId);
+                prefs.remove('justLogin');
+                //  start bg services
+                FlutterBackgroundService().sendData({"action": "startService"});
+              }
+            } else {}
           } catch (e) {
             print(e.toString());
             _showReload = true;

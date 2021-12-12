@@ -5,9 +5,9 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $username = "";
-    if (isset($_POST['username'])) {
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $email = "";
+    if (isset($_POST['email'])) {
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
     }
     $mobileName = "";
     if (isset($_POST['mobileName'])) {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $executequery = "CALL InsertMobile(?,?,?,?);";
     $executeparamType = "ssss";
     $executeparamArray = array(
-        $username,
+        $email,
         $mobileName,
         $mobileDescription,
         $mobileNumber

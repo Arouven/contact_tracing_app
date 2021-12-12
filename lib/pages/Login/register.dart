@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:contact_tracing/services/auth.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:csc_picker/csc_picker.dart';
+//import 'package:csc_picker/csc_picker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
+//import 'package:geocoder/geocoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
-import 'package:contact_tracing/classes/globals.dart';
+//import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 
@@ -29,7 +35,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _isLoading = true;
   bool _showReload = false;
 
-  late bool? _usernameInDB;
+  late bool? _emailInDB;
   String _dateOfBirth = '';
   // DefaultCountry _defaultCountry;
 
@@ -37,17 +43,15 @@ class _RegisterState extends State<RegisterPage> {
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
-  TextEditingController _nationalIdNumberController = TextEditingController();
-  TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _invalidFirstName = false;
   bool _invalidLastName = false;
-  bool _invalidEmail = false;
-  bool _invalidNIC = false;
+  //bool _invalidEmail = false;
+  // bool _invalidNIC = false;
   bool _invalidAddress = false;
-  bool _invalidUserName = false;
+  bool _invalidemail = false;
   bool _invalidPassword = false;
   bool _invalidConfirmPassword = false;
 
@@ -86,77 +90,161 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
+  // void _submit() async {
+  //   if (_confirmPasswordController.text.isEmpty) {
+  //     setState(() {
+  //       _invalidConfirmPassword = true;
+  //     });
+  //   } else if (_passwordController.text.isEmpty) {
+  //     setState(() {
+  //       _invalidPassword = true;
+  //     });
+  //   } else if (_passwordController.text != _confirmPasswordController.text) {
+  //     setState(() {
+  //       _invalidConfirmPassword = true;
+  //     });
+  //   } else if (_emailController.text.isEmpty || _emailInDB!) {
+  //     setState(() {
+  //       _invalidemail = true;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     var _firstName = _firstNameController.text.trim();
+  //     var _lastName = _lastNameController.text.trim();
+  //     var _address = _addressController.text.trim();
+  //     var _email = _emailController.text.trim();
+  //     var _password = _confirmPasswordController.text.trim();
+  //     //  var _country = _defaultCountry.toString().split('.').last;
+
+  //     try {
+  //       final res = await http.post(
+  //         Uri.parse(registerUrl),
+  //         body: {
+  //           'firstName': _firstName,
+  //           'lastName': _lastName,
+  //           'address': _address,
+  //           'dateOfBirth': _dateOfBirth,
+  //           'email': _email,
+  //           'password': _password
+  //         },
+  //       );
+  //       //print(res.body);
+  //       final data = jsonDecode(res.body);
+
+  //       if (data['msg'] == 'email already existed') {
+  //         var msg = 'email already taken please change the email or login.';
+  //         DialogBox.showErrorDialog(
+  //           context: context,
+  //           title: 'Already Exist',
+  //           body: msg,
+  //         );
+  //         print(msg);
+  //       } else if (data['msg'] == 'user inserted') {
+  //         //user inserted
+  //         //redirect to home
+  //         print('user inserted');
+  //         final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  //         await prefs.setString('email', _email);
+  //         await prefs.setString('password', _password);
+
+  //         Navigator.of(context).pushReplacement(
+  //             MaterialPageRoute(builder: (context) => MobilePage()));
+  //       }
+  //     } on Exception {
+  //       setState(() {
+  //         _showReload = true;
+  //       });
+  //     }
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
+
   void _submit() async {
-    if (_confirmPasswordController.text.isEmpty) {
-      setState(() {
-        _invalidConfirmPassword = true;
-      });
-    } else if (_passwordController.text.isEmpty) {
+    if (_passwordController.text.isEmpty) {
       setState(() {
         _invalidPassword = true;
       });
-    } else if (_passwordController.text != _confirmPasswordController.text) {
+    }
+    if ((_passwordController.text != _confirmPasswordController.text) ||
+        (_confirmPasswordController.text.isEmpty)) {
       setState(() {
         _invalidConfirmPassword = true;
       });
-    } else if (_usernameController.text.isEmpty || _usernameInDB!) {
+    }
+    if (_emailController.text.isEmpty || _emailInDB!) {
       setState(() {
-        _invalidUserName = true;
+        _invalidemail = true;
       });
-    } else {
+    }
+
+    if ((_invalidPassword == false) ||
+        (_invalidConfirmPassword == false) ||
+        (_invalidemail == false)) {
       setState(() {
         _isLoading = true;
       });
-      var _firstName = _firstNameController.text.trim();
-      var _lastName = _lastNameController.text.trim();
-      var _email = _emailController.text.trim();
-      var _nationalIdNumber = _nationalIdNumberController.text.trim();
-      var _address = _addressController.text.trim();
-      var _username = _usernameController.text.trim();
-      var _password = _confirmPasswordController.text.trim();
-      //  var _country = _defaultCountry.toString().split('.').last;
 
-      try {
-        final res = await http.post(
-          Uri.parse(registerUrl),
-          body: {
-            'firstName': _firstName,
-            'lastName': _lastName,
-            'address': _address,
-            'email': _email,
-            'dateOfBirth': _dateOfBirth,
-            'nationalIdNumber': _nationalIdNumber,
-            'username': _username,
-            'password': _password
-          },
+      final response = await FirebaseAuthenticate().firebaseRegisterUser(
+        email: _emailController.text.trim(),
+        password: _confirmPasswordController.text.trim(),
+      );
+
+      if (response == true) {
+        String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
+        final data = await DatabaseServices().registerUser(
+          firstName: _firstNameController.text.trim(),
+          lastName: _lastNameController.text.trim(),
+          address: _addressController.text.trim(),
+          dateOfBirth: _dateOfBirth,
+          email: _emailController.text.trim(),
+          firebaseuid: firebaseuid!,
         );
-        //print(res.body);
-        final data = jsonDecode(res.body);
+        if (data != 'Error') {
+          if (data['msg'] == 'email already existed') {
+            var msg = 'email already taken please change the email or login.';
+            DialogBox.showErrorDialog(
+              context: context,
+              title: 'Already Exist',
+              body: msg,
+            );
+            print(msg);
+          } else if (data['msg'] == 'user inserted') {
+            //user inserted
+            //redirect to home
+            print('user inserted');
+            final SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+            await prefs.setString(
+              'email',
+              _emailController.text.trim(),
+            );
+            await prefs.setString(
+              'password',
+              _confirmPasswordController.text.trim(),
+            );
 
-        if (data['msg'] == 'username already existed') {
-          var msg =
-              'Username already taken please change the username or login.';
-          DialogBox.showErrorDialog(
-            context: context,
-            title: 'Already Exist',
-            body: msg,
-          );
-          print(msg);
-        } else if (data['msg'] == 'user inserted') {
-          //user inserted
-          //redirect to home
-          print('user inserted');
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-          await prefs.setString('username', _username);
-          await prefs.setString('password', _password);
-
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => MobilePage()));
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => MobilePage()));
+          }
+        } else {
+          setState(() {
+            _showReload = true;
+          });
         }
-      } on Exception {
+      } else {
+        //cannot register on firebase
+        DialogBox.showErrorDialog(
+          context: context,
+          title: FirebaseAuthenticate().geterrors().code,
+          body: FirebaseAuthenticate().geterrors().message!,
+        );
         setState(() {
-          _showReload = true;
+          _isLoading = false;
         });
       }
       setState(() {
@@ -164,14 +252,81 @@ class _RegisterState extends State<RegisterPage> {
       });
     }
   }
+// else {
+//       setState(() {
+//         _isLoading = true;
+//       });
 
-  _buildUsernameTile() {
-    if (_usernameInDB == true) {
+//       final response = await FirebaseAuthenticate().firebaseRegisterUser(
+//         email: _emailController.text.trim(),
+//         password: _confirmPasswordController.text.trim(),
+//       );
+
+//       if (response == true) {
+//         String? firebaseuid = FirebaseAuth.instance.currentUser!.uid;
+//         print(firebaseuid);
+//         final data = await DatabaseServices().registerUser(
+//           firstName: _firstNameController.text.trim(),
+//           lastName: _lastNameController.text.trim(),
+//           address: _addressController.text.trim(),
+//           dateOfBirth: _dateOfBirth,
+//           email: _emailController.text.trim(),
+//           firebaseuid: firebaseuid,
+//         );
+//         if (data != 'Error') {
+//           if (data['msg'] == 'email already existed') {
+//             var msg = 'email already taken please change the email or login.';
+//             DialogBox.showErrorDialog(
+//               context: context,
+//               title: 'Already Exist',
+//               body: msg,
+//             );
+//             print(msg);
+//           } else if (data['msg'] == 'user inserted') {
+//             //user inserted
+//             //redirect to home
+//             print('user inserted');
+//             final SharedPreferences prefs =
+//                 await SharedPreferences.getInstance();
+//             await prefs.setString(
+//               'email',
+//               _emailController.text.trim(),
+//             );
+//             await prefs.setString(
+//               'password',
+//               _confirmPasswordController.text.trim(),
+//             );
+
+//             Navigator.of(context).pushReplacement(
+//                 MaterialPageRoute(builder: (context) => MobilePage()));
+//           }
+//         } else {
+//           setState(() {
+//             _showReload = true;
+//           });
+//         }
+//       } else {
+//         //cannot register on firebase
+//         DialogBox.showErrorDialog(
+//           context: context,
+//           title: response.e.code,
+//           body: response.e.message,
+//         );
+//         setState(() {
+//           _isLoading = false;
+//         });
+//       }
+//       setState(() {
+//         _isLoading = false;
+//       });
+//     }
+  _buildemailTile() {
+    if (_emailInDB == true) {
       return Icon(
         Icons.cancel_outlined,
         color: Colors.red,
       );
-    } else if (_usernameInDB == false) {
+    } else if (_emailInDB == false) {
       return Icon(
         Icons.done,
         color: Colors.green,
@@ -181,38 +336,60 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
-  _checkUsername() async {
-    // setState(() {
-    //   _usernameInDB = null;
-    // });
-    String text = _usernameController.text;
-    try {
-      final res = await http.post(
-        Uri.parse(checkUsernameUrl),
-        body: {'username': text},
-      );
-      final data = jsonDecode(res.body);
-
-      if (data['msg'] == 'username already in db') {
-        print(data['msg']);
-        setState(() {
-          _usernameInDB = true;
-        });
-      } else if (data['msg'] == 'username not in db') {
-        print(data['msg']);
-        setState(() {
-          _usernameInDB = false;
-        });
-      } else {
-        setState(() {
-          _usernameInDB = null;
-        });
-      }
-    } on Exception {
-      setState(() {
-        _usernameInDB = null;
-      });
+  _checkEmail(String email) async {
+    // Null or empty string is invalid
+    if (email == null || email.isEmpty) {
+      return false;
     }
+
+    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    final regExp = RegExp(pattern);
+
+    if (!regExp.hasMatch(email)) {
+      setState(() {
+        _emailInDB = true;
+      });
+      return false;
+    } else {
+      bool? emailExist = await FirebaseAuthenticate().emailExist(
+        email: email,
+      );
+      setState(() {
+        _emailInDB = emailExist;
+      });
+      return true;
+    }
+    // // setState(() {
+    // //   _emailInDB = null;
+    // // });
+    // String text = _emailController.text;
+    // try {
+    //   final res = await http.post(
+    //     Uri.parse(checkEmailUrl),
+    //     body: {'email': text},
+    //   );
+    //   final data = jsonDecode(res.body);
+
+    //   if (data['msg'] == 'email already in db') {
+    //     print(data['msg']);
+    //     setState(() {
+    //       _emailInDB = true;
+    //     });
+    //   } else if (data['msg'] == 'email not in db') {
+    //     print(data['msg']);
+    //     setState(() {
+    //       _emailInDB = false;
+    //     });
+    //   } else {
+    //     setState(() {
+    //       _emailInDB = null;
+    //     });
+    //   }
+    // } on Exception {
+    //   setState(() {
+    //     _emailInDB = null;
+    //   });
+    // }
   }
 
   Future _fillAddresses() async {
@@ -292,15 +469,6 @@ class _RegisterState extends State<RegisterPage> {
             ),
           ),
           ListTile(
-            title: TextField(
-              controller: _emailController,
-              decoration: new InputDecoration(
-                labelText: 'Email',
-                errorText: _invalidEmail ? 'Please enter a valid Email' : null,
-              ),
-            ),
-          ),
-          ListTile(
             title: _loginButton(),
           ),
         ],
@@ -373,15 +541,6 @@ class _RegisterState extends State<RegisterPage> {
         shrinkWrap: true,
         physics: AlwaysScrollableScrollPhysics(),
         children: [
-          ListTile(
-            title: TextField(
-              controller: _nationalIdNumberController,
-              decoration: new InputDecoration(
-                labelText: 'NIC',
-                errorText: _invalidNIC ? 'NIC Can\'t Be Empty' : null,
-              ),
-            ),
-          ),
           ListTile(
             title: TextField(
               controller: _addressController,
@@ -502,50 +661,47 @@ class _RegisterState extends State<RegisterPage> {
         shrinkWrap: true,
         physics: AlwaysScrollableScrollPhysics(),
         children: [
-          (_usernameController.text == '' || _usernameController.text == null)
+          (_emailController.text == '' || _emailController.text == null)
               ? ListTile(
                   title: TextField(
-                    controller: _usernameController,
+                    controller: _emailController,
                     decoration: new InputDecoration(
-                      labelText: 'Username',
-                      errorText:
-                          _invalidUserName ? 'User Name Can\'t Be Empty' : null,
+                      labelText: 'email',
+                      errorText: _invalidemail ? 'Email Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
                       print(s);
                       setState(() {
-                        _usernameInDB = null;
-                        _checkUsername();
-                        s.isEmpty
-                            ? _invalidUserName = true
-                            : _invalidUserName = false;
+                        _emailInDB = null;
+                        _checkEmail(s);
+                        _invalidemail = s.isEmpty ? true : false;
                       });
                     },
                   ),
                 )
               : ListTile(
                   title: TextField(
-                    controller: _usernameController,
+                    controller: _emailController,
                     decoration: new InputDecoration(
-                      labelText: 'Username',
-                      // errorText:
-                      //     _invalidUserName ? 'User Name Can\'t Be Empty' : null,
+                      labelText: 'email',
+                      errorText:
+                          _invalidemail ? 'User Name Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
                       setState(() {
-                        _usernameInDB = null;
-                        _checkUsername();
+                        _emailInDB = null;
+                        _checkEmail(s);
                       });
-                      // _checkUsername();
+                      // _checkemail();
                       print(s);
                       // setState(() {
                       //   s.isEmpty
-                      //       ? _invalidUserName = true
-                      //       : _invalidUserName = false;
+                      //       ? _invalidemail = true
+                      //       : _invalidemail = false;
                       // });
                     },
                   ),
-                  trailing: _buildUsernameTile(),
+                  trailing: _buildemailTile(),
                 ),
           ListTile(
             title: TextField(
@@ -658,21 +814,6 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
-  bool _isEmail(String string) {
-    // Null or empty string is invalid
-    if (string == null || string.isEmpty) {
-      return false;
-    }
-
-    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-    final regExp = RegExp(pattern);
-
-    if (!regExp.hasMatch(string)) {
-      return false;
-    }
-    return true;
-  }
-
   // void _showdialogInvalidCountry() {
   //   DialogBox.showErrorDialog(
   //     context: context,
@@ -684,7 +825,7 @@ class _RegisterState extends State<RegisterPage> {
   Widget _form() {
     if (_currentPosition == 0.0) {
       //return _f4();
-      return _f1(); //firstname, lastname, email
+      return _f1(); //firstname, lastname
     } else if (_currentPosition == 1.0) {
       setState(() {
         _firstNameController.text.isEmpty
@@ -693,44 +834,45 @@ class _RegisterState extends State<RegisterPage> {
         _lastNameController.text.isEmpty
             ? _invalidLastName = true
             : _invalidLastName = false;
-        (_isEmail(_emailController.text.trim()))
-            ? _invalidEmail = false
-            : _invalidEmail = true;
+        // (_isEmail(_emailController.text.trim()))
+        //     ? _invalidEmail = false
+        //     : _invalidEmail = true;
       });
-      if (_invalidFirstName || _invalidLastName || _invalidEmail) {
+      if (_invalidFirstName || _invalidLastName) {
         print('before ' + (_currentPosition.toString()));
         _currentPosition = _currentPosition.ceilToDouble();
         _updatePosition(max(--_currentPosition, 0));
         print('after ' + (_currentPosition.toString()));
         return _f1();
       }
-      _usernameController.text = _firstNameController.text.trim() +
-          ' ' +
-          _lastNameController.text.trim();
-      _checkUsername();
+      // _emailController.text = _firstNameController.text.trim() +
+      //     ' ' +
+      //     _lastNameController.text.trim();
+      // _checkemail();
       return _f2(); //dob
     } else if (_currentPosition == 2.0) {
-      return _f3(); //country, nic, address
+      return _f3(); //country, address
     } else if (_currentPosition == 3.0) {
       setState(() {
         // if (_defaultCountry.toString().isEmpty) {
         //   _showdialogInvalidCountry();
         // }
-        _nationalIdNumberController.text.isEmpty
-            ? _invalidNIC = true
-            : _invalidNIC = false;
+        // _nationalIdNumberController.text.isEmpty
+        //     ? _invalidNIC = true
+        //     : _invalidNIC = false;
         _addressController.text.isEmpty
             ? _invalidAddress = true
             : _invalidAddress = false;
       });
-      if (_invalidNIC || _invalidAddress) {
+      // if (_invalidNIC || _invalidAddress) {
+      if (_invalidAddress) {
         print('before ' + (_currentPosition.toString()));
         _currentPosition = _currentPosition.ceilToDouble();
         _updatePosition(max(--_currentPosition, 0));
         print('after ' + (_currentPosition.toString()));
         return _f3();
       }
-      return _f4(); //username, password, confirm password
+      return _f4(); //email, password, confirm password
     } else {
       return Container();
     }

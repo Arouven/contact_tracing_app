@@ -1,23 +1,28 @@
 import 'dart:async';
 
-import 'package:contact_tracing/classes/auth.dart';
-import 'package:contact_tracing/classes/globals.dart';
-import 'package:contact_tracing/classes/notification.dart';
-import 'package:contact_tracing/classes/uploadClass.dart';
-import 'package:contact_tracing/classes/write.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:contact_tracing/classes/auth.dart';
+// import 'package:contact_tracing/classes/globals.dart';
+// import 'package:contact_tracing/classes/notification.dart';
+// import 'package:contact_tracing/classes/uploadClass.dart';
+// import 'package:contact_tracing/classes/write.dart';
+// import 'package:flutter_background_service/flutter_background_service.dart';
+// import 'package:geolocator/geolocator.dart';
 // import 'package:contact_tracing/pages/Location/filter.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'package:contact_tracing/services/auth.dart';
+import 'package:contact_tracing/services/notification.dart';
+//import 'package:contact_tracing/services/write.dart';
+import 'package:splashscreen/splashscreen.dart';
 
 import 'Location/live_geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splashscreen/splashscreen.dart';
+//import 'package:splashscreen/splashscreen.dart';
 
 //import 'Login/dotindicator.dart';
 import 'Login/login.dart';
-import 'Login/register.dart';
+//import 'Login/register.dart';
 import 'Mobile/mobiles.dart';
 //import 'package:flutter_restart/flutter_restart.dart';
 
@@ -33,7 +38,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   int _latestUpdate = 0;
-  Writefile _wf = new Writefile();
+  //Writefile _wf = new Writefile();
   @override
   void initState() {
     // TODO: implement initState
@@ -122,7 +127,7 @@ class _SplashPageState extends State<SplashPage> {
       return Future.value(MobilePage());
     } else {
       print("LoginPage");
-      FirebaseAuthenticate().firebaseSignIn();
+      // FirebaseAuthenticate().firebaseRegisterUser();
       return Future.value(LoginPage());
     }
   }

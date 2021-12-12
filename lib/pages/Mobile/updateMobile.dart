@@ -1,12 +1,14 @@
-import 'dart:convert';
+//import 'dart:convert';
 import 'dart:io';
+import 'package:contact_tracing/services/databaseServices.dart';
+//import 'package:contact_tracing/services/globals.dart';
 import 'package:device_info/device_info.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import '../../classes/globals.dart';
-import 'package:contact_tracing/classes/mobile.dart';
+//import '../../classes/globals.dart';
+import 'package:contact_tracing/models/mobile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -98,7 +100,25 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
                   setState(() {
                     _isLoading = true;
                   });
-                  await _saveToDb();
+                  Navigator.of(context).pop();
+                  final data = await DatabaseServices().updateMobile(
+                    mobileId: widget.mobile.mobileId.toString(),
+                    mobileName: _mobileName.text.toString(),
+                    mobileDescription: _mobileDescription.text.toString(),
+                    mobileNumber: _mobileNumber.toString(),
+                  );
+                  print(data);
+                  if (data != 'Error') {
+                    if (data['msg'] == "success") {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => MobilePage()),
+                          (e) => false);
+                    }
+                  } else {
+                    setState(() {
+                      _showReload = true;
+                    });
+                  }
                 },
               ),
             ],
@@ -110,31 +130,6 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
         _isLoading = false;
       });
       return null;
-    }
-  }
-
-  Future<void> _saveToDb() async {
-    Navigator.of(context).pop();
-    try {
-      final url = updateMobileUrl;
-      final res = await http.post(Uri.parse(url), body: {
-        "mobileId": widget.mobile.mobileId.toString(),
-        "mobileName": _mobileName.text.toString(),
-        "mobileDescription": _mobileDescription.text.toString(),
-        "mobileNumber": _mobileNumber.toString()
-      });
-      final data = jsonDecode(res.body);
-      print(data);
-      if (data['msg'] == "success") {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => MobilePage()),
-            (e) => false);
-      }
-    } catch (e) {
-      print(e.toString());
-      setState(() {
-        _showReload = true;
-      });
     }
   }
 

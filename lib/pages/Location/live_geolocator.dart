@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/pages/splash.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,7 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 //import 'package:grouped_buttons/grouped_buttons.dart';
 
 //import 'package:flutter/material.dart';
@@ -46,16 +47,12 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _lastUpdateFromServer = '0';
 
   Future<void> _downloadData() async {
-    try {
-      final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
-      // print(latestUpdateLocationsUrl);
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String jsonBody = res.body;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonBody = await DatabaseServices().downloadUpdateLocation();
+    if (jsonBody != 'Error') {
       await prefs.setString('Locations', jsonBody);
       _useExistingData(bodyResponse: jsonBody);
-    } catch (e) {
-      print('json request problem');
-      print(e);
+    } else {
       setState(() {
         _showReload = true;
       });

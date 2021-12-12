@@ -8,13 +8,13 @@ const int timeToUploadPerMinute = 5; //6 * 60;//6 hours
 //website config
 //login register
 const String website = 'https://contact-tracing-utm.000webhostapp.com/';
-const String loginUrl = website + "flutter_login/login.php";
+//const String loginUrl = website + "flutter_login/login.php";
 const String resetUrl = website + "flutter_login/reset.php";
 const String getMobilesUrl = website + "apis/getMobiles.php";
 const String updateMobileUrl = website + "apis/updateMobile.php";
 const String addMobileUrl = website + "apis/addMobile.php";
 const String registerUrl = website + "flutter_login/register.php";
-const String checkUsernameUrl = website + "flutter_login/checkUsername.php";
+const String checkEmailUrl = website + "flutter_login/checkUsername.php";
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
@@ -41,9 +41,7 @@ const String flutterIcon = '@mipmap/ic_launcher';
 // prefs.setString('telephone', telephone);
 // prefs.setString('email', email);
 // prefs.setString('dateOfBirth', dateOfBirth);
-// prefs.setString('nationalIdNumber', nationalIdNumber);
-// prefs.setString('username', username);
-// prefs.setString('password', password);
+// prefs.setString('firebaseuid', firebaseuid);
 // prefs.setString("userId", data['userId']);
  // prefs.setString('latestUpdate', time);
 

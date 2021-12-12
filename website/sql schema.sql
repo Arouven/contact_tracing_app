@@ -6,7 +6,7 @@ CREATE TABLE `User` (
   `address` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
   `email` VARCHAR(255) NOT NULL,
-  `firebaseuid` VARCHAR(255) NOT NULL,
+  `firebaseuid` TEXT NOT NULL,
   PRIMARY KEY (`userId`)
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE `Mobile` (
   `mobileName` VARCHAR(255) NOT NULL,
   `mobileDescription` VARCHAR(255) NOT NULL,
   `mobileNumber` VARCHAR(255) NOT NULL,
-  `fcmtoken` VARCHAR(255) NOT NULL,
+  `fcmtoken` TEXT DEFAULT NULL,
   `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
@@ -51,31 +51,6 @@ CREATE TABLE `TestingCentres` (
   `longitude` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`testingId`)
 );
-
--- create stored procedure
-DELIMITER / / CREATE PROCEDURE InsertMobile(
-  IN username VARCHAR(255),
-  IN mobileName VARCHAR(255),
-  IN mobileDescription VARCHAR(255),
-  IN mobileNumber VARCHAR(255)
-) BEGIN DECLARE userId INT DEFAULT 0;
-
-SELECT
-  User.userId INTO userId
-FROM
-  User
-WHERE
-  User.username = username;
-
-INSERT INTO
-  `Mobile`
-SET
-  `userId` = userId,
-  `mobileName` = mobileName,
-  `mobileDescription` = mobileDescription,
-  `mobileNumber` = mobileNumber;
-
-END / / DELIMITER;
 
 -- INSERTING TEST DATA INTO TABLES
 INSERT INTO
@@ -113,31 +88,25 @@ INSERT INTO
     firstName,
     lastName,
     address,
-    email,
     dateOfBirth,
-    nationalIdNumber,
-    username,
-    password
+    email,
+    firebaseuid
   )
 VALUES
   (
     'John',
     'Smith',
     'Bambous',
-    'JohnSmith@gmail.com',
     '2000-01-13',
-    'J6465516549846513',
-    'Johny',
+    'JohnSmith@gmail.com',
     '1234'
   ),
   (
     'James',
     'Smith',
     'Port-Louis',
-    'JamesSmith@gmail.com',
     '2000-01-13',
-    'J6465516549846523',
-    'JamesSmith',
+    'JamesSmith@gmail.com',
     '1234'
   );
 
@@ -487,3 +456,30 @@ VALUES
     '57.497987',
     '1'
   );
+
+-- create stored procedure
+DELIMITER / / CREATE PROCEDURE InsertMobile(
+  IN firebaseuid TEXT,
+  IN mobileName VARCHAR(255),
+  IN mobileDescription VARCHAR(255),
+  IN mobileNumber VARCHAR(255),
+  IN fcmtoken TEXT
+) BEGIN DECLARE userId INT DEFAULT 0;
+
+SELECT
+  User.userId INTO userId
+FROM
+  User
+WHERE
+  User.firebaseuid = firebaseuid;
+
+INSERT INTO
+  `Mobile`
+SET
+  `userId` = userId,
+  `mobileName` = mobileName,
+  `mobileDescription` = mobileDescription,
+  `mobileNumber` = mobileNumber,
+  `fcmtoken` = fcmtoken;
+
+END / / DELIMITER;
