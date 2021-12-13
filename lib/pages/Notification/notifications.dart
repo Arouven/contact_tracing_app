@@ -5,6 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+FirebaseDatabase database = FirebaseDatabase.instance;
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -26,6 +29,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   Future aa() async {
     _messageList = await ApiMessage.getMessages();
+  }
+
+  fb() {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("users/123");
+
+// Get the Stream
+    Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent event) {
+      print('Event Type: ${event.type}'); // DatabaseEventType.value;
+      print('Snapshot: ${event.snapshot}'); // DataSnapshot
+    });
   }
 
   openAppMessage() {

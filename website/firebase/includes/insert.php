@@ -17,10 +17,10 @@ $messaging = $factory->createMessaging();
 $topic = 'a-topic';
 $title = 'Title';
 $body =    'Body';
-$message = CloudMessage::withTarget('topic', $topic)
-    ->withNotification(Notification::create($title, $body))
-    //->withData(['key' => 'value'])
-;
+//$message = CloudMessage::withTarget('topic', $topic)
+//  ->withNotification(Notification::create($title, $body))
+//->withData(['key' => 'value'])
+//;
 
 // $message = CloudMessage::fromArray([
 //     'topic' => $topic,
@@ -34,17 +34,19 @@ $message = CloudMessage::withTarget('topic', $topic)
 $data = [
     'title' => $title,
     'body' => $body,
-    'read' => 'false',
+    'read' => false,
 ];
 
-$ref = "notification/uid-" . $uid . "/";
+$uid = '4oEnKlRjSeOUCqISBP40gvqW3AA3';
+$phone =  '+23057775794';
+$ref = "notification/uid-$uid/$phone/";
 $postdata = $database->getReference($ref)->push($data);
 
 if ($postdata) {
     // $_SESSION['status'] = "Data Inserted Successfully";
     // header("Location: index.php");
     echo 'inserted';
-    $messaging->send($message);
+    // $messaging->send($message);
 } else {
     // $_SESSION['status'] = "Data Not Inserted. Something Went Wrong.!";
     // header("Location: index.php");
