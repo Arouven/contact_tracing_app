@@ -1,13 +1,13 @@
+import 'dart:convert';
+
 import 'package:contact_tracing/models/message.dart';
-import 'package:contact_tracing/services/apiNotification.dart';
 import 'package:contact_tracing/services/notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-FirebaseDatabase database = FirebaseDatabase.instance;
+//FirebaseDatabase database = FirebaseDatabase.instance;
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -18,55 +18,105 @@ class NotificationsPage extends StatefulWidget {
   }
 }
 
+List<Message> messageList = [];
+
 class _NotificationsPageState extends State<NotificationsPage> {
-  var _messageList = [];
+  bool _isLoading = true;
   @override
   void initState() {
-    aa().whenComplete(() => setState(() {}));
-    openAppMessage();
+    getListofMessages().then((value) => setState(() {}));
+    updateListofMessages();
     super.initState();
   }
 
-  Future aa() async {
-    _messageList = await ApiMessage.getMessages();
+  Future getListofMessages() async {
+    setState(() {
+      _isLoading = true;
+    });
+    DatabaseReference ref = FirebaseDatabase.instance.ref(
+      "notification/+23057775794",
+    );
+    // Get the data once
+    DatabaseEvent event = await ref.once();
+
+// Print the data of the snapshot
+    print(event.snapshot.value); // { "name": "John" }
+    DataSnapshot snapshot = event.snapshot; // DataSnapshot
+    Map message = snapshot.value as Map;
+    messageList.clear();
+    setState(() {
+      message.forEach((key, value) {
+        messageList.add(
+          new Message(
+            id: key,
+            title: value['title'],
+            body: value['body'],
+            read: value['read'],
+            timestamp: value['timestamp'],
+          ),
+        );
+      });
+      _isLoading = false;
+    });
   }
 
-  fb() {
-    DatabaseReference ref = FirebaseDatabase.instance.ref("users/123");
-
+  updateListofMessages() {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(
+      "notification/+23057775794",
+    );
 // Get the Stream
     Stream<DatabaseEvent> stream = ref.onValue;
 
 // Subscribe to the stream!
     stream.listen((DatabaseEvent event) {
-      print('Event Type: ${event.type}'); // DatabaseEventType.value;
-      print('Snapshot: ${event.snapshot}'); // DataSnapshot
-    });
-  }
-
-  openAppMessage() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Parse the message received
+      DataSnapshot snapshot = event.snapshot; // DataSnapshot
+      Map message = snapshot.value as Map;
+      messageList.clear();
       setState(() {
-        print('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQqqq');
-        _messageList = ApiMessage.getMessages();
+        message.forEach((key, value) {
+          messageList.add(
+            new Message(
+              id: key,
+              title: value['title'],
+              body: value['body'],
+              read: value['read'],
+              timestamp: value['timestamp'],
+            ),
+          );
+        });
       });
     });
   }
 
   Widget _body() {
-    return Scrollbar(
+    if (_isLoading == true) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Scrollbar(
         child: ListView.builder(
-            itemCount: _messageList == null ? 0 : _messageList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(_messageList[index].title),
-              );
-            }));
-    // widgets.add(ListTile(
-    //   title: Text('title'),
-    // ));
-    //return null;
+          itemCount: messageList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              leading: Icon(Icons.email),
+              title: Text(
+                messageList[index].title,
+                style: (messageList[index].read)
+                    ? null
+                    : TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: (messageList[index].read)
+                  ? null
+                  : Icon(
+                      Icons.brightness_1,
+                      size: 9.0,
+                      color: Colors.red,
+                    ),
+              onTap: () {},
+            );
+          },
+        ),
+      );
+    }
   }
 
   @override

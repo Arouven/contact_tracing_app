@@ -1,18 +1,15 @@
-//import 'package:meta/meta.dart';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
-
 class Message {
-  final String title;
-  final String body;
-
-  const Message({
+  Message({
+    required this.id,
     required this.title,
     required this.body,
+    required this.read,
+    required this.timestamp,
   });
 
-  static Message fromListMessage(listMessage) => Message(
-        title: listMessage.notification!.title!,
-        body: listMessage.notification!.body!,
-      );
+  String id;
+  String title;
+  String body;
+  bool read;
+  int timestamp;
 }

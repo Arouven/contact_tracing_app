@@ -3,13 +3,14 @@ import 'dart:async';
 // import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 //import 'package:contact_tracing/classes/notification.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
 // import 'pages/Mobile/addMobile.dart';
@@ -61,7 +62,7 @@ void onStart() {
             desiredAccuracy: geolocatorAccuracy,
           );
           final SharedPreferences prefs = await SharedPreferences.getInstance();
-          if ((prefs.getString("username") != null) &&
+          if ((prefs.getString("email") != null) &&
               (prefs.getString("mobileId") != null)) {
             print("username and mobileid not null at start of service");
             _wf.writeToFile(
@@ -144,7 +145,7 @@ Future<void> _messageHandler(RemoteMessage message) async {
 }
 
 Future<void> sendMsg(RemoteMessage message) async {
-  Notif.notifications.insert(0, message);
+  //Notif.notifications.insert(0, message);
   PushNotification notification = PushNotification(
     title: message.notification?.title,
     body: message.notification?.body,
@@ -156,6 +157,29 @@ Future<void> sendMsg(RemoteMessage message) async {
     notification.body,
     notificationDetails,
   );
+}
+
+updateBadge() {
+  DatabaseReference ref = FirebaseDatabase.instance.ref(
+    "notification/+23057775794",
+  );
+// Get the Stream
+  Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+  stream.listen((DatabaseEvent event) {
+    DataSnapshot snapshot = event.snapshot; // DataSnapshot
+    Map message = snapshot.value as Map;
+    int badge = 0;
+    message.forEach((key, value) {
+      if (value['read'] == false) badge += 1;
+    });
+    if (badge > 0) {
+      FlutterAppBadger.updateBadgeCount(badge);
+    } else {
+      FlutterAppBadger.removeBadge();
+    }
+  });
 }
 
 Future<Position> _determinePosition() async {
@@ -205,12 +229,13 @@ void main() async {
 
   await setFirebase();
   openAppMessage();
+
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     print('Message clicked!');
   });
   FlutterBackgroundService.initialize(onStart);
-
+  updateBadge();
   runApp(MyApp());
 }
 

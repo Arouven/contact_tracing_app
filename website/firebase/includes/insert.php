@@ -34,12 +34,13 @@ $body =    'Body';
 $data = [
     'title' => $title,
     'body' => $body,
+    'timestamp' => time(),
     'read' => false,
 ];
 
-$uid = '4oEnKlRjSeOUCqISBP40gvqW3AA3';
+
 $phone =  '+23057775794';
-$ref = "notification/uid-$uid/$phone/";
+$ref = "notification/$phone/";
 $postdata = $database->getReference($ref)->push($data);
 
 if ($postdata) {
