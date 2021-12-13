@@ -15,7 +15,7 @@ class NotifyFirebase
     private $priority;
     private $arrayToSend;
     private $db;
-    function __construct($mobileId = "1", $url = "https://fcm.googleapis.com/fcm/send", $token = 'f1RjgXu_SV-7L3ODUOxtTb:APA91bFyJJFcrUpiUE-CcghtpEWo2Sagd4sSYcD9A0AAfdUfziRvh-73CQx_aFyMo0vVfoc750kcJV1OKJrKyQLG9F7To8rEn_3OrVD1m145jTqmx-pmnZSu_qdLe0Dcya3m0cefxV-N', $title = "Title", $body = "Body", $sound = 'default', $badge = '1', $priority = 'high')
+    function __construct($mobileId = "1", $url = "https://fcm.googleapis.com/fcm/send", $token = 'f1RjgXu_SV-7L3ODUOxtTb:APA91bFyJJFcrUpiUE-CcghtpEWo2Sagd4sSYcD9A0AAfdUfziRvh-73CQx_aFyMo0vVfoc750kcJV1OKJrKyQLG9F7To8rEn_3OrVD1m145jTqmx-pmnZSu_qdLe0Dcya3m0cefxV-N', $title = "Title3", $body = "Body", $sound = 'default', $badge = '1', $priority = 'high')
     {
         $this->db = new database();
         $this->url = $url;

@@ -144,6 +144,7 @@ Future<void> _messageHandler(RemoteMessage message) async {
 }
 
 Future<void> sendMsg(RemoteMessage message) async {
+  Notif.notifications.insert(0, message);
   PushNotification notification = PushNotification(
     title: message.notification?.title,
     body: message.notification?.body,

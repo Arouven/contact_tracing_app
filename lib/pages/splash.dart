@@ -4,6 +4,7 @@ import 'package:contact_tracing/services/notification.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import 'Location/live_geolocator.dart';
+import 'Notification/notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Login/login.dart';
@@ -102,7 +103,8 @@ class _SplashPageState extends State<SplashPage> {
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
       print("LiveGeolocatorPage");
-      return Future.value(LiveGeolocatorPage());
+      return Future.value(NotificationsPage());
+      //return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {
@@ -110,7 +112,6 @@ class _SplashPageState extends State<SplashPage> {
       return Future.value(MobilePage());
     } else {
       print("LoginPage");
-      // FirebaseAuthenticate().firebaseRegisterUser();
       return Future.value(LoginPage());
     }
   }
