@@ -22,13 +22,13 @@ class Mobile {
         mobileNumber: json['mobileNumber'],
         fcmtoken: json['fcmtoken'],
       );
-  static Mobile problem(non) => Mobile(
-        mobileId: 0,
-        mobileName: 'mobileName',
-        mobileDescription: 'mobileDescription',
-        mobileNumber: 'mobileNumber',
-        fcmtoken: 'fcmtoken',
-      );
+  // static Mobile problem(non) => Mobile(
+  //       mobileId: 0,
+  //       mobileName: 'mobileName',
+  //       mobileDescription: 'mobileDescription',
+  //       mobileNumber: 'mobileNumber',
+  //       fcmtoken: 'fcmtoken',
+  //     );
   // static Mobile newmobile() => Mobile(
   //     mobileId: 0,
   //     mobileName: 'new mobile name',

@@ -125,6 +125,8 @@ class DatabaseServices {
           "fcmtoken": fcmtoken,
         },
       );
+      final response = jsonDecode(res.body);
+
       return jsonDecode(res.body);
     } catch (e) {
       print(e.toString());

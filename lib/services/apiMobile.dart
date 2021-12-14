@@ -27,9 +27,10 @@ class ApiMobile {
       return null;
     } catch (e) {
       print(e);
-      final non = "[0]";
-      final body = jsonDecode(non);
-      return body.map<Mobile>(Mobile.problem).toList();
+      // final non = "[0]";
+      // final body = jsonDecode(non);
+      return null;
+      //body.map<Mobile>(Mobile.problem).toList();
     }
   }
 }

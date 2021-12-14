@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -418,8 +419,88 @@ class _MobilePageState extends State<MobilePage> {
     );
   }
 
-  setActive() {
-    print('hello');
+  /// display add mobile dialog
+  Future<void> _showSetActiveDialog(Mobile mobile) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Set Mobile Active?',
+            style: TextStyle(
+              color: Colors.orange,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                new Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                          'Are you sure you want to set this mobile as active?'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                String? fcmtoken =
+                    await FirebaseAuthenticate().getfirebasefcmtoken();
+                final response = await DatabaseServices().updateMobilefmcToken(
+                  mobileId: mobile.mobileId.toString(),
+                  fcmtoken: fcmtoken!,
+                );
+                Navigator.of(context).pop();
+                if (response != 'Error') {
+                  if (response['msg'] == 'success') {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (BuildContext context) => MobilePage(),
+                    ));
+                  } else {
+                    DialogBox.showErrorDialog(
+                      context: context,
+                      title: response['msg'],
+                      body: response['error'],
+                    );
+                  }
+                  print('updated successfully');
+                } else {
+                  DialogBox.showErrorDialog(
+                    context: context,
+                    title: 'Error Happened',
+                    body: 'An Error occur, please retry',
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  setActive(Mobile mobile) {
+    print('set active');
+    _showSetActiveDialog(mobile);
+    print(mobile.fcmtoken);
+  }
+
+  editmobile(Mobile mobile) {
+    print('editmobile');
+    _showEditDialog(mobile);
+    print(mobile.fcmtoken);
   }
 
   /// take [mobiles] as List<Mobile>
@@ -427,64 +508,70 @@ class _MobilePageState extends State<MobilePage> {
   /// return the list<Widget>
   List<Widget> _buildMobiles(List<Mobile> mobiles) {
     List<Widget> widgets = [];
-    bool inList = false;
-    for (Mobile mobile in mobiles) {
-      if (myfcmtoken.toString() == mobile.fcmtoken.toString()) {
-        inList = true;
-        break;
-      }
-    }
-    if (inList == true) {
-      //_showAddDialog();
-      print('hi');
+    // bool inList = false;
+    // for (Mobile mobile in mobiles) {
+    //   if (myfcmtoken.toString() == mobile.fcmtoken.toString()) {
+    //     inList = true;
+    //     break;
+    //   }
+    // }
+    if ((mobiles == null)) {
+      //if there is no mobiles stop
+      // _showAddDialog();
+      DialogBox.showErrorDialog(
+        context: context,
+        title: 'No Mobile!',
+        body: 'Click on the plus sign below to add your mobile',
+      );
+      print('mobile is null');
       return widgets;
     } else {
-      if (mobiles == null) {
-        //if there is no mobiles stop
-        // _showAddDialog();
-        return widgets;
-      } else {
-        for (Mobile mobile in mobiles) {
-          widgets.add(
-            ListTile(
-              title: Text(
-                mobile.mobileName,
-                style: (myfcmtoken.toString() == mobile.fcmtoken.toString())
-                    ? TextStyle(fontWeight: FontWeight.bold)
-                    : null,
-              ),
-              subtitle: (myfcmtoken.toString() == mobile.fcmtoken.toString())
-                  ? Text(
-                      'Active',
-                      style: TextStyle(
-                        color: Colors.green,
-                      ),
-                    )
+      for (Mobile mobile in mobiles) {
+        widgets.add(
+          ListTile(
+            title: Text(
+              mobile.mobileName,
+              style: (myfcmtoken.toString() == mobile.fcmtoken.toString())
+                  ? TextStyle(fontWeight: FontWeight.bold)
                   : null,
-              trailing: PopupMenuButton(
-                  itemBuilder: (context) => [
-                        PopupMenuItem(
-                          child: ListTile(
-                            title: Text("Set Active"),
-                            onTap: setActive(),
-                          ),
-                          value: mobile.mobileId,
-                        ),
-                        PopupMenuItem(
-                          child: ListTile(
-                            title: Text("Edit Mobile"),
-                            onTap: setActive(),
-                          ),
-                          value: mobile.mobileId,
-                        )
-                      ]),
-              onTap: () {
-                print('mobile press');
-                _showEditDialog(mobile);
-              },
             ),
-          );
-        }
+            subtitle: (myfcmtoken.toString() == mobile.fcmtoken.toString())
+                ? Text(
+                    'Active',
+                    style: TextStyle(
+                      color: Colors.green,
+                    ),
+                  )
+                : null,
+            trailing: // IconButton(onPressed: onPressed, icon: icon)
+
+                PopupMenuButton(
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                          PopupMenuItem(
+                            child: TextButton(
+                              child: const Text(
+                                'Set Active',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              onPressed: () {
+                                setActive(mobile);
+                              },
+                            ),
+                          ),
+                          PopupMenuItem(
+                            child: TextButton(
+                              child: const Text(
+                                'Edit Mobile',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              onPressed: () {
+                                editmobile(mobile);
+                              },
+                            ),
+                          )
+                        ]),
+          ),
+        );
       }
       widgets.add(
         ListTile(),
