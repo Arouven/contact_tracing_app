@@ -16,12 +16,13 @@ CREATE TABLE `Mobile` (
   `mobileName` VARCHAR(255) NOT NULL,
   `mobileDescription` VARCHAR(255) NOT NULL,
   `mobileNumber` VARCHAR(255) NOT NULL,
-  `fcmtoken` TEXT DEFAULT NULL,
+  `fcmtoken` TEXT DEFAULT NOT NULL,
   `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
   PRIMARY KEY (`mobileId`),
-  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`)
+  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`),
+  CONSTRAINT fcm_unique UNIQUE (`fcmtoken`)
 );
 
 CREATE TABLE `Coordinates` (
@@ -482,4 +483,6 @@ SET
   `mobileNumber` = mobileNumber,
   `fcmtoken` = fcmtoken;
 
-END / / DELIMITER;
+END;
+
+/ / DELIMITER;

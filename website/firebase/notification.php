@@ -1,6 +1,7 @@
 <?php
 require $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require __DIR__ . 'includes/insert.php';
 
 
 class NotifyFirebase
@@ -27,16 +28,17 @@ class NotifyFirebase
         $this->priority = $priority;
         $this->notification = array('title' => $this->title, 'body' => $this->body, 'sound' => $this->sound, 'badge' => $this->badge);
         $this->arrayToSend = array('to' => $this->token, 'notification' => $this->notification, 'priority' => $this->priority);
+        new SaveNotificationToFirebase($this->token, $this->title, $this->body);
         $this->sendFCM();
     }
     function getRespectiveFCMtoken($mobileId)
     {
-        $selectquery = "SELECT UNIQUE Mobile.fcmtoken FROM Mobile WHERE Mobile.mobileId = ?;";
+        $selectquery = "SELECT Mobile.fcmtoken FROM Mobile WHERE Mobile.mobileId = ?;";
         $selectparamType = "i";
         $selectparamArray = array($mobileId);
         $data = $this->db->select($selectquery, $selectparamType, $selectparamArray);
 
-        if (isset($data) && $data != null) { //if there is something in the result           
+        if (isset($data) && $data != null) { //if there is something in the result 
             return $data[0]['fcmtoken'];
         } else { //nothing in result
             return 'd61hZ9MvRyupiaG4r9BfbO:APA91bEUY1QgnIJjCknSOx82aks9tiye9XIIeOQTkzZzVp4Koau3Y-DiC5HWDaQZRrXQQ9C_3CBW_Ng1c5v7aBoYJ1tmLID3UlGZtS49z-GcFm9QDnA0Jz9kr2BS6vR5Sd4ZZD7cIi-0';
@@ -66,14 +68,14 @@ class NotifyFirebase
         // ];
 
         // Create the api body
-        $apiBody = [
-            'notification' => $this->notification, //$notifData,
-            //   'data' => $dataPayload, //Optional
-            //  'time_to_live' => 600, // optional - In Seconds
-            //'to' => '/topics/mytargettopic'
-            //'registration_ids' = ID ARRAY
-            'to' => $this->token
-        ];
+        //   $apiBody = [
+        //  'notification' => $this->notification, //$notifData,
+        //   'data' => $dataPayload, //Optional
+        //  'time_to_live' => 600, // optional - In Seconds
+        //'to' => '/topics/mytargettopic'
+        //'registration_ids' = ID ARRAY
+        //    'to' => $this->token
+        // ];
 
         // Initialize curl with the prepared headers and body
         $ch = curl_init();

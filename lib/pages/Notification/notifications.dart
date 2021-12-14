@@ -4,6 +4,7 @@ import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../widgets/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -24,7 +25,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
   @override
   void initState() {
-    getListofMessages().then((value) => setState(() {}));
+    FlutterBackgroundService().sendData({"action": "updateBadge"});
+    // getListofMessages().then((value) => setState(() {}));
     updateListofMessages();
     super.initState();
   }

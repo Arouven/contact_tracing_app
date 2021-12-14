@@ -1,7 +1,9 @@
+import 'package:badges/badges.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:flutter/material.dart';
 import '../pages/Location/live_geolocator.dart';
 import '../pages/Login/login.dart';
@@ -66,6 +68,13 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         ),
         _buildMenuItem(
           context,
+          const Text('Notifications'),
+          (badgeNumber()),
+          NotificationsPage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
           const Text('Profile'),
           const Icon(Icons.person),
           ProfilePage.route,
@@ -75,3 +84,30 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
     ),
   );
 }
+
+var badge = '';
+
+Widget badgeNumber() {
+  if (Badgeservices.badgeText != '') {
+    print(Badgeservices.badgeText);
+    return (Badge(
+      badgeContent: Text(
+        Badgeservices.badgeText,
+        style: TextStyle(fontSize: 8.0),
+      ),
+      child: Icon(Icons.notifications),
+    ));
+  } else {
+    return (Icon(Icons.notifications));
+  }
+}
+// Widget expandedBadge() {
+//   return Expanded(
+//     child: Center(
+//       child: Badge(
+//         badgeContent: Text('10'),
+//         child: Icon(Icons.person, size: 30),
+//       ),
+//     ),
+//   );
+// }

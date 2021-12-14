@@ -78,14 +78,14 @@ class FirebaseAuthenticate {
 
   String? getfirebaseuid() {
     String? firebaseuid = FirebaseAuth.instance.currentUser!.uid;
-    print(firebaseuid);
+    print('firebaseuid: ' + firebaseuid.toString());
     return firebaseuid;
   }
 
   Future<String?> getfirebasefcmtoken() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     String? token = await _firebaseMessaging.getToken();
-    print(token);
+    print('fcmtoken: ' + token.toString());
     return token;
   }
 

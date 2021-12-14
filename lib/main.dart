@@ -1,7 +1,5 @@
 import 'dart:async';
-// import 'package:contact_tracing/pages/Location/filter.dart';
-// import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
-//import 'package:contact_tracing/classes/notification.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,9 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
-// import 'pages/Mobile/addMobile.dart';
 
-// import 'pages/Login/register.dart';
 import 'pages/Login/login.dart';
 import './pages/splash.dart';
 import 'pages/Mobile/mobiles.dart';
@@ -45,6 +41,11 @@ void onStart() {
       service.stopBackgroundService();
     }
 
+    if (event["action"] == "updateBadge") {
+      print('service');
+      updateBadge();
+    }
+
     if (event["action"] == "startService") {
       print("event = startService and start timer too");
       // bring to foreground
@@ -64,7 +65,7 @@ void onStart() {
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           if ((prefs.getString("email") != null) &&
               (prefs.getString("mobileId") != null)) {
-            print("username and mobileid not null at start of service");
+            print("email and mobileid not null at start of service");
             _wf.writeToFile(
               '${position.latitude.toString()}',
               '${position.longitude.toString()}',
@@ -146,6 +147,7 @@ Future<void> _messageHandler(RemoteMessage message) async {
 
 Future<void> sendMsg(RemoteMessage message) async {
   //Notif.notifications.insert(0, message);
+  await updateBadge();
   PushNotification notification = PushNotification(
     title: message.notification?.title,
     body: message.notification?.body,
@@ -159,27 +161,29 @@ Future<void> sendMsg(RemoteMessage message) async {
   );
 }
 
-updateBadge() {
+updateBadge() async {
   DatabaseReference ref = FirebaseDatabase.instance.ref(
     "notification/+23057775794",
   );
-// Get the Stream
-  Stream<DatabaseEvent> stream = ref.onValue;
+  // Get the data once
+  DatabaseEvent event = await ref.once();
 
-// Subscribe to the stream!
-  stream.listen((DatabaseEvent event) {
-    DataSnapshot snapshot = event.snapshot; // DataSnapshot
-    Map message = snapshot.value as Map;
-    int badge = 0;
-    message.forEach((key, value) {
-      if (value['read'] == false) badge += 1;
-    });
-    if (badge > 0) {
-      FlutterAppBadger.updateBadgeCount(badge);
-    } else {
-      FlutterAppBadger.removeBadge();
-    }
+// Print the data of the snapshot
+  print(event.snapshot.value); // { "name": "John" }
+  DataSnapshot snapshot = event.snapshot; // DataSnapshot
+  Map message = snapshot.value as Map;
+
+  int badge = 0;
+  message.forEach((key, value) {
+    if (value['read'] == false) badge += 1;
   });
+  Badgeservices.badgeText = badge.toString();
+  // prefs.setString('badge', badge.toString());
+  if (badge > 0) {
+    FlutterAppBadger.updateBadgeCount(badge);
+  } else {
+    FlutterAppBadger.removeBadge();
+  }
 }
 
 Future<Position> _determinePosition() async {
@@ -235,7 +239,7 @@ void main() async {
     print('Message clicked!');
   });
   FlutterBackgroundService.initialize(onStart);
-  updateBadge();
+  // FlutterBackgroundService.initialize(updateBadge());
   runApp(MyApp());
 }
 
