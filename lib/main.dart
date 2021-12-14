@@ -41,11 +41,6 @@ void onStart() {
       service.stopBackgroundService();
     }
 
-    if (event["action"] == "updateBadge") {
-      print('service');
-      updateBadge();
-    }
-
     if (event["action"] == "startService") {
       print("event = startService and start timer too");
       // bring to foreground
@@ -87,9 +82,6 @@ void onStart() {
             timer.cancel();
             myTimer.cancel();
           }
-          // service.sendData(
-          //   {"current_date": DateTime.now().toIso8601String()},
-          // );
           counter = counter + 1;
         },
       );
@@ -161,26 +153,26 @@ Future<void> sendMsg(RemoteMessage message) async {
   );
 }
 
-var notificationbadge = 0;
+//var notificationbadge = 0;
 updateBadge() async {
-  DatabaseReference ref = FirebaseDatabase.instance.ref(
-    path,
-  );
+  DatabaseReference ref = FirebaseDatabase.instance.ref(path);
   // Get the data once
   DatabaseEvent event = await ref.once();
 
 // Print the data of the snapshot
-  print(event.snapshot.value); // { "name": "John" }
+  print('values: ' + event.snapshot.value.toString()); // { "name": "John" }
   DataSnapshot snapshot = event.snapshot; // DataSnapshot
   Map message = snapshot.value as Map;
 
   int badge = 0;
   message.forEach((key, value) {
-    if (value['read'] == false) badge += 1;
+    bool read = value['read'] as bool;
+    if (read == false) {
+      badge = badge + 1;
+    }
+    // print(badge);
   });
-  notificationbadge = badge;
-  //Badgeservices.badgeText = badge.toString();
-  // prefs.setString('badge', badge.toString());
+  Badges.number = badge;
   if (badge > 0) {
     FlutterAppBadger.updateBadgeCount(badge);
   } else {
@@ -241,6 +233,7 @@ void main() async {
     print('Message clicked!');
   });
   FlutterBackgroundService.initialize(onStart);
+  await updateBadge();
   // FlutterBackgroundService.initialize(updateBadge());
   runApp(MyApp());
 }
