@@ -89,97 +89,6 @@ void onStart() {
   });
 }
 
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-late AndroidNotificationChannel channel;
-late NotificationSettings settings;
-late FirebaseMessaging _messaging;
-
-Future<void> setFirebase() async {
-  channel = Notif().androidNotificationChannel();
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-  await Firebase.initializeApp();
-  _messaging = FirebaseMessaging.instance;
-
-  // 3. On iOS, this helps to take the user permissions
-  settings = await _messaging.requestPermission(
-    alert: true,
-    badge: true,
-    provisional: false,
-    sound: true,
-  );
-}
-
-void openAppMessage() {
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Parse the message received
-      sendMsg(message);
-    });
-  } else {
-    print('User declined or has not accepted permission');
-  }
-}
-
-Future<void> _messageHandler(RemoteMessage message) async {
-  print('background message ${message.notification!.body}');
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-    // Parse the message received
-    sendMsg(message);
-  } else {
-    print('User declined or has not accepted permission');
-  }
-}
-
-Future<void> sendMsg(RemoteMessage message) async {
-  //Notif.notifications.insert(0, message);
-  await updateBadge();
-  PushNotification notification = PushNotification(
-    title: message.notification?.title,
-    body: message.notification?.body,
-  );
-  NotificationDetails notificationDetails = await Notif().getPlatform();
-  flutterLocalNotificationsPlugin.show(
-    notification.hashCode,
-    notification.title,
-    notification.body,
-    notificationDetails,
-  );
-}
-
-//var notificationbadge = 0;
-updateBadge() async {
-  DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-  // Get the data once
-  DatabaseEvent event = await ref.once();
-
-// Print the data of the snapshot
-  print('values: ' + event.snapshot.value.toString()); // { "name": "John" }
-  DataSnapshot snapshot = event.snapshot; // DataSnapshot
-  Map message = snapshot.value as Map;
-
-  int badge = 0;
-  message.forEach((key, value) {
-    bool read = value['read'] as bool;
-    if (read == false) {
-      badge = badge + 1;
-    }
-    // print(badge);
-  });
-  Badges.number = badge;
-  if (badge > 0) {
-    FlutterAppBadger.updateBadgeCount(badge);
-  } else {
-    FlutterAppBadger.removeBadge();
-  }
-}
-
 Future<Position> _determinePosition() async {
   bool serviceEnabled;
   LocationPermission permission;
@@ -217,6 +126,71 @@ Future<Position> _determinePosition() async {
   return await Geolocator.getCurrentPosition();
 }
 
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+late FlutterLocalNotificationsPlugin flutterLNP;
+late AndroidNotificationChannel channel;
+late NotificationSettings settings;
+late FirebaseMessaging _messaging;
+
+Future<void> setFirebase() async {
+  channel = NotificationServices().androidNotificationChannel();
+  flutterLNP = FlutterLocalNotificationsPlugin();
+  await flutterLNP
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  await Firebase.initializeApp();
+  _messaging = FirebaseMessaging.instance;
+
+  // 3. On iOS, this helps to take the user permissions
+  settings = await _messaging.requestPermission(
+    alert: true,
+    badge: true,
+    provisional: false,
+    sound: true,
+  );
+}
+
+void openAppMessage() {
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Parse the message received
+      sendMsg(message);
+    });
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
+
+Future<void> messageHandler(RemoteMessage message) async {
+  print('background message ${message.notification!.body}');
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+    // Parse the message received
+    sendMsg(message);
+  } else {
+    print('User declined or has not accepted permission');
+  }
+}
+
+Future<void> sendMsg(RemoteMessage message) async {
+  //Notif.notifications.insert(0, message);
+  await BadgeServices.updateBadge();
+  PushNotification notification = PushNotification(
+    title: message.notification?.title,
+    body: message.notification?.body,
+  );
+  NotificationDetails notificationDetails =
+      await NotificationServices().getPlatform();
+  flutterLNP.show(
+    notification.hashCode,
+    notification.title,
+    notification.body,
+    notificationDetails,
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
@@ -228,13 +202,12 @@ void main() async {
   await setFirebase();
   openAppMessage();
 
-  FirebaseMessaging.onBackgroundMessage(_messageHandler);
+  FirebaseMessaging.onBackgroundMessage(messageHandler);
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     print('Message clicked!');
   });
   FlutterBackgroundService.initialize(onStart);
-  await updateBadge();
-  // FlutterBackgroundService.initialize(updateBadge());
+  await BadgeServices.updateBadge();
   runApp(MyApp());
 }
 

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-//import 'package:contact_tracing/classes/notification.dart';
 import 'package:ftpconnect/ftpconnect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,7 +34,8 @@ class UploadFile {
       await renamedFile.delete();
       print('$fileName file deleted');
 
-      await Notif().showNotification('File Uploaded', '$fileName was uploaded');
+      await NotificationServices()
+          .showNotification('File Uploaded', '$fileName was uploaded');
     } catch (e) {
       print('Error: ${e.toString()}');
     } finally {

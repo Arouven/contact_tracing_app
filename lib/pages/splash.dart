@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
     // TODO: implement initState
     super.initState();
 
-    Notif().initialize(context);
+    NotificationServices().initialize(context);
 
     ///gives you the message on which user taps
     ///and it opened the app from terminated state

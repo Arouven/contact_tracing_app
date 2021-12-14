@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:contact_tracing/models/message.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:flutter/cupertino.dart';
@@ -114,10 +115,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       color: Colors.red,
                     ),
               onTap: () async {
-                await DatabaseServices().markRead(
-                  message: messageList[index],
-                  path: path,
-                );
+                if (messageList[index].read) {
+                } else {
+                  await DatabaseServices().markRead(
+                    message: messageList[index],
+                    path: path,
+                  );
+                  BadgeServices.number = BadgeServices.number - 1;
+                  BadgeServices.updateAppBadge();
+                }
                 setState(() {
                   print(messageList[index].id);
                 });

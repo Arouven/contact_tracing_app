@@ -60,17 +60,10 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           MobilePage.route,
           currentRoute,
         ),
-        // _buildMenuItem(
-        //   context,
-        //   const Text('Notifications'),
-        //   const Icon(Icons.notifications),
-        //   NotificationsPage.route,
-        //   currentRoute,
-        // ),
         _buildMenuItem(
           context,
           const Text('Notifications'),
-          Badges.ss(),
+          BadgeServices.notificationBadge(),
           NotificationsPage.route,
           currentRoute,
         ),
@@ -85,30 +78,3 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
     ),
   );
 }
-
-// var badge = '';
-
-// Widget badgeNumber() {
-//   if (notificationbadge > 0) {
-//     print(notificationbadge);
-//     return (Badge(
-//       badgeContent: Text(
-//         notificationbadge.toString(),
-//         style: TextStyle(fontSize: 8.0),
-//       ),
-//       child: Icon(Icons.notifications),
-//     ));
-//   } else {
-//     return (Icon(Icons.notifications));
-//   }
-// }
-// Widget expandedBadge() {
-//   return Expanded(
-//     child: Center(
-//       child: Badge(
-//         badgeContent: Text('10'),
-//         child: Icon(Icons.person, size: 30),
-//       ),
-//     ),
-//   );
-// }
