@@ -99,12 +99,12 @@ class _SplashPageState extends State<SplashPage> {
       print(exception);
     }
 
+    return Future.value(NotificationsPage());
     if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {
       print("LiveGeolocatorPage");
-      return Future.value(NotificationsPage());
-      //return Future.value(LiveGeolocatorPage());
+      return Future.value(LiveGeolocatorPage());
     } else if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") == null) {

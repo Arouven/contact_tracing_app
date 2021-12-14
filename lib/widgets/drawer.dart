@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart';
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
@@ -69,7 +70,13 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
         _buildMenuItem(
           context,
           const Text('Notifications'),
-          (badgeNumber()),
+          new Badge(
+            badgeContent: Text(
+              notificationbadge.toString(),
+              style: TextStyle(fontSize: 8.0),
+            ),
+            child: Icon(Icons.notifications),
+          ),
           NotificationsPage.route,
           currentRoute,
         ),
@@ -88,11 +95,11 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
 var badge = '';
 
 Widget badgeNumber() {
-  if (Badgeservices.badgeText != '') {
-    print(Badgeservices.badgeText);
+  if (notificationbadge > 0) {
+    print(notificationbadge);
     return (Badge(
       badgeContent: Text(
-        Badgeservices.badgeText,
+        notificationbadge.toString(),
         style: TextStyle(fontSize: 8.0),
       ),
       child: Icon(Icons.notifications),

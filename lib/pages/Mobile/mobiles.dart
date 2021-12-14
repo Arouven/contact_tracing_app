@@ -465,6 +465,10 @@ class _MobilePageState extends State<MobilePage> {
                 Navigator.of(context).pop();
                 if (response != 'Error') {
                   if (response['msg'] == 'success') {
+                    await prefs.setString(
+                      'mobileId',
+                      mobile.mobileId.toString(),
+                    );
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (BuildContext context) => MobilePage(),
                     ));

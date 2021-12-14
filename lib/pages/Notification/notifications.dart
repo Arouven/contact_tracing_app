@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:contact_tracing/models/message.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +21,14 @@ class NotificationsPage extends StatefulWidget {
 }
 
 List<Message> messageList = [];
+String path = "notification/+23057775794/";
 
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
   @override
   void initState() {
-    FlutterBackgroundService().sendData({"action": "updateBadge"});
-    // getListofMessages().then((value) => setState(() {}));
+    //FlutterBackgroundService().sendData({"action": "updateBadge"});
+    getListofMessages().then((value) => setState(() {}));
     updateListofMessages();
     super.initState();
   }
@@ -35,9 +37,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     setState(() {
       _isLoading = true;
     });
-    DatabaseReference ref = FirebaseDatabase.instance.ref(
-      "notification/+23057775794",
-    );
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
     // Get the data once
     DatabaseEvent event = await ref.once();
 
@@ -63,9 +63,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   updateListofMessages() {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(
-      "notification/+23057775794",
-    );
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
     Stream<DatabaseEvent> stream = ref.onValue;
 
@@ -104,7 +102,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 messageList[index].title,
                 style: (messageList[index].read)
                     ? null
-                    : TextStyle(fontWeight: FontWeight.bold),
+                    : TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
               ),
               trailing: (messageList[index].read)
                   ? null
@@ -113,7 +113,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       size: 9.0,
                       color: Colors.red,
                     ),
-              onTap: () {},
+              onTap: () async {
+                await DatabaseServices().markRead(
+                  message: messageList[index],
+                  path: path,
+                );
+                setState(() {
+                  print(messageList[index].id);
+                });
+              },
             );
           },
         ),

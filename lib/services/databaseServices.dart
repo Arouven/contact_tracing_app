@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'package:contact_tracing/models/message.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'globals.dart';
 import 'package:http/http.dart' as http;
 
@@ -125,12 +129,28 @@ class DatabaseServices {
           "fcmtoken": fcmtoken,
         },
       );
-      final response = jsonDecode(res.body);
-
+//update firebase too
       return jsonDecode(res.body);
     } catch (e) {
       print(e.toString());
       return 'Error';
     }
+  }
+
+  Future markRead({required Message message, required String path}) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");
+    await ref.update({
+      "read": true,
+    });
+  }
+
+  Future updateFirebaseToken(
+      {required String oldfcmtoken,
+      required String newfcmtoken,
+      required String path}) async {
+    // DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");
+    // await ref.update({
+    //   "read": true,
+    // });
   }
 }

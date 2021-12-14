@@ -161,9 +161,10 @@ Future<void> sendMsg(RemoteMessage message) async {
   );
 }
 
+var notificationbadge = 0;
 updateBadge() async {
   DatabaseReference ref = FirebaseDatabase.instance.ref(
-    "notification/+23057775794",
+    path,
   );
   // Get the data once
   DatabaseEvent event = await ref.once();
@@ -177,7 +178,8 @@ updateBadge() async {
   message.forEach((key, value) {
     if (value['read'] == false) badge += 1;
   });
-  Badgeservices.badgeText = badge.toString();
+  notificationbadge = badge;
+  //Badgeservices.badgeText = badge.toString();
   // prefs.setString('badge', badge.toString());
   if (badge > 0) {
     FlutterAppBadger.updateBadgeCount(badge);
