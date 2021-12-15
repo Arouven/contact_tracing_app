@@ -1,20 +1,16 @@
-//import 'dart:convert';
 import 'dart:io';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
-//import 'package:contact_tracing/services/globals.dart';
 import 'package:device_info/device_info.dart';
-//import 'package:firebase_messaging/firebase_messaging.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
-//import '../../classes/globals.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:http/http.dart' as http;
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../../widgets/commonWidgets.dart';
+import 'package:flutter_otp/flutter_otp.dart';
 
 class AddMobilePage extends StatefulWidget {
   static const String route = '/addMobile';
@@ -237,6 +233,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
                       initialValue: number,
                       textFieldController: _mobileNumberController,
                       formatInput: false,
+                      // keyboardType: TextInputType.number,
                       keyboardType: TextInputType.numberWithOptions(
                           signed: true, decimal: true),
                     ),
@@ -260,6 +257,73 @@ class _AddMobilePageState extends State<AddMobilePage> {
     }
   }
 
+  String verificationId = '';
+  String phone = '';
+  bool codesent = false;
+  addmobile() async {
+    phone = '+23057775794'; //from setstate
+    // FirebaseAuth auth = FirebaseAuth.instance;
+    print('existing');
+    FirebaseAuthenticate().getfirebaseuid();
+    FirebaseAuthenticate().getfirebasefcmtoken();
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phone,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await FirebaseAuth.instance
+            .signInWithCredential(credential); //auto retrive otp
+        print('auto signed in');
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print(e);
+      },
+      codeSent: (String verificationid, int? resendToken) {
+        //when receive sms code
+        setState(() {
+          codesent = true;
+          verificationId = verificationid;
+        });
+      },
+      codeAutoRetrievalTimeout: (String verificationid) {
+        setState(() {
+          verificationId = verificationid;
+          print(verificationId);
+        });
+      },
+      timeout: Duration(seconds: 60),
+    );
+    print('new');
+    FirebaseAuthenticate().getfirebaseuid();
+    FirebaseAuthenticate().getfirebasefcmtoken();
+  }
+
+  verifyPin(String smsCode) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId, smsCode: smsCode);
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      print('lobin success');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // otptesting() {
+  //   FlutterOtp otp = FlutterOtp();
+  //   String countryCode =
+  //       "+230"; // give your country code if not it will take +1 as default
+  //   String phoneNumber = "57775794"; //enter your 10 digit number
+  //   int minNumber = 1000;
+  //   int maxNumber = 6000;
+
+  //   otp.sendOtp(
+  //     phoneNumber,
+  //     'OTP is : pass the generated otp here ',
+  //     minNumber,
+  //     maxNumber,
+  //     countryCode,
+  //   );
+  // }
+
   @override
   void initState() {
     super.initState();
@@ -267,6 +331,8 @@ class _AddMobilePageState extends State<AddMobilePage> {
           _mobileName.text = _deviceData;
           _isLoading = false;
         }));
+    //otptesting();
+    addmobile();
   }
 
   @override

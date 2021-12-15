@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
-import 'package:contact_tracing/services/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../widgets/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-//FirebaseDatabase database = FirebaseDatabase.instance;
+import 'singlenotification.dart';
+
+String path = "notification/+23057775794/";
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -21,11 +19,9 @@ class NotificationsPage extends StatefulWidget {
   }
 }
 
-List<Message> messageList = [];
-String path = "notification/+23057775794/";
-
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
+  List<Message> messageList = [];
   @override
   void initState() {
     //FlutterBackgroundService().sendData({"action": "updateBadge"});
@@ -124,9 +120,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   BadgeServices.number = BadgeServices.number - 1;
                   BadgeServices.updateAppBadge();
                 }
-                setState(() {
-                  print(messageList[index].id);
-                });
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => SingleNotificationPage(
+                      message: messageList[index],
+                    ),
+                  ),
+                );
               },
             );
           },
