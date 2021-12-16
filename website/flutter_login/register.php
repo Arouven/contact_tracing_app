@@ -26,18 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		$dateOfBirth = mysqli_real_escape_string($conn, $_POST['dateOfBirth']);
 	}
 
-	$firebaseuid = "";
-	if (isset($_POST['firebaseuid'])) {
-		$firebaseuid = mysqli_real_escape_string($conn, $_POST['firebaseuid']);
-	}
 
-	$selectquery = "SELECT UNIQUE * FROM User WHERE firebaseuid = ?;";
+	$selectquery = "SELECT * FROM User WHERE email = ?;";
 
 
 	$selectparamType = "s";
-	$selectparamArray = array(
-		$firebaseuid
-	);
+	$selectparamArray = array($email);
 	$cekData = $db->select($selectquery, $selectparamType, $selectparamArray);
 
 	//print json_encode($cekData);
@@ -46,19 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 		$data['msg'] = 'email already existed';
 		print json_encode($data);
 	} else { //insert it
-		$insertquery = "INSERT INTO User (firstName, lastName, address, email, dateOfBirth, firebaseuid) VALUES (?, ?, ?, ?, ?, ?);";
-		$insertparamType = "ssssss";
+		$insertquery = "INSERT INTO User (firstName, lastName, address, email, dateOfBirth) VALUES (?, ?, ?, ?, ?);";
+		$insertparamType = "sssss";
 		$insertparamArray = array(
 			$firstName,
 			$lastName,
 			$address,
 			$email,
-			$dateOfBirth,
-			$firebaseuid
+			$dateOfBirth
 		);
 		$insertedId = $db->insert($insertquery, $insertparamType, $insertparamArray);
 		$data['msg'] = 'user inserted';
-		$data['userId'] = $insertedId;
 		print json_encode($data);
 	}
 }

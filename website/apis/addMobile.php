@@ -5,17 +5,13 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $firebaseuid = "";
-    if (isset($_POST['firebaseuid'])) {
-        $firebaseuid = mysqli_real_escape_string($conn, $_POST['firebaseuid']);
+    $email = "";
+    if (isset($_POST['email'])) {
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
     }
     $mobileName = "";
     if (isset($_POST['mobileName'])) {
         $mobileName = mysqli_real_escape_string($conn, $_POST['mobileName']);
-    }
-    $mobileDescription = "";
-    if (isset($_POST['mobileDescription'])) {
-        $mobileDescription = mysqli_real_escape_string($conn, $_POST['mobileDescription']);
     }
     $mobileNumber = "";
     if (isset($_POST['mobileNumber'])) {
@@ -27,23 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
 
-    // -- create stored procedure
-    // DELIMITER / / CREATE PROCEDURE InsertMobile(
-    //   IN firebaseuid TEXT,
-    //   IN mobileName VARCHAR(255),
-    //   IN mobileDescription VARCHAR(255),
-    //   IN mobileNumber VARCHAR(255),
-    //   IN fcmtoken TEXT
-    $executequery = "CALL InsertMobile(?,?,?,?,?);";
-    $executeparamType = "sssss";
+
+    $executequery = "INSERT IGNORE INTO `Mobile` (`mobileName`, `mobileNumber`, `email`, `fcmtoken`) VALUES (?, ?, ?, ?);"; //  REPLACE INTO books (id, title, author, year_published) VALUES     (1, 'Green Eggs and Ham', 'Dr. Seuss', 1960);
+    $executeparamType = "ssss";
     $executeparamArray = array(
-        $firebaseuid,
         $mobileName,
-        $mobileDescription,
         $mobileNumber,
-        $fcmtoken,
+        $email,
+        $fcmtoken
     );
-    $db->execute($executequery, $executeparamType, $executeparamArray);
+    $db->insert($executequery, $executeparamType, $executeparamArray);
 
 
 

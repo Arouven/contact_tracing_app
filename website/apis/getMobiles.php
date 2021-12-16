@@ -6,15 +6,13 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $firebaseuid = "";
-    if (isset($_POST['firebaseuid'])) {
-        $firebaseuid = mysqli_real_escape_string($conn, $_POST['firebaseuid']);
+    $email = "";
+    if (isset($_POST['email'])) {
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
     }
-    $selectquery = "SELECT Mobile.mobileId, Mobile.mobileName, Mobile.mobileDescription, Mobile.mobileNumber, Mobile.fcmtoken FROM Mobile INNER JOIN User ON Mobile.userId = User.userId WHERE User.firebaseuid = ?;";
+    $selectquery = "SELECT * FROM Mobile WHERE Mobile.email = ?;";
     $selectparamType = "s";
-    $selectparamArray = array(
-        $firebaseuid
-    );
+    $selectparamArray = array($email);
     $data = $db->select($selectquery, $selectparamType, $selectparamArray);
     $outputArray = array();
 

@@ -48,7 +48,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   Future<void> _downloadData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String jsonBody = await DatabaseServices().downloadUpdateLocation();
+    String jsonBody = await DatabaseServices.downloadUpdateLocation();
     if (jsonBody != 'Error') {
       await prefs.setString('Locations', jsonBody);
       _useExistingData(bodyResponse: jsonBody);

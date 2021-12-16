@@ -11,17 +11,17 @@ $title = 'testingcentres';
 $output = array_merge(getArray($selectquery, $title), $output);
 
 //all non infected and non first level contact
-$selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.contactWithInfected = FALSE AND mt.confirmInfected = FALSE;';
+$selectquery = 'SELECT mt.mobileNumber, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber WHERE mt.contactWithInfected = FALSE AND mt.confirmInfected = FALSE;';
 $title = 'cleanUsers';
 $output = array_merge(getArray($selectquery, $title), $output);
 
 //first level contact with infected
-$selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.contactWithInfected = TRUE';
+$selectquery = 'SELECT mt.mobileNumber, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber WHERE mt.contactWithInfected = TRUE';
 $title = 'contactWithInfected';
 $output = array_merge(getArray($selectquery, $title), $output);
 
 //infected mobiles
-$selectquery = 'SELECT mt.mobileId, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId WHERE mt.confirmInfected = TRUE';
+$selectquery = 'SELECT mt.mobileNumber, ct.longitude, ct.latitude, ct.MaxDateTime FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber WHERE mt.confirmInfected = TRUE';
 $title = 'confirmInfected';
 $output = array_merge(getArray($selectquery, $title), $output);
 

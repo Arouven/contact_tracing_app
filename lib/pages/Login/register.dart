@@ -5,18 +5,14 @@ import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-//import 'package:csc_picker/csc_picker.dart';
 import 'package:geolocator/geolocator.dart';
-//import 'package:geocoder/geocoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
-//import 'package:contact_tracing/classes/globals.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 
@@ -48,8 +44,6 @@ class _RegisterState extends State<RegisterPage> {
 
   bool _invalidFirstName = false;
   bool _invalidLastName = false;
-  //bool _invalidEmail = false;
-  // bool _invalidNIC = false;
   bool _invalidAddress = false;
   bool _invalidemail = false;
   bool _invalidPassword = false;
@@ -195,15 +189,12 @@ class _RegisterState extends State<RegisterPage> {
       );
 
       if (response == true) {
-        String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
-        final data = await DatabaseServices().registerUser(
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
-          address: _addressController.text.trim(),
-          dateOfBirth: _dateOfBirth,
-          email: _emailController.text.trim(),
-          firebaseuid: firebaseuid!,
-        );
+        final data = await DatabaseServices.registerUser(
+            firstName: _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim(),
+            address: _addressController.text.trim(),
+            dateOfBirth: _dateOfBirth,
+            email: _emailController.text.trim());
         if (data != 'Error') {
           if (data['msg'] == 'email already existed') {
             var msg = 'email already taken please change the email or login.';
@@ -222,10 +213,6 @@ class _RegisterState extends State<RegisterPage> {
             await prefs.setString(
               'email',
               _emailController.text.trim(),
-            );
-            await prefs.setString(
-              'password',
-              _confirmPasswordController.text.trim(),
             );
 
             Navigator.of(context).pushReplacement(

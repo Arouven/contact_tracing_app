@@ -1,39 +1,34 @@
 -- CREATING TABLES
 CREATE TABLE `User` (
-  `userId` BIGINT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(255) NOT NULL,
   `firstName` VARCHAR(255) NOT NULL,
   `lastName` VARCHAR(255) NOT NULL,
   `address` VARCHAR(255) NOT NULL,
   `dateOfBirth` DATE NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `firebaseuid` TEXT NOT NULL,
-  PRIMARY KEY (`userId`)
+  PRIMARY KEY (`email`)
 );
 
 CREATE TABLE `Mobile` (
-  `mobileId` BIGINT NOT NULL AUTO_INCREMENT,
-  `userId` BIGINT NOT NULL,
-  `mobileName` VARCHAR(255) NOT NULL,
-  `mobileDescription` VARCHAR(255) NOT NULL,
   `mobileNumber` VARCHAR(255) NOT NULL,
-  `fcmtoken` TEXT DEFAULT NOT NULL,
-  `contactWithInfected` BOOLEAN NOT NULL DEFAULT FALSE,
-  `confirmInfected` BOOLEAN NOT NULL DEFAULT FALSE,
+  `email` VARCHAR(255) NOT NULL,
+  `mobileName` VARCHAR(255) NOT NULL,
+  `fcmtoken` TEXT NOT NULL,
+  `contactWithInfected` BOOLEAN DEFAULT FALSE,
+  `confirmInfected` BOOLEAN DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
-  PRIMARY KEY (`mobileId`),
-  FOREIGN KEY (`userId`) REFERENCES `User`(`userId`),
-  CONSTRAINT fcm_unique UNIQUE (`fcmtoken`)
+  PRIMARY KEY (`mobileNumber`),
+  FOREIGN KEY (`email`) REFERENCES `User`(`email`)
 );
 
 CREATE TABLE `Coordinates` (
   `coordinatesId` BIGINT NOT NULL AUTO_INCREMENT,
-  `mobileId` BIGINT NOT NULL,
+  `mobileNumber` VARCHAR(255) NOT NULL,
   `dateTimeCoordinates` BIGINT NOT NULL,
   `latitude` VARCHAR(255) NOT NULL,
   `longitude` VARCHAR(255) NOT NULL,
   `accuracy` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`coordinatesId`),
-  FOREIGN KEY (`mobileId`) REFERENCES `Mobile`(`mobileId`)
+  FOREIGN KEY (`mobileNumber`) REFERENCES `Mobile`(`mobileNumber`)
 );
 
 CREATE TABLE `AdminParamters` (
@@ -457,32 +452,3 @@ VALUES
     '57.497987',
     '1'
   );
-
--- create stored procedure
-DELIMITER / / CREATE PROCEDURE InsertMobile(
-  IN firebaseuid TEXT,
-  IN mobileName VARCHAR(255),
-  IN mobileDescription VARCHAR(255),
-  IN mobileNumber VARCHAR(255),
-  IN fcmtoken TEXT
-) BEGIN DECLARE userId INT DEFAULT 0;
-
-SELECT
-  User.userId INTO userId
-FROM
-  User
-WHERE
-  User.firebaseuid = firebaseuid;
-
-INSERT INTO
-  `Mobile`
-SET
-  `userId` = userId,
-  `mobileName` = mobileName,
-  `mobileDescription` = mobileDescription,
-  `mobileNumber` = mobileNumber,
-  `fcmtoken` = fcmtoken;
-
-END;
-
-/ / DELIMITER;

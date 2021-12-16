@@ -15,9 +15,9 @@ class csvtosql
             $inserted = array();
             $f = fopen($file, "r");
             while (($column = fgetcsv($f, 10000, ",")) !== FALSE) {
-                $mobileId = "";
+                $mobileNumber = "";
                 if (isset($column[0])) {
-                    $mobileId = mysqli_real_escape_string($conn, $column[0]);
+                    $mobileNumber = mysqli_real_escape_string($conn, $column[0]);
                 }
                 $dateTime = "";
                 if (isset($column[1])) {
@@ -36,11 +36,11 @@ class csvtosql
                     $accuracy = mysqli_real_escape_string($conn, $column[4]);
                 }
 
-                $sqlInsert = "INSERT into Coordinates (mobileId,dateTimeCoordinates,latitude,longitude,accuracy)
+                $sqlInsert = "INSERT into Coordinates (mobileNumber,dateTimeCoordinates,latitude,longitude,accuracy)
                         values (?,?,?,?,?)";
                 $paramType = "iisss";
                 $paramArray = array(
-                    $mobileId,
+                    $mobileNumber,
                     $dateTime,
                     $latitude,
                     $longitude,
@@ -52,7 +52,7 @@ class csvtosql
                     $type = "success";
                     $message = "CSV Data Imported into the Database";
                     array_push($inserted, true);
-                    echo " $type, $message:- $insertId. mobileid $mobileId, datetime $dateTime, lat $latitude, lon $longitude, acc $accuracy";
+                    echo " $type, $message:- $insertId. mobileNumber $mobileNumber, datetime $dateTime, lat $latitude, lon $longitude, acc $accuracy";
                 } else {
                     $type = "error";
                     $message = "Problem in Importing CSV Data";

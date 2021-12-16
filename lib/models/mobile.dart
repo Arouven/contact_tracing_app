@@ -1,24 +1,21 @@
 //import 'package:meta/meta.dart';
 
 class Mobile {
-  final int mobileId;
   final String mobileName;
-  final String mobileDescription;
+  final String email;
   final String mobileNumber;
   final String fcmtoken;
 
   const Mobile({
-    required this.mobileId,
-    required this.mobileName,
-    required this.mobileDescription,
     required this.mobileNumber,
+    required this.mobileName,
+    required this.email,
     required this.fcmtoken,
   });
 
   static Mobile fromJson(json) => Mobile(
-        mobileId: json['mobileId'],
         mobileName: json['mobileName'],
-        mobileDescription: json['mobileDescription'],
+        email: json['email'],
         mobileNumber: json['mobileNumber'],
         fcmtoken: json['fcmtoken'],
       );

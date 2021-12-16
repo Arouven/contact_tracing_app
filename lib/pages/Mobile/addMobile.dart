@@ -1,16 +1,19 @@
 import 'dart:io';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import '../../widgets/commonWidgets.dart';
-import 'package:flutter_otp/flutter_otp.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 
 class AddMobilePage extends StatefulWidget {
   static const String route = '/addMobile';
@@ -27,17 +30,19 @@ class _AddMobilePageState extends State<AddMobilePage> {
   String _deviceData = "";
   bool _isLoading = true;
   bool _showReload = false;
-  bool _validateName = false;
-  bool _validateDescription = false;
-  bool _validateNumber = false;
+  bool _invalidMobileName = false;
+  bool _invalidPhoneNumber = false;
   String _numwithoutcode = '';
   String initialCountry = 'MU';
   PhoneNumber number = PhoneNumber(isoCode: 'MU');
   String _mobileNumber = '';
 
+  String _verificationId = '';
+  String _phoneNumber = '';
+  bool _codeSent = false;
+
   TextEditingController _mobileNumberController = TextEditingController();
   TextEditingController _mobileName = TextEditingController();
-  TextEditingController _mobileDescription = TextEditingController();
 
   Future<void> initPlatformState() async {
     String deviceData = "";
@@ -56,19 +61,21 @@ class _AddMobilePageState extends State<AddMobilePage> {
     });
   }
 
-  _addButtonPressed() async {
+  _updateMysql() async {
     print('add button pressed');
     setState(() {
       _isLoading = true;
     });
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
 
-    String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
+    //  String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
     String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    final data = await DatabaseServices().addMobile(
-      firebaseuid: firebaseuid!,
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+
+    final data = await DatabaseServices.addMobile(
       mobileName: _mobileName.text.toString(),
-      mobileDescription: _mobileDescription.text.toString(),
+      email: email!,
       mobileNumber: _mobileNumber.toString(),
       fcmtoken: fcmtoken!,
     );
@@ -95,154 +102,118 @@ class _AddMobilePageState extends State<AddMobilePage> {
     }
   }
 
-  Future<void> _showAcceptDialog() async {
-    print(_validateName);
-    print(_validateDescription);
-    print(_validateNumber);
-    print(_numwithoutcode.length);
-    if (!_validateDescription && !_validateName && !_validateNumber) {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text(
-              'Add Phone',
-              style: TextStyle(color: Colors.orange),
-            ),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  new Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                            'Are you sure you want to save the new phone?'),
-                      ),
-                    ],
-                  ),
-                ],
+  List<Widget> _fields() {
+    return <Widget>[
+      new Container(
+          child: new Row(
+        children: <Widget>[
+          Expanded(
+            child: new TextField(
+              controller: _mobileName,
+              decoration: new InputDecoration(
+                labelText: 'Mobile Name',
+                errorText: _invalidMobileName ? 'Name Can\'t Be Empty' : null,
               ),
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Add'),
-                onPressed: () async {
-                  await _addButtonPressed();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-      return null;
-    }
+          ),
+          IconButton(
+            icon: Icon(Icons.info),
+            color: Colors.black,
+            iconSize: 30.0,
+            alignment: Alignment.centerRight,
+            onPressed: () {
+              setState(() {
+                _mobileName.text = _deviceData;
+              });
+            },
+          ),
+        ],
+      )),
+      new Container(
+        child: InternationalPhoneNumberInput(
+          inputDecoration: new InputDecoration(
+            labelText: 'Mobile Number',
+            errorText: _invalidPhoneNumber ? 'Number Can\'t Be Empty' : null,
+          ),
+          onInputChanged: (PhoneNumber number) {
+            String? pn = number.phoneNumber;
+
+            _numwithoutcode =
+                (pn!.substring(number.dialCode!.length, pn.length));
+            print(_numwithoutcode);
+            setState(() {
+              _phoneNumber = number.phoneNumber!;
+              _numwithoutcode.length == 0
+                  ? _invalidPhoneNumber = true
+                  : _invalidPhoneNumber = false;
+              _mobileNumber = pn;
+            });
+          },
+          onInputValidated: (bool value) {
+            print(value);
+          },
+          selectorConfig: SelectorConfig(
+            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+          ),
+          ignoreBlank: false,
+          autoValidateMode: AutovalidateMode.disabled,
+          selectorTextStyle: TextStyle(color: Colors.black),
+          initialValue: number,
+          textFieldController: _mobileNumberController,
+          formatInput: false,
+          keyboardType: TextInputType.number,
+          // keyboardType: TextInputType.numberWithOptions(
+          //     signed: true, decimal: true),
+        ),
+      ),
+      new Container(
+        height: 40,
+      ),
+      new Container(
+        width: 100,
+        child: new ElevatedButton(
+          child: new Text('Next'),
+          onPressed: () async {
+            await _verifyPhone();
+          },
+        ),
+      ),
+    ];
   }
 
   Widget _displayMobile() {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: Center(
-        child: ListView(
-          children: <Widget>[
-            new Container(
-              child: new Column(
+        child: _codeSent
+            ? Container(
+                height: 80,
+                child: new Column(
+                  children: <Widget>[
+                    Text('OTP'),
+                    OTPTextField(
+                      length: 6,
+                      width: MediaQuery.of(context).size.width,
+                      fieldWidth: 30,
+                      style: TextStyle(fontSize: 20),
+                      textFieldAlignment: MainAxisAlignment.spaceAround,
+                      fieldStyle: FieldStyle.underline,
+                      onCompleted: (pin) {
+                        _verifyPin(pin);
+                      },
+                    ),
+                  ],
+                ),
+              )
+            : ListView(
                 children: <Widget>[
                   new Container(
-                      child: new Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: new TextField(
-                          controller: _mobileName,
-                          decoration: new InputDecoration(
-                            labelText: 'Mobile Name',
-                            errorText:
-                                _validateName ? 'Name Can\'t Be Empty' : null,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.info),
-                        color: Colors.black,
-                        iconSize: 30.0,
-                        alignment: Alignment.centerRight,
-                        onPressed: () {
-                          setState(() {
-                            _mobileName.text = _deviceData;
-                          });
-                        },
-                      ),
-                    ],
-                  )),
-                  new Container(
-                    child: new Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: new TextField(
-                            controller: _mobileDescription,
-                            decoration: new InputDecoration(
-                              //border: OutlineInputBorder(),
-                              labelText: 'Mobile Description',
-                              errorText: _validateDescription
-                                  ? 'Description Can\'t Be Empty'
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: new Column(
+                      children: _fields(),
                     ),
                   ),
-                  new Container(
-                    child: InternationalPhoneNumberInput(
-                      inputDecoration: new InputDecoration(
-                        labelText: 'Mobile Number',
-                        errorText:
-                            _validateNumber ? 'Number Can\'t Be Empty' : null,
-                      ),
-                      onInputChanged: (PhoneNumber number) {
-                        String? pn = number.phoneNumber;
-                        _numwithoutcode =
-                            (pn!.substring(number.dialCode!.length, pn.length));
-                        print(_numwithoutcode);
-                        setState(() {
-                          _numwithoutcode.length == 0
-                              ? _validateNumber = true
-                              : _validateNumber = false;
-                          _mobileNumber = pn;
-                        });
-                      },
-                      onInputValidated: (bool value) {
-                        print(value);
-                      },
-                      selectorConfig: SelectorConfig(
-                        selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                      ),
-                      ignoreBlank: false,
-                      autoValidateMode: AutovalidateMode.disabled,
-                      selectorTextStyle: TextStyle(color: Colors.black),
-                      initialValue: number,
-                      textFieldController: _mobileNumberController,
-                      formatInput: false,
-                      // keyboardType: TextInputType.number,
-                      keyboardType: TextInputType.numberWithOptions(
-                          signed: true, decimal: true),
-                    ),
-                  )
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -257,72 +228,93 @@ class _AddMobilePageState extends State<AddMobilePage> {
     }
   }
 
-  String verificationId = '';
-  String phone = '';
-  bool codesent = false;
-  addmobile() async {
-    phone = '+23057775794'; //from setstate
-    // FirebaseAuth auth = FirebaseAuth.instance;
-    print('existing');
-    FirebaseAuthenticate().getfirebaseuid();
-    FirebaseAuthenticate().getfirebasefcmtoken();
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phone,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await FirebaseAuth.instance
-            .signInWithCredential(credential); //auto retrive otp
-        print('auto signed in');
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        print(e);
-      },
-      codeSent: (String verificationid, int? resendToken) {
-        //when receive sms code
-        setState(() {
-          codesent = true;
-          verificationId = verificationid;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationid) {
-        setState(() {
-          verificationId = verificationid;
-          print(verificationId);
-        });
-      },
-      timeout: Duration(seconds: 60),
-    );
-    print('new');
-    FirebaseAuthenticate().getfirebaseuid();
-    FirebaseAuthenticate().getfirebasefcmtoken();
+  _verifyPhone() async {
+    setState(() {
+      _isLoading = true;
+      _mobileName.text.isEmpty
+          ? _invalidMobileName = true
+          : _invalidMobileName = false;
+      _numwithoutcode.length == 0
+          ? _invalidPhoneNumber = true
+          : _invalidPhoneNumber = false;
+    });
+    print(_invalidMobileName);
+    print(_invalidPhoneNumber);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email');
+
+    if ((_invalidMobileName == false) &&
+        (_invalidPhoneNumber == false) &&
+        (email != null)) {
+      print('existing');
+      print(_phoneNumber);
+      // FirebaseAuthenticate().getfirebaseuid();
+      //FirebaseAuthenticate().getfirebasefcmtoken();
+
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: _phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          print('verificationCompleted');
+          await FirebaseAuth.instance
+              .signInWithCredential(credential); //auto retrive otp
+          print('auto signed in');
+          print('new');
+          FirebaseAuthenticate().getfirebaseuid();
+          FirebaseAuthenticate().getfirebasefcmtoken();
+          await _updateMysql();
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print('verificationFailed');
+          print(e);
+          DialogBox.showErrorDialog(
+            context: context,
+            body: e.message.toString(),
+          );
+        },
+        codeSent: (String verificationid, int? resendToken) {
+          //when receive sms code
+          setState(() {
+            _codeSent = true;
+            _verificationId = verificationid;
+            print('verificationid: ' + _verificationId);
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationid) {
+          setState(() {
+            _verificationId = verificationid;
+            print('verificationid: ' + _verificationId);
+          });
+        },
+        timeout: Duration(seconds: 120),
+      );
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
-  verifyPin(String smsCode) async {
+  _verifyPin(String smsCode) async {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationId, smsCode: smsCode);
+      verificationId: _verificationId,
+      smsCode: smsCode,
+    );
+    print('verificationid: ' + _verificationId);
+    print('smsCode: ' + smsCode);
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
       print('lobin success');
-    } catch (e) {
+      print('new');
+      FirebaseAuthenticate().getfirebaseuid();
+      FirebaseAuthenticate().getfirebasefcmtoken();
+      await _updateMysql();
+    } on FirebaseAuthException catch (e) {
       print(e);
+      DialogBox.showErrorDialog(
+        context: context,
+        body: e.message.toString(),
+      );
     }
   }
-
-  // otptesting() {
-  //   FlutterOtp otp = FlutterOtp();
-  //   String countryCode =
-  //       "+230"; // give your country code if not it will take +1 as default
-  //   String phoneNumber = "57775794"; //enter your 10 digit number
-  //   int minNumber = 1000;
-  //   int maxNumber = 6000;
-
-  //   otp.sendOtp(
-  //     phoneNumber,
-  //     'OTP is : pass the generated otp here ',
-  //     minNumber,
-  //     maxNumber,
-  //     countryCode,
-  //   );
-  // }
 
   @override
   void initState() {
@@ -331,8 +323,8 @@ class _AddMobilePageState extends State<AddMobilePage> {
           _mobileName.text = _deviceData;
           _isLoading = false;
         }));
-    //otptesting();
-    addmobile();
+    //addmobile();
+    //verifyPin('661230');
   }
 
   @override
@@ -344,11 +336,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
         bottom: true,
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.clear_outlined,
-                color: Colors.red,
-              ),
+            leading: BackButton(
               onPressed: () {
                 DialogBox.showDiscardDialog(
                     context: context,
@@ -358,38 +346,11 @@ class _AddMobilePageState extends State<AddMobilePage> {
                     route: MobilePage());
               },
             ),
-            automaticallyImplyLeading: true,
-            backgroundColor: Colors.blue[100],
-            title: Text(
-              'New Mobile',
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
+            title: Text('New Mobile'),
             centerTitle: true,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.check_outlined,
-                  color: Colors.green,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _mobileName.text.isEmpty
-                        ? _validateName = true
-                        : _validateName = false;
-                    _mobileDescription.text.isEmpty
-                        ? _validateDescription = true
-                        : _validateDescription = false;
-                    _numwithoutcode.length == 0
-                        ? _validateNumber = true
-                        : _validateNumber = false;
-                  });
-                  _showAcceptDialog();
-                },
-              ),
-            ],
+            backgroundColor: Colors.blue,
           ),
+          drawer: buildDrawer(context, MobilePage.route),
           body: _body(),
         ),
       ),
@@ -400,7 +361,6 @@ class _AddMobilePageState extends State<AddMobilePage> {
   void dispose() {
     _mobileNumberController.dispose();
     _mobileName.dispose();
-    _mobileDescription.dispose();
     super.dispose();
   }
 }

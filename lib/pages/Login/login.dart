@@ -65,9 +65,10 @@ class _LoginState extends State<LoginPage> {
           await prefs.setString('password', password);
           await prefs.setBool('justLogin', true);
           print("credential save");
-          print("mobileid is " + prefs.getString('mobileId').toString());
-          if (prefs.getString('mobileId') == '' ||
-              prefs.getString('mobileId') == null) {
+          print(
+              "mobileNumber is " + prefs.getString('mobileNumber').toString());
+          if (prefs.getString('mobileNumber') == '' ||
+              prefs.getString('mobileNumber') == null) {
             print("mobile id is null");
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => MobilePage()),

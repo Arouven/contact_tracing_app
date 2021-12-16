@@ -20,19 +20,18 @@ class updateDatabase
         $distanceContact = floatval($this->getNumber('contactDistance')); //2
         foreach ($confirmedInfected as $key1 => $value1) {
             $datetimeInfected = $confirmedInfected[$key1]['dateTimeCoordinates'];
-            $mobileIdInfected = $confirmedInfected[$key1]['mobileId'];
+            $mobileNumberInfected = $confirmedInfected[$key1]['mobileNumber'];
             $latitudeInfected = floatval($confirmedInfected[$key1]['latitude']);
             $longitudeInfected = floatval($confirmedInfected[$key1]['longitude']);
             $nonInfectedAtThatTime = $this->getAllNonInfectedAtThatTime($datetimeInfected);
             foreach ($nonInfectedAtThatTime as $key2 => $value2) {
                 $datetimePossibleContact = $nonInfectedAtThatTime[$key2]['dateTimeCoordinates'];
-                $mobileIdPossibleContact = $nonInfectedAtThatTime[$key2]['mobileId'];
                 $mobileNumberPossibleContact = $nonInfectedAtThatTime[$key2]['mobileNumber'];
                 $latitudePossibleContact = floatval($nonInfectedAtThatTime[$key2]['latitude']);
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$key2]['longitude']);
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact);
                 if ($distanceMetres <= $distanceContact) { //mark contact with infected
-                    print "$mobileIdPossibleContact will be marked as contact, infected by $mobileIdInfected.";
+                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected.";
                     //send message to mobile
                     $message = new message(
                         $mobileNumberPossibleContact,
@@ -41,19 +40,19 @@ class updateDatabase
                     if ($message->sendMessage()) {
                         echo 'message sent';
                     }
-                    $this->markAsContact($mobileIdPossibleContact);
+                    $this->markAsContact($mobileNumberPossibleContact);
                 }
             }
         }
     }
-    function markAsContact($mobileIdContact)
+    function markAsContact($mobileNumberContact)
     {
-        $updateStatement = 'UPDATE Mobile SET contactWithInfected = TRUE WHERE mobileId = ' . $mobileIdContact . ';';
+        $updateStatement = "UPDATE Mobile SET contactWithInfected = TRUE WHERE mobileNumber = $mobileNumberContact;";
         $this->db->execute($updateStatement);
     }
     function getAllNonInfectedAtThatTime($datetimeInfected)
     {
-        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileId, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = ' . $datetimeInfected . '  AND Mobile.dateTimeLastTest IS NULL;';
+        $selectquery = "SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileNumber, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileNumber = Mobile.mobileNumber WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = $datetimeInfected AND Mobile.dateTimeLastTest IS NULL;";
         $data = $this->db->select($selectquery);
         $array = array();
 
@@ -66,7 +65,7 @@ class updateDatabase
     }
     function getConfirmedInfected()
     {
-        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude,Mobile.mobileId FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileId = Mobile.mobileId WHERE Mobile.performCovidTest = TRUE AND Mobile.confirmInfected = TRUE ORDER BY Coordinates.dateTimeCoordinates ASC';
+        $selectquery = 'SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileNumber = Mobile.mobileNumber WHERE Mobile.performCovidTest = TRUE AND Mobile.confirmInfected = TRUE ORDER BY Coordinates.dateTimeCoordinates ASC';
         $data = $this->db->select($selectquery);
         $infected = array();
 
@@ -97,7 +96,7 @@ class updateDatabase
         //     [INNER | LEFT] JOIN t2 ON join_predicate
         // WHERE 
         //     where_predicate;
-        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected = FALSE, Mobile.confirmInfected = FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileId=Coordinates.mobileId WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
+        $updateStatement = "UPDATE Mobile SET Mobile.contactWithInfected = FALSE, Mobile.confirmInfected = FALSE, Mobile.dateTimeLastTest IS NULL FROM Mobile INNER JOIN Coordinates ON Mobile.mobileNumber=Coordinates.mobileNumber WHERE Coordinates.dateTimeCoordinates < " . $updateFrom . ";";
         $this->db->execute($updateStatement);
         print "outdated test resetted";
     }

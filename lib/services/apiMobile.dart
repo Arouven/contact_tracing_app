@@ -6,15 +6,14 @@ import 'globals.dart';
 import '../models/mobile.dart';
 
 class ApiMobile {
-  static Future<List<Mobile>?> getMobiles() async {
+  static Future<List<Mobile>> getMobiles() async {
     print("in apiMobile, getMobiles");
     try {
-      // final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      String? firebaseuid = await FirebaseAuth.instance.currentUser!.uid;
-      print(firebaseuid);
-      final res = await http
-          .post(Uri.parse(getMobilesUrl), body: {"firebaseuid": firebaseuid});
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('email');
+      if (email == null) return [];
+      final res =
+          await http.post(Uri.parse(getMobilesUrl), body: {"email": email});
       final body = json.decode(res.body);
       print(body);
       final mobiles = body['mobiles'];
@@ -24,12 +23,12 @@ class ApiMobile {
         return mobiles.map<Mobile>(Mobile.fromJson).toList();
       }
       print('null from api');
-      return null;
+      return [];
     } catch (e) {
       print(e);
       // final non = "[0]";
       // final body = jsonDecode(non);
-      return null;
+      return [];
       //body.map<Mobile>(Mobile.problem).toList();
     }
   }

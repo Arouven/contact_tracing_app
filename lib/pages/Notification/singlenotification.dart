@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
+//import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:lipsum/lipsum.dart' as lipsum;
 
 class SingleNotificationPage extends StatefulWidget {
   static const String route = '/singlenotif';
@@ -21,7 +23,7 @@ class SingleNotificationPage extends StatefulWidget {
 }
 
 class _SingleNotificationPageState extends State<SingleNotificationPage> {
-  bool _isLoading = true;
+  // bool _isLoading = true;
   @override
   void initState() {
     //FlutterBackgroundService().sendData({"action": "updateBadge"});
@@ -35,51 +37,49 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
     final messagetitle = widget.message.title;
     final messagebody = widget.message.body;
     final messagetimestamp = widget.message.timestamp;
-    if (_isLoading == true) {
-      return Center(child: CircularProgressIndicator());
-    } else {
-      return Scrollbar(
-        child: Container(),
-        
-        // ListView.builder(
-        //   itemCount: messageList.length,
-        //   itemBuilder: (BuildContext context, int index) {
-        //     return ListTile(
-        //       leading: Icon(Icons.email),
-        //       title: Text(
-        //         messageList[index].title,
-        //         style: (messageList[index].read)
-        //             ? null
-        //             : TextStyle(
-        //                 fontWeight: FontWeight.bold,
-        //               ),
-        //       ),
-        //       trailing: (messageList[index].read)
-        //           ? null
-        //           : Icon(
-        //               Icons.brightness_1,
-        //               size: 9.0,
-        //               color: Colors.red,
-        //             ),
-        //       onTap: () async {
-        //         if (messageList[index].read) {
-        //         } else {
-        //           await DatabaseServices().markRead(
-        //             message: messageList[index],
-        //             path: path,
-        //           );
-        //           BadgeServices.number = BadgeServices.number - 1;
-        //           BadgeServices.updateAppBadge();
-        //         }
-        //         Navigator.of(context).pushReplacement(MaterialPageRoute(
-        //           builder: (BuildContext context) => MobilePage(),
-        //         ));
-        //       },
-        //     );
-        //   },
-        // ),
-      );
-    }
+    var humanReadableTimeStamp =
+        (DateTime.fromMillisecondsSinceEpoch(messagetimestamp * 1000))
+            .toLocal()
+            .toString();
+    humanReadableTimeStamp = humanReadableTimeStamp.substring(
+      0,
+      humanReadableTimeStamp.length - 4,
+    );
+    var testText = lipsum.createText(numParagraphs: 10, numSentences: 5);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  messagetitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
+              Text(humanReadableTimeStamp),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                messagebody,
+                textAlign: TextAlign.justify,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override

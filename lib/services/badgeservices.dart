@@ -39,13 +39,15 @@ class BadgeServices {
     Map message = snapshot.value as Map;
 
     int badge = 0;
-    message.forEach((key, value) {
-      bool read = value['read'] as bool;
-      if (read == false) {
-        badge = badge + 1;
-      }
-      // print(badge);
-    });
+    if (message != null) {
+      message.forEach((key, value) {
+        bool read = value['read'] as bool;
+        if (read == false) {
+          badge = badge + 1;
+        }
+        // print(badge);
+      });
+    }
     number = badge;
   }
 

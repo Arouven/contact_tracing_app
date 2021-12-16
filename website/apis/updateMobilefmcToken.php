@@ -6,9 +6,9 @@ $db = new database();
 $conn = $db->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $mobileId = "";
-    if (isset($_POST['mobileId'])) {
-        $mobileId = mysqli_real_escape_string($conn, $_POST['mobileId']);
+    $mobileNumber = "";
+    if (isset($_POST['mobileNumber'])) {
+        $mobileNumber = mysqli_real_escape_string($conn, $_POST['mobileNumber']);
     }
 
     $fcmtoken = "";
@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $outputArray['error'] = "Your mobile is already in the database";
         print json_encode($outputArray);
     } else {
-        $executequery = "UPDATE Mobile SET Mobile.fcmtoken = ? WHERE Mobile.mobileId = ?;";
-        $executeparamType = "si";
-        $executeparamArray = array($fcmtoken, $mobileId,);
+        $executequery = "UPDATE Mobile SET Mobile.fcmtoken = ? WHERE Mobile.mobileNumber = ?;";
+        $executeparamType = "ss";
+        $executeparamArray = array($fcmtoken, $mobileNumber);
         $db->execute($executequery, $executeparamType, $executeparamArray);
         $outputArray['msg'] = "success";
         print json_encode($outputArray);

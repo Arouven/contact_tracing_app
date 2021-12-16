@@ -7,13 +7,12 @@ import 'globals.dart';
 import 'package:http/http.dart' as http;
 
 class DatabaseServices {
-  Future registerUser({
+  static Future registerUser({
     required String firstName,
     required String lastName,
     required String address,
     required String dateOfBirth,
     required String email,
-    required String firebaseuid,
   }) async {
     try {
       final res = await http.post(
@@ -24,7 +23,6 @@ class DatabaseServices {
           'address': address,
           'dateOfBirth': dateOfBirth,
           'email': email,
-          'firebaseuid': firebaseuid
         },
       );
       print(res.body);
@@ -35,33 +33,33 @@ class DatabaseServices {
     }
   }
 
-  Future emailExist({required String email}) async {
-    // setState(() {
-    //   _emailInDB = null;
-    // });
-    bool? _emailInDB;
-    try {
-      final res = await http.post(
-        Uri.parse(checkEmailUrl),
-        body: {'email': email},
-      );
-      final data = jsonDecode(res.body);
-      if (data['msg'] == 'email already in db') {
-        print(data['msg']);
-        _emailInDB = true;
-      } else if (data['msg'] == 'email not in db') {
-        print(data['msg']);
-        _emailInDB = false;
-      } else {
-        _emailInDB = null;
-      }
-    } on Exception {
-      _emailInDB = null;
-    }
-    return _emailInDB;
-  }
+  // Future emailExist({required String email}) async {
+  //   // setState(() {
+  //   //   _emailInDB = null;
+  //   // });
+  //   bool? _emailInDB;
+  //   try {
+  //     final res = await http.post(
+  //       Uri.parse(checkEmailUrl),
+  //       body: {'email': email},
+  //     );
+  //     final data = jsonDecode(res.body);
+  //     if (data['msg'] == 'email already in db') {
+  //       print(data['msg']);
+  //       _emailInDB = true;
+  //     } else if (data['msg'] == 'email not in db') {
+  //       print(data['msg']);
+  //       _emailInDB = false;
+  //     } else {
+  //       _emailInDB = null;
+  //     }
+  //   } on Exception {
+  //     _emailInDB = null;
+  //   }
+  //   return _emailInDB;
+  // }
 
-  Future downloadUpdateLocation() async {
+  static Future downloadUpdateLocation() async {
     try {
       final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
       return res.body;
@@ -70,18 +68,16 @@ class DatabaseServices {
     }
   }
 
-  Future addMobile({
-    required String firebaseuid,
+  static Future addMobile({
     required String mobileName,
-    required String mobileDescription,
+    required String email,
     required String mobileNumber,
     required String fcmtoken,
   }) async {
     try {
       final res = await http.post(Uri.parse(addMobileUrl), body: {
-        "firebaseuid": firebaseuid,
         "mobileName": mobileName,
-        "mobileDescription": mobileDescription,
+        "email": email,
         "mobileNumber": mobileNumber,
         "fcmtoken": fcmtoken,
       });
@@ -92,20 +88,18 @@ class DatabaseServices {
     }
   }
 
-  Future updateMobile({
-    required String mobileId,
-    required String mobileName,
-    required String mobileDescription,
+  static Future updateMobile({
     required String mobileNumber,
+    required String mobileName,
+    required String email,
     required String fcmtoken,
   }) async {
     try {
       final res = await http.post(
         Uri.parse(updateMobileUrl),
         body: {
-          "mobileId": mobileId,
           "mobileName": mobileName,
-          "mobileDescription": mobileDescription,
+          "email": email,
           "mobileNumber": mobileNumber,
           "fcmtoken": fcmtoken,
         },
@@ -117,15 +111,15 @@ class DatabaseServices {
     }
   }
 
-  Future updateMobilefmcToken({
-    required String mobileId,
+  static Future updateMobilefmcToken({
+    required String mobileNumber,
     required String fcmtoken,
   }) async {
     try {
       final res = await http.post(
         Uri.parse(updateMobilefmcTokenUrl),
         body: {
-          "mobileId": mobileId,
+          "mobileNumber": mobileNumber,
           "fcmtoken": fcmtoken,
         },
       );
@@ -137,14 +131,15 @@ class DatabaseServices {
     }
   }
 
-  Future markRead({required Message message, required String path}) async {
+  static Future markRead(
+      {required Message message, required String path}) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");
     await ref.update({
       "read": true,
     });
   }
 
-  Future updateFirebaseToken(
+  static Future updateFirebaseToken(
       {required String oldfcmtoken,
       required String newfcmtoken,
       required String path}) async {

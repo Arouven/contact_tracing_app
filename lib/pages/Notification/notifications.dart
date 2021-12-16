@@ -44,17 +44,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
     Map message = snapshot.value as Map;
     messageList.clear();
     setState(() {
-      message.forEach((key, value) {
-        messageList.add(
-          new Message(
-            id: key,
-            title: value['title'],
-            body: value['body'],
-            read: value['read'],
-            timestamp: value['timestamp'],
-          ),
-        );
-      });
+      if (message != null) {
+        message.forEach((key, value) {
+          messageList.add(
+            new Message(
+              id: key,
+              title: value['title'],
+              body: value['body'],
+              read: value['read'],
+              timestamp: value['timestamp'],
+            ),
+          );
+        });
+      }
       _isLoading = false;
     });
   }
@@ -70,17 +72,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
       Map message = snapshot.value as Map;
       messageList.clear();
       setState(() {
-        message.forEach((key, value) {
-          messageList.add(
-            new Message(
-              id: key,
-              title: value['title'],
-              body: value['body'],
-              read: value['read'],
-              timestamp: value['timestamp'],
-            ),
-          );
-        });
+        if (message != null) {
+          message.forEach((key, value) {
+            messageList.add(
+              new Message(
+                id: key,
+                title: value['title'],
+                body: value['body'],
+                read: value['read'],
+                timestamp: value['timestamp'],
+              ),
+            );
+          });
+        }
+        _isLoading = false;
       });
     });
   }
@@ -113,7 +118,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               onTap: () async {
                 if (messageList[index].read) {
                 } else {
-                  await DatabaseServices().markRead(
+                  await DatabaseServices.markRead(
                     message: messageList[index],
                     path: path,
                   );
