@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
@@ -174,18 +174,18 @@ class _MobilePageState extends State<MobilePage> {
                 String? fcmtoken =
                     await FirebaseAuthenticate().getfirebasefcmtoken();
                 final response = await DatabaseServices.updateMobilefmcToken(
-                  mobileNumber: mobile.mobileNumber.toString(),
+                  mobileNumber: mobile.mobileNumber,
                   fcmtoken: fcmtoken!,
                 );
                 Navigator.of(context).pop();
                 if (response != 'Error') {
                   if (response['msg'] == 'success') {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    await prefs.setString(
-                      'mobileNumber',
-                      mobile.mobileNumber,
+                    await GlobalVariables.setMobileNumber(
+                      mobileNumber: mobile.mobileNumber,
                     );
+                    setState(() {
+                      _isLoading = false;
+                    });
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (BuildContext context) => MobilePage(),
                     ));
@@ -267,8 +267,7 @@ class _MobilePageState extends State<MobilePage> {
                           ? TextStyle(fontWeight: FontWeight.bold)
                           : null,
                     ),
-                    subtitle: (_mymobileNumber.toString() ==
-                            _mobiles[index].mobileNumber)
+                    subtitle: (_mymobileNumber == _mobiles[index].mobileNumber)
                         ? Text(
                             'Active',
                             style: TextStyle(
@@ -346,8 +345,7 @@ class _MobilePageState extends State<MobilePage> {
   }
 
   Future getMobileNumber() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final mNum = prefs.getString('mobileNumber');
+    final mNum = await GlobalVariables.getMobileNumber();
     if (mNum != null) {
       return mNum;
     }

@@ -99,7 +99,7 @@ class _SplashPageState extends State<SplashPage> {
       print(exception);
     }
 
-    return Future.value(NotificationsPage());
+    return Future.value(LoginPage());
     if (prefs.getString('email') != null &&
         prefs.getString('password') != null &&
         prefs.getString("mobileId") != null) {

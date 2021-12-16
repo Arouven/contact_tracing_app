@@ -1,10 +1,11 @@
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 //import 'package:grouped_buttons/grouped_buttons.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
 
 class FilterPage extends StatefulWidget {
@@ -18,7 +19,6 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   List<String> _checked = [];
-  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -31,14 +31,15 @@ class _FilterPageState extends State<FilterPage> {
   }
 
   initCheckboxes() async {
-    prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('showConfirmInfected') == true) _checked.add("Infected");
-    if (prefs.getBool('showContactWithInfected') == true)
+    if (await GlobalVariables.getShowConfirmInfected() == true)
+      _checked.add("Infected");
+    if (await GlobalVariables.getShowContactWithInfected() == true)
       _checked.add("Contacts");
-    if (prefs.getBool('showCleanUsers') == true) _checked.add("Safe users");
-    if (prefs.getBool('showTestingCenters') == true)
+    if (await GlobalVariables.getShowCleanUsers() == true)
+      _checked.add("Safe users");
+    if (await GlobalVariables.getShowTestingCenters() == true)
       _checked.add("Testing Centers");
-    if (prefs.getBool('showMyLocation') == true) _checked.add("Me");
+    if (await GlobalVariables.getShowMyLocation() == true) _checked.add("Me");
   }
 
   Widget _popCheckboxes() {
@@ -53,25 +54,30 @@ class _FilterPageState extends State<FilterPage> {
             "Me",
           ],
           checked: _checked,
-          onChange: (bool isChecked, String label, int index) {
+          onChange: (bool isChecked, String label, int index) async {
             if (label == "Infected") {
-              prefs.setBool('showConfirmInfected', isChecked);
+              await GlobalVariables.setShowConfirmInfected(
+                  showConfirmInfected: isChecked);
               print('showConfirmInfected');
             }
             if (label == "Contacts") {
-              prefs.setBool('showContactWithInfected', isChecked);
+              await GlobalVariables.setShowContactWithInfected(
+                  showContactWithInfected: isChecked);
               print('showContactWithInfected');
             }
             if (label == "Safe users") {
-              prefs.setBool('showCleanUsers', isChecked);
+              await GlobalVariables.setShowCleanUsers(
+                  showCleanUsers: isChecked);
               print('showCleanUsers');
             }
             if (label == "Testing Centers") {
-              prefs.setBool('showTestingCenters', isChecked);
+              await GlobalVariables.setShowTestingCenters(
+                  showTestingCenters: isChecked);
               print('showTestingCenters');
             }
             if (label == "Me") {
-              prefs.setBool('showMyLocation', isChecked);
+              await GlobalVariables.setShowMyLocation(
+                  showMyLocation: isChecked);
               print('showMyLocation');
             }
             setState(() {});

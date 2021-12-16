@@ -15,7 +15,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
 //import 'package:http/http.dart' as http;
 //import 'package:grouped_buttons/grouped_buttons.dart';
@@ -47,11 +47,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _lastUpdateFromServer = '0';
 
   Future<void> _downloadData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonBody = await DatabaseServices.downloadUpdateLocation();
     if (jsonBody != 'Error') {
-      await prefs.setString('Locations', jsonBody);
-      _useExistingData(bodyResponse: jsonBody);
+      await GlobalVariables.setLocations(locations: jsonBody);
+      await _useExistingData(bodyResponse: jsonBody);
     } else {
       setState(() {
         _showReload = true;
@@ -60,30 +59,29 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _useExistingData({String bodyResponse = ''}) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? myMobileId = prefs.getString("mobileId");
+    String myMobileNumber = await GlobalVariables.getMobileNumber();
     if (bodyResponse == '') {
-      bodyResponse = prefs.getString('Locations')!;
+      bodyResponse = await GlobalVariables.getLocations();
     }
     final data = jsonDecode(bodyResponse);
     if (data['status'] == "200") {
       print(data);
-      if (prefs.getBool('showConfirmInfected') == true) {
-        await _populateMarkers(data["confirmInfected"], myMobileId,
+      if (await GlobalVariables.getShowConfirmInfected() == true) {
+        await _populateMarkers(data["confirmInfected"], myMobileNumber,
             Colors.red[400], Colors.red.shade900);
       }
-      if (prefs.getBool('showContactWithInfected') == true) {
-        await _populateMarkers(data["contactWithInfected"], myMobileId,
+      if (await GlobalVariables.getShowContactWithInfected() == true) {
+        await _populateMarkers(data["contactWithInfected"], myMobileNumber,
             Colors.yellow[400], Colors.yellow.shade900);
       }
-      if (prefs.getBool('showCleanUsers') == true) {
-        await _populateMarkers(data["cleanUsers"], myMobileId,
+      if (await GlobalVariables.getShowCleanUsers() == true) {
+        await _populateMarkers(data["cleanUsers"], myMobileNumber,
             Colors.green[400], Colors.green.shade900);
       }
-      if (prefs.getBool('showTestingCenters') == true) {
+      if (await GlobalVariables.getShowTestingCenters() == true) {
         await _populateCentresMarkers(data["testingcentres"], Colors.blue);
       }
-      if (prefs.getBool('showMyLocation') == true) {
+      if (await GlobalVariables.getShowMyLocation() == true) {
         await _addCurrentLocationToMarkers();
       }
 
@@ -114,8 +112,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _generateMarkers() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? bodyResponse = prefs.getString('Locations');
+    String bodyResponse = await GlobalVariables.getLocations();
     if (widget.downloadUpdatedLocations ||
         bodyResponse == null ||
         bodyResponse == '') {
@@ -488,21 +485,21 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _setFilters() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('showTestingCenters') == null) {
-      await prefs.setBool('showTestingCenters', true);
+    if (await GlobalVariables.getShowTestingCenters() == null) {
+      await GlobalVariables.setShowTestingCenters(showTestingCenters: true);
     }
-    if (prefs.getBool('showConfirmInfected') == null) {
-      await prefs.setBool('showConfirmInfected', true);
+    if (await GlobalVariables.getShowConfirmInfected() == null) {
+      await GlobalVariables.setShowConfirmInfected(showConfirmInfected: true);
     }
-    if (prefs.getBool('showCleanUsers') == null) {
-      await prefs.setBool('showCleanUsers', true);
+    if (await GlobalVariables.getShowCleanUsers() == null) {
+      await GlobalVariables.setShowCleanUsers(showCleanUsers: true);
     }
-    if (prefs.getBool('showContactWithInfected') == null) {
-      await prefs.setBool('showContactWithInfected', true);
+    if (await GlobalVariables.getShowContactWithInfected() == null) {
+      await GlobalVariables.setShowContactWithInfected(
+          showContactWithInfected: true);
     }
-    if (prefs.getBool('showMyLocation') == null) {
-      await prefs.setBool('showMyLocation', true);
+    if (await GlobalVariables.getShowMyLocation() == null) {
+      await GlobalVariables.setShowMyLocation(showMyLocation: true);
     }
   }
 

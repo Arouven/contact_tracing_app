@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // change as per requirements
 const geolocatorAccuracy = LocationAccuracy.best;
@@ -33,7 +34,98 @@ const String channelName = 'your channel name';
 const String channelDescription = 'your channel description';
 const String flutterIcon = '@mipmap/ic_launcher';
 
+class GlobalVariables {
+  static setEmail({required String email}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+  }
 
+  static setMobileNumber({required String mobileNumber}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('mobileNumber', mobileNumber);
+  }
+
+  static setJustLogin({required bool justLogin}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('justLogin', justLogin);
+  }
+
+  static setShowConfirmInfected({required bool showConfirmInfected}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showConfirmInfected', showConfirmInfected);
+  }
+
+  static setShowContactWithInfected(
+      {required bool showContactWithInfected}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showContactWithInfected', showContactWithInfected);
+  }
+
+  static setShowCleanUsers({required bool showCleanUsers}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showCleanUsers', showCleanUsers);
+  }
+
+  static setShowTestingCenters({required bool showTestingCenters}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showTestingCenters', showTestingCenters);
+  }
+
+  static setShowMyLocation({required bool showMyLocation}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showMyLocation', showMyLocation);
+  }
+
+  static setLocations({required String locations}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('Locations', locations);
+  }
+
+  static getEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email');
+  }
+
+  static getMobileNumber() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('mobileNumber');
+  }
+
+  static getJustLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('justLogin');
+  }
+
+  static getShowConfirmInfected() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showConfirmInfected');
+  }
+
+  static getShowContactWithInfected() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showContactWithInfected');
+  }
+
+  static getShowCleanUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showCleanUsers');
+  }
+
+  static getShowTestingCenters() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showTestingCenters');
+  }
+
+  static getShowMyLocation() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showMyLocation');
+  }
+
+  static getLocations() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('Locations');
+  }
+}
 //global vars
 //in register.dart
 // prefs.setString('firstName', firstname);

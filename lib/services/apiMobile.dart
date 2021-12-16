@@ -12,8 +12,10 @@ class ApiMobile {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final email = prefs.getString('email');
       if (email == null) return [];
-      final res =
-          await http.post(Uri.parse(getMobilesUrl), body: {"email": email});
+      final res = await http.post(
+        Uri.parse(getMobilesUrl),
+        body: {"email": email},
+      );
       final body = json.decode(res.body);
       print(body);
       final mobiles = body['mobiles'];

@@ -2,11 +2,10 @@ import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/services/auth.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
@@ -60,15 +59,13 @@ class _LoginState extends State<LoginPage> {
         if (firebaseLoggedIn == true) {
           print(email);
           print(password);
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('email', email);
-          await prefs.setString('password', password);
-          await prefs.setBool('justLogin', true);
+          await GlobalVariables.setEmail(email: email);
+          await GlobalVariables.setJustLogin(justLogin: true);
+          final mobileNumber = await GlobalVariables.getMobileNumber();
+
           print("credential save");
-          print(
-              "mobileNumber is " + prefs.getString('mobileNumber').toString());
-          if (prefs.getString('mobileNumber') == '' ||
-              prefs.getString('mobileNumber') == null) {
+          print("mobileNumber is " + mobileNumber);
+          if (mobileNumber == '' || mobileNumber == null) {
             print("mobile id is null");
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => MobilePage()),

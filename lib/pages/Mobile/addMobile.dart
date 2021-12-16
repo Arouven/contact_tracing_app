@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -70,13 +70,12 @@ class _AddMobilePageState extends State<AddMobilePage> {
 
     //  String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
     String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
+    final email = await GlobalVariables.getEmail();
 
     final data = await DatabaseServices.addMobile(
-      mobileName: _mobileName.text.toString(),
+      mobileName: _mobileName.text,
       email: email!,
-      mobileNumber: _mobileNumber.toString(),
+      mobileNumber: _mobileNumber,
       fcmtoken: fcmtoken!,
     );
     if (data != 'Error') {
@@ -240,8 +239,8 @@ class _AddMobilePageState extends State<AddMobilePage> {
     });
     print(_invalidMobileName);
     print(_invalidPhoneNumber);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
+
+    final email = await GlobalVariables.getEmail();
 
     if ((_invalidMobileName == false) &&
         (_invalidPhoneNumber == false) &&
@@ -262,10 +261,17 @@ class _AddMobilePageState extends State<AddMobilePage> {
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
           await _updateMysql();
+          await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
+          setState(() {
+            _isLoading = false;
+          });
         },
         verificationFailed: (FirebaseAuthException e) {
           print('verificationFailed');
           print(e);
+          setState(() {
+            _isLoading = false;
+          });
           DialogBox.showErrorDialog(
             context: context,
             body: e.message.toString(),
@@ -277,20 +283,20 @@ class _AddMobilePageState extends State<AddMobilePage> {
             _codeSent = true;
             _verificationId = verificationid;
             print('verificationid: ' + _verificationId);
+            _isLoading = false;
           });
         },
         codeAutoRetrievalTimeout: (String verificationid) {
           setState(() {
             _verificationId = verificationid;
             print('verificationid: ' + _verificationId);
+
+            _isLoading = false;
           });
         },
         timeout: Duration(seconds: 120),
       );
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   _verifyPin(String smsCode) async {
@@ -307,6 +313,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
       FirebaseAuthenticate().getfirebaseuid();
       FirebaseAuthenticate().getfirebasefcmtoken();
       await _updateMysql();
+      await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
     } on FirebaseAuthException catch (e) {
       print(e);
       DialogBox.showErrorDialog(

@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -40,16 +40,25 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   String _numwithoutcode = '';
   String initialCountry = 'MU';
   PhoneNumber number = PhoneNumber(isoCode: 'MU');
-  String _mobileNumber = '';
+  //String _mobileNumber = '';
 
   String _verificationId = '';
   String _phoneNumber = '';
   bool _codeSent = false;
 
   TextEditingController _mobileNumberController = TextEditingController();
-  TextEditingController _mobileName = TextEditingController();
+  TextEditingController _mobileNameController = TextEditingController();
 
   Future<void> initPlatformState() async {
+    String phoneNumber = widget.mobile.mobileNumber.trim();
+    PhoneNumber number =
+        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    String parsableNumber = number.parseNumber();
+    setState(() {
+      _phoneNumber = phoneNumber;
+      _mobileNumberController.text =
+          _numwithoutcode = parsableNumber.replaceAll(RegExp(r'\+'), '').trim();
+    });
     String deviceData = "";
     try {
       if (Platform.isAndroid) {
@@ -75,13 +84,12 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
 
     //  String? firebaseuid = FirebaseAuthenticate().getfirebaseuid();
     String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
+    final email = await GlobalVariables.getEmail();
 
     final data = await DatabaseServices.updateMobile(
-      mobileName: _mobileName.text.toString(),
+      mobileName: _mobileNameController.text,
       email: email!,
-      mobileNumber: _mobileNumber.toString(),
+      mobileNumber: _phoneNumber,
       fcmtoken: fcmtoken!,
     );
     if (data != 'Error') {
@@ -114,7 +122,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
         children: <Widget>[
           Expanded(
             child: new TextField(
-              controller: _mobileName,
+              controller: _mobileNameController,
               decoration: new InputDecoration(
                 labelText: 'Mobile Name',
                 errorText: _invalidMobileName ? 'Name Can\'t Be Empty' : null,
@@ -128,7 +136,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
             alignment: Alignment.centerRight,
             onPressed: () {
               setState(() {
-                _mobileName.text = _deviceData;
+                _mobileNameController.text = _deviceData;
               });
             },
           ),
@@ -151,7 +159,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
               _numwithoutcode.length == 0
                   ? _invalidPhoneNumber = true
                   : _invalidPhoneNumber = false;
-              _mobileNumber = pn;
+              // _mobileNumber = pn;
             });
           },
           onInputValidated: (bool value) {
@@ -240,7 +248,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   _verifyPhone() async {
     setState(() {
       _isLoading = true;
-      _mobileName.text.isEmpty
+      _mobileNameController.text.isEmpty
           ? _invalidMobileName = true
           : _invalidMobileName = false;
       _numwithoutcode.length == 0
@@ -249,8 +257,8 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     });
     print(_invalidMobileName);
     print(_invalidPhoneNumber);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
+
+    final email = await GlobalVariables.getEmail();
 
     if ((_invalidMobileName == false) &&
         (_invalidPhoneNumber == false) &&
@@ -329,7 +337,8 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   void initState() {
     super.initState();
     initPlatformState().whenComplete(() => setState(() {
-          _mobileName.text = _deviceData;
+          _mobileNameController.text = widget.mobile.mobileName;
+
           _isLoading = false;
         }));
   }
@@ -367,7 +376,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   @override
   void dispose() {
     _mobileNumberController.dispose();
-    _mobileName.dispose();
+    _mobileNameController.dispose();
     super.dispose();
   }
 }

@@ -8,10 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
@@ -208,12 +206,7 @@ class _RegisterState extends State<RegisterPage> {
             //user inserted
             //redirect to home
             print('user inserted');
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            await prefs.setString(
-              'email',
-              _emailController.text.trim(),
-            );
+            await GlobalVariables.setEmail(email: _emailController.text.trim());
 
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => MobilePage()));
@@ -653,7 +646,7 @@ class _RegisterState extends State<RegisterPage> {
                   title: TextField(
                     controller: _emailController,
                     decoration: new InputDecoration(
-                      labelText: 'email',
+                      labelText: 'Email',
                       errorText: _invalidemail ? 'Email Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
@@ -670,9 +663,8 @@ class _RegisterState extends State<RegisterPage> {
                   title: TextField(
                     controller: _emailController,
                     decoration: new InputDecoration(
-                      labelText: 'email',
-                      errorText:
-                          _invalidemail ? 'User Name Can\'t Be Empty' : null,
+                      labelText: 'Email',
+                      errorText: _invalidemail ? 'Email Can\'t Be Empty' : null,
                     ),
                     onChanged: (String s) {
                       setState(() {
@@ -705,7 +697,9 @@ class _RegisterState extends State<RegisterPage> {
                   } else {
                     _invalidPassword = false;
                   }
-                  _invalidPasswordMessage = _validatePassword(s)!;
+                  _invalidPasswordMessage = (_validatePassword(s) != null)
+                      ? _validatePassword(s) as String
+                      : '';
                 });
               },
             ),
