@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 import 'Location/live_geolocator.dart';
 import 'Notification/notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'Login/login.dart';
 import 'Mobile/mobiles.dart';
 
@@ -56,58 +57,49 @@ class _SplashPageState extends State<SplashPage> {
     // });
   }
 
-  Future<void> deleteMe() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.setString('email', 'Arouven Poolian');
-    // await prefs.setString('password', 'Aa@12345');
-    // await prefs.setString("mobileId", '1');
-  }
-
   Future<Widget> loadFromFuture() async {
     await Future.delayed(const Duration(seconds: 2), () {});
-    await deleteMe();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('latestUpdate') != null) {
-      try {
-        if (mounted) {
-          setState(() {
-            _latestUpdate =
-                int.parse(prefs.getString('latestUpdate') as String);
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _latestUpdate = 0;
-          });
-        }
-      }
-    }
 
-    try {
-      var today = DateTime.now();
-      var nowMinus5days = today.subtract(const Duration(days: 5));
-      var nowMinus5daysInEpoch =
-          (nowMinus5days.millisecondsSinceEpoch).toString();
-      nowMinus5daysInEpoch =
-          nowMinus5daysInEpoch.substring(0, nowMinus5daysInEpoch.length - 3);
-      int nowMinus5 = int.parse(nowMinus5daysInEpoch);
-      if (_latestUpdate < nowMinus5) {
-        //await _showRestartDialog();
-      }
-    } catch (exception) {
-      print(exception);
-    }
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // if (prefs.getString('latestUpdate') != null) {
+    //   try {
+    //     if (mounted) {
+    //       setState(() {
+    //         _latestUpdate =
+    //             int.parse(prefs.getString('latestUpdate') as String);
+    //       });
+    //     }
+    //   } catch (e) {
+    //     if (mounted) {
+    //       setState(() {
+    //         _latestUpdate = 0;
+    //       });
+    //     }
+    //   }
+    // }
 
+    // try {
+    //   var today = DateTime.now();
+    //   var nowMinus5days = today.subtract(const Duration(days: 5));
+    //   var nowMinus5daysInEpoch =
+    //       (nowMinus5days.millisecondsSinceEpoch).toString();
+    //   nowMinus5daysInEpoch =
+    //       nowMinus5daysInEpoch.substring(0, nowMinus5daysInEpoch.length - 3);
+    //   int nowMinus5 = int.parse(nowMinus5daysInEpoch);
+    //   if (_latestUpdate < nowMinus5) {
+    //     //await _showRestartDialog();
+    //   }
+    // } catch (exception) {
+    //   print(exception);
+    // }
+
+    final email = await GlobalVariables.getEmail();
+    final mobileNumber = await GlobalVariables.getMobileNumber();
     return Future.value(LoginPage());
-    if (prefs.getString('email') != null &&
-        prefs.getString('password') != null &&
-        prefs.getString("mobileId") != null) {
+    if (email != null && mobileNumber != null) {
       print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());
-    } else if (prefs.getString('email') != null &&
-        prefs.getString('password') != null &&
-        prefs.getString("mobileId") == null) {
+    } else if (email != null && mobileNumber == null) {
       print("MobilePage");
       return Future.value(MobilePage());
     } else {

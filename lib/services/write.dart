@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Writefile {
   Writefile() {
@@ -18,10 +18,9 @@ class Writefile {
 
     final fullPath = externalDirectory!.path;
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var fullFilePath =
-        '$fullPath/${prefs.getString("firebaseuid")}_geolocatorbest.csv';
-    await prefs.setString("fileDirectory", '$fullPath/');
+    final email = await GlobalVariables.getEmail();
+    var fullFilePath = '$fullPath/${email}_geolocatorbest.csv';
+    await GlobalVariables.setFileDirectory(fileDirectory: '$fullPath/');
 //Retrive different types of data
 
     /*
@@ -33,12 +32,12 @@ class Writefile {
   Future writeToFile(String latitude, String longitude, String accuracy) async {
     print("in Writefile");
     final file = await _localFile;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String time = (new DateTime.now().millisecondsSinceEpoch).toString();
     time = time.substring(0, time.length - 3);
-    await prefs.setString('latestUpdate', time);
-    String text =
-        '${prefs.getString("mobileId")},$time,$latitude,$longitude,$accuracy\n';
+
+    final mobileNumber = await GlobalVariables.getMobileNumber();
+    String text = '$mobileNumber,$time,$latitude,$longitude,$accuracy\n';
 
     File result;
     if (file.existsSync()) {

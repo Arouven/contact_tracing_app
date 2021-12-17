@@ -15,13 +15,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
-//import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/drawer.dart';
-//import 'package:http/http.dart' as http;
-//import 'package:grouped_buttons/grouped_buttons.dart';
-
-//import 'package:flutter/material.dart';
-//import 'package:cool_alert/cool_alert.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -47,7 +41,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _lastUpdateFromServer = '0';
 
   Future<void> _downloadData() async {
-    String jsonBody = await DatabaseServices.downloadUpdateLocation();
+    String jsonBody = await DatabaseMySQLServices.downloadUpdateLocation();
     if (jsonBody != 'Error') {
       await GlobalVariables.setLocations(locations: jsonBody);
       await _useExistingData(bodyResponse: jsonBody);
@@ -92,13 +86,15 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             (DateTime.fromMillisecondsSinceEpoch(serverLastUpdated * 1000))
                 .toLocal()
                 .toString();
-        _lastUpdateFromServer = _lastUpdateFromServer.substring(
-            0, _lastUpdateFromServer.length - 4);
+        setState(() {
+          _lastUpdateFromServer = _lastUpdateFromServer.substring(
+              0, _lastUpdateFromServer.length - 4);
+        });
       } on FormatException {
         print('problem with conversion');
 
         setState(() {
-          _showReload = true;
+          _lastUpdateFromServer = 'Never';
         });
       }
       print("markers populated");
@@ -207,10 +203,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> initLocationService() async {
-    //  final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await
-
-    //_currentLocation = (await Geolocator.getLastKnownPosition())!;
     bool serviceEnabled;
     bool serviceRequestResult;
     try {
@@ -220,9 +212,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         // _currentLocation ;
         Position cp = await Geolocator.getCurrentPosition(
             desiredAccuracy: geolocatorAccuracy);
-        // setState(() {
-        //   _currentLocation = cp;
-        // });
+
         // if (mounted) {
         if (_currentLocation != null) {
           setState(() {
@@ -504,10 +494,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<Position?> initPrefs() async {
-    //final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // double lastlat = prefs.getDouble("lastlat");
-    ///double lastlng = prefs.getDouble("lastlng");
-    //prefs.getDouble("lastlng");
     print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
     Position? position = await Geolocator.getLastKnownPosition();

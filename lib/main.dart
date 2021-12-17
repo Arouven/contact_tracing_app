@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
 
@@ -30,7 +29,13 @@ void onStart() {
   late Timer myTimer;
   final service = FlutterBackgroundService();
   service.onDataReceived.listen((event) {
-    if (event!["action"] == "setAsBackground") {
+    if (event!["action"] == "setAsForeground") {
+      print("event = setAsForeground");
+      // bring to foreground
+      service.setForegroundMode(true);
+      return;
+    }
+    if (event["action"] == "setAsBackground") {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
     }
@@ -40,53 +45,48 @@ void onStart() {
       myTimer.cancel();
       service.stopBackgroundService();
     }
-
-    if (event["action"] == "startService") {
-      print("event = startService and start timer too");
-      // bring to foreground
-      service.setForegroundMode(true);
-      myTimer = Timer.periodic(
-        Duration(minutes: timeToGetLocationPerMinute),
-        (timer) async {
-          print("in timer");
-          if (!(await service.isServiceRunning())) {
-            print("cancel timer");
-            timer.cancel();
-            myTimer.cancel();
-          }
-          Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: geolocatorAccuracy,
-          );
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          if ((prefs.getString("email") != null) &&
-              (prefs.getString("mobileId") != null)) {
-            print("email and mobileid not null at start of service");
-            _wf.writeToFile(
-              '${position.latitude.toString()}',
-              '${position.longitude.toString()}',
-              '${position.accuracy.toString()}',
-            );
-            if (counter > timeToUploadPerMinute) {
-              UploadFile uploadFile = new UploadFile();
-              uploadFile.uploadToServer();
-              print("file uploaded and counter set to 0");
-              counter = 0;
-            }
-
-            service.setNotificationInfo(
-              title: "Contact tracing",
-              content:
-                  "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-            );
-          } else {
-            timer.cancel();
-            myTimer.cancel();
-          }
-          counter = counter + 1;
-        },
-      );
-    }
   });
+  service.setForegroundMode(true);
+  myTimer = Timer.periodic(
+    Duration(minutes: timeToGetLocationPerMinute),
+    (timer) async {
+      print("in timer");
+      if (!(await service.isServiceRunning())) {
+        print("cancel timer");
+        timer.cancel();
+        myTimer.cancel();
+      }
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: geolocatorAccuracy,
+      );
+      final email = await GlobalVariables.getEmail();
+      final mobileNumber = await GlobalVariables.getMobileNumber();
+      if ((email != null) && (mobileNumber != null)) {
+        print("email and mobileid not null at start of service");
+        _wf.writeToFile(
+          '${position.latitude.toString()}',
+          '${position.longitude.toString()}',
+          '${position.accuracy.toString()}',
+        );
+        if (counter > timeToUploadPerMinute) {
+          UploadFile uploadFile = new UploadFile();
+          uploadFile.uploadToServer();
+          print("file uploaded and counter set to 0");
+          counter = 0;
+        }
+
+        service.setNotificationInfo(
+          title: "Contact tracing",
+          content:
+              "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+        );
+      } else {
+        timer.cancel();
+        myTimer.cancel();
+      }
+      counter = counter + 1;
+    },
+  );
 }
 
 Future<Position> _determinePosition() async {
@@ -195,9 +195,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
   Position position = await _determinePosition();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setDouble("lastlat", position.latitude);
-  await prefs.setDouble("lastlng", position.longitude);
+  // final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // await prefs.setDouble("lastlat", position.latitude);
+  // await prefs.setDouble("lastlng", position.longitude);
 
   await setFirebase();
   openAppMessage();

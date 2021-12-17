@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:contact_tracing/models/message.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'globals.dart';
 import 'package:http/http.dart' as http;
 
-class DatabaseServices {
+class DatabaseMySQLServices {
   static Future registerUser({
     required String firstName,
     required String lastName,
@@ -33,31 +32,16 @@ class DatabaseServices {
     }
   }
 
-  // Future emailExist({required String email}) async {
-  //   // setState(() {
-  //   //   _emailInDB = null;
-  //   // });
-  //   bool? _emailInDB;
-  //   try {
-  //     final res = await http.post(
-  //       Uri.parse(checkEmailUrl),
-  //       body: {'email': email},
-  //     );
-  //     final data = jsonDecode(res.body);
-  //     if (data['msg'] == 'email already in db') {
-  //       print(data['msg']);
-  //       _emailInDB = true;
-  //     } else if (data['msg'] == 'email not in db') {
-  //       print(data['msg']);
-  //       _emailInDB = false;
-  //     } else {
-  //       _emailInDB = null;
-  //     }
-  //   } on Exception {
-  //     _emailInDB = null;
-  //   }
-  //   return _emailInDB;
-  // }
+  static Future getMobiles({required String email}) async {
+    final res = await http.post(
+      Uri.parse(getMobilesUrl),
+      body: {"email": email},
+    );
+    final body = json.decode(res.body);
+    print(body);
+    final mobiles = body['mobiles'];
+    return mobiles;
+  }
 
   static Future downloadUpdateLocation() async {
     try {
@@ -130,7 +114,9 @@ class DatabaseServices {
       return 'Error';
     }
   }
+}
 
+class DatabaseFirebaseServices {
   static Future markRead(
       {required Message message, required String path}) async {
     DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");

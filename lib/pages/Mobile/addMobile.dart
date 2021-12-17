@@ -72,7 +72,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
     String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
     final email = await GlobalVariables.getEmail();
 
-    final data = await DatabaseServices.addMobile(
+    final data = await DatabaseMySQLServices.addMobile(
       mobileName: _mobileName.text,
       email: email!,
       mobileNumber: _mobileNumber,
@@ -227,6 +227,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
     }
   }
 
+  //bool _signedin = false;
   _verifyPhone() async {
     setState(() {
       _isLoading = true;
@@ -263,6 +264,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
           await _updateMysql();
           await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
           setState(() {
+         //   _signedin = true;
             _isLoading = false;
           });
         },
@@ -278,7 +280,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
           );
         },
         codeSent: (String verificationid, int? resendToken) {
-          //when receive sms code
+          print('codesent');
           setState(() {
             _codeSent = true;
             _verificationId = verificationid;
@@ -287,12 +289,15 @@ class _AddMobilePageState extends State<AddMobilePage> {
           });
         },
         codeAutoRetrievalTimeout: (String verificationid) {
-          setState(() {
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-
-            _isLoading = false;
-          });
+          print('codeautoretrievaltimeout');
+        //  if (_signedin == true) {
+          //} else {
+            setState(() {
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          //}
         },
         timeout: Duration(seconds: 120),
       );
@@ -314,7 +319,14 @@ class _AddMobilePageState extends State<AddMobilePage> {
       FirebaseAuthenticate().getfirebasefcmtoken();
       await _updateMysql();
       await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
+     // setState(() {
+       // _signedin = true;
+     // });
     } on FirebaseAuthException catch (e) {
+      // setState(() {
+      //   _signedin = false;
+      // });
+      print('verifyPin exception');
       print(e);
       DialogBox.showErrorDialog(
         context: context,

@@ -25,12 +25,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     //FlutterBackgroundService().sendData({"action": "updateBadge"});
-    getListofMessages().then((value) => setState(() {}));
-    updateListofMessages();
+    _getListofMessages().then((value) => setState(() {}));
+    _updateListofMessages();
     super.initState();
   }
 
-  Future getListofMessages() async {
+  Future _getListofMessages() async {
     setState(() {
       _isLoading = true;
     });
@@ -61,7 +61,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     });
   }
 
-  updateListofMessages() {
+  void _updateListofMessages() {
     DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
     Stream<DatabaseEvent> stream = ref.onValue;
@@ -118,7 +118,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               onTap: () async {
                 if (messageList[index].read) {
                 } else {
-                  await DatabaseServices.markRead(
+                  await DatabaseFirebaseServices.markRead(
                     message: messageList[index],
                     path: path,
                   );

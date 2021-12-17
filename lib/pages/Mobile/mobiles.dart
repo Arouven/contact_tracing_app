@@ -173,7 +173,8 @@ class _MobilePageState extends State<MobilePage> {
               onPressed: () async {
                 String? fcmtoken =
                     await FirebaseAuthenticate().getfirebasefcmtoken();
-                final response = await DatabaseServices.updateMobilefmcToken(
+                final response =
+                    await DatabaseMySQLServices.updateMobilefmcToken(
                   mobileNumber: mobile.mobileNumber,
                   fcmtoken: fcmtoken!,
                 );

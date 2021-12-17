@@ -1,12 +1,8 @@
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
-import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
-import 'package:firebase_database/firebase_database.dart';
-//import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:lipsum/lipsum.dart' as lipsum;
 
 class SingleNotificationPage extends StatefulWidget {

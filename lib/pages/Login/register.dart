@@ -82,80 +82,6 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
-  // void _submit() async {
-  //   if (_confirmPasswordController.text.isEmpty) {
-  //     setState(() {
-  //       _invalidConfirmPassword = true;
-  //     });
-  //   } else if (_passwordController.text.isEmpty) {
-  //     setState(() {
-  //       _invalidPassword = true;
-  //     });
-  //   } else if (_passwordController.text != _confirmPasswordController.text) {
-  //     setState(() {
-  //       _invalidConfirmPassword = true;
-  //     });
-  //   } else if (_emailController.text.isEmpty || _emailInDB!) {
-  //     setState(() {
-  //       _invalidemail = true;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       _isLoading = true;
-  //     });
-  //     var _firstName = _firstNameController.text.trim();
-  //     var _lastName = _lastNameController.text.trim();
-  //     var _address = _addressController.text.trim();
-  //     var _email = _emailController.text.trim();
-  //     var _password = _confirmPasswordController.text.trim();
-  //     //  var _country = _defaultCountry.toString().split('.').last;
-
-  //     try {
-  //       final res = await http.post(
-  //         Uri.parse(registerUrl),
-  //         body: {
-  //           'firstName': _firstName,
-  //           'lastName': _lastName,
-  //           'address': _address,
-  //           'dateOfBirth': _dateOfBirth,
-  //           'email': _email,
-  //           'password': _password
-  //         },
-  //       );
-  //       //print(res.body);
-  //       final data = jsonDecode(res.body);
-
-  //       if (data['msg'] == 'email already existed') {
-  //         var msg = 'email already taken please change the email or login.';
-  //         DialogBox.showErrorDialog(
-  //           context: context,
-  //           title: 'Already Exist',
-  //           body: msg,
-  //         );
-  //         print(msg);
-  //       } else if (data['msg'] == 'user inserted') {
-  //         //user inserted
-  //         //redirect to home
-  //         print('user inserted');
-  //         final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //         await prefs.setString('email', _email);
-  //         await prefs.setString('password', _password);
-
-  //         Navigator.of(context).pushReplacement(
-  //             MaterialPageRoute(builder: (context) => MobilePage()));
-  //       }
-  //     } on Exception {
-  //       setState(() {
-  //         _showReload = true;
-  //       });
-  //     }
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
-
   void _submit() async {
     if (_passwordController.text.isEmpty) {
       setState(() {
@@ -187,7 +113,7 @@ class _RegisterState extends State<RegisterPage> {
       );
 
       if (response == true) {
-        final data = await DatabaseServices.registerUser(
+        final data = await DatabaseMySQLServices.registerUser(
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
             address: _addressController.text.trim(),
@@ -232,74 +158,7 @@ class _RegisterState extends State<RegisterPage> {
       });
     }
   }
-// else {
-//       setState(() {
-//         _isLoading = true;
-//       });
 
-//       final response = await FirebaseAuthenticate().firebaseRegisterUser(
-//         email: _emailController.text.trim(),
-//         password: _confirmPasswordController.text.trim(),
-//       );
-
-//       if (response == true) {
-//         String? firebaseuid = FirebaseAuth.instance.currentUser!.uid;
-//         print(firebaseuid);
-//         final data = await DatabaseServices().registerUser(
-//           firstName: _firstNameController.text.trim(),
-//           lastName: _lastNameController.text.trim(),
-//           address: _addressController.text.trim(),
-//           dateOfBirth: _dateOfBirth,
-//           email: _emailController.text.trim(),
-//           firebaseuid: firebaseuid,
-//         );
-//         if (data != 'Error') {
-//           if (data['msg'] == 'email already existed') {
-//             var msg = 'email already taken please change the email or login.';
-//             DialogBox.showErrorDialog(
-//               context: context,
-//               title: 'Already Exist',
-//               body: msg,
-//             );
-//             print(msg);
-//           } else if (data['msg'] == 'user inserted') {
-//             //user inserted
-//             //redirect to home
-//             print('user inserted');
-//             final SharedPreferences prefs =
-//                 await SharedPreferences.getInstance();
-//             await prefs.setString(
-//               'email',
-//               _emailController.text.trim(),
-//             );
-//             await prefs.setString(
-//               'password',
-//               _confirmPasswordController.text.trim(),
-//             );
-
-//             Navigator.of(context).pushReplacement(
-//                 MaterialPageRoute(builder: (context) => MobilePage()));
-//           }
-//         } else {
-//           setState(() {
-//             _showReload = true;
-//           });
-//         }
-//       } else {
-//         //cannot register on firebase
-//         DialogBox.showErrorDialog(
-//           context: context,
-//           title: response.e.code,
-//           body: response.e.message,
-//         );
-//         setState(() {
-//           _isLoading = false;
-//         });
-//       }
-//       setState(() {
-//         _isLoading = false;
-//       });
-//     }
   _buildemailTile() {
     if (_emailInDB == true) {
       return Icon(
