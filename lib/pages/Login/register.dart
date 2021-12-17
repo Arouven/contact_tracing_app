@@ -351,10 +351,10 @@ class _RegisterState extends State<RegisterPage> {
                     print(_dateOfBirth);
                   },
                   pickerTheme: DateTimePickerTheme(
-                    backgroundColor: Colors.transparent,
-                    itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
-                    dividerColor: Colors.blue,
-                  ),
+                      // backgroundColor: Colors.transparent,
+                      // itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                      // dividerColor: Colors.blue,
+                      ),
                 ),
               ),
             ),
@@ -725,7 +725,7 @@ class _RegisterState extends State<RegisterPage> {
       return Center(
         child: FloatingActionButton(
           foregroundColor: Colors.red,
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           child: Icon(Icons.replay),
           onPressed: () {
             _submit();
@@ -759,16 +759,8 @@ class _RegisterState extends State<RegisterPage> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
+                  new ElevatedButton(
+                    child: new Text('Next'),
                     onPressed: () {
                       print('before ' + (_currentPosition.toString()));
                       _currentPosition = _currentPosition.floorToDouble();
@@ -795,15 +787,9 @@ class _RegisterState extends State<RegisterPage> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
+                  ElevatedButton(
                     child: Text(
                       'Previous',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
                     ),
                     onPressed: () {
                       print('before ' + (_currentPosition.toString()));
@@ -812,14 +798,15 @@ class _RegisterState extends State<RegisterPage> {
                       print('after ' + (_currentPosition.toString()));
                     },
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green,
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green),
                     ),
                     child: Text(
                       'Submit',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     onPressed: () {
@@ -843,14 +830,14 @@ class _RegisterState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
+                    // style: TextButton.styleFrom(
+                    //   backgroundColor: Colors.blue,
+                    // ),
                     child: Text(
                       'Previous',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      // style: TextStyle(
+                      //   color: Colors.white,
+                      // ),
                     ),
                     onPressed: () {
                       print('before ' + (_currentPosition.toString()));
@@ -860,14 +847,14 @@ class _RegisterState extends State<RegisterPage> {
                     },
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
+                    // style: TextButton.styleFrom(
+                    //   backgroundColor: Colors.blue,
+                    // ),
                     child: Text(
                       'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                      // style: TextStyle(
+                      //   color: Colors.white,
+                      // ),
                     ),
                     onPressed: () {
                       print('before ' + (_currentPosition.toString()));
@@ -909,7 +896,7 @@ class _RegisterState extends State<RegisterPage> {
         appBar: AppBar(
           title: Text("Register"),
           centerTitle: true,
-          backgroundColor: Colors.blue,
+          // backgroundColor: Colors.blue,
           actions: (_currentPosition == 2.0)
               ? [
                   IconButton(

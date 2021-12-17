@@ -169,7 +169,7 @@ class _LoginState extends State<LoginPage> {
       return Center(
         child: FloatingActionButton(
           foregroundColor: Colors.red,
-          backgroundColor: Colors.white,
+          // backgroundColor: Colors.white,
           child: Icon(Icons.replay),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -288,7 +288,7 @@ class _LoginState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -296,7 +296,7 @@ class _LoginState extends State<LoginPage> {
           appBar: AppBar(
             centerTitle: true,
             title: Text("Login"),
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, LoginPage.route),
           body: _body(),

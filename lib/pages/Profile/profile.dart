@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     //var moblies = ApiProfile.getProfiles();
     return Container(
-      color: Colors.white,
+      //  color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
           appBar: AppBar(
             title: Text('Profile'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, ProfilePage.route),
           //body:

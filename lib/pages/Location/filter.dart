@@ -101,7 +101,7 @@ class _FilterPageState extends State<FilterPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      //  color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -120,7 +120,7 @@ class _FilterPageState extends State<FilterPage> {
             ),
             title: Text('Marker Filter'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, FilterPage.route),
           body: _body(),

@@ -80,19 +80,12 @@ class _AddMobilePageState extends State<AddMobilePage> {
     );
     if (data != 'Error') {
       print(data);
-      try {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => MobilePage(),
-          ),
-          (e) => false,
-        );
-      } catch (e) {
-        setState(() {
-          _isLoading = false;
-        });
-        print(e.toString());
-      }
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => MobilePage(),
+        ),
+        (e) => false,
+      );
     } else {
       setState(() {
         _isLoading = false;
@@ -117,7 +110,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
           ),
           IconButton(
             icon: Icon(Icons.info),
-            color: Colors.black,
+            // color: Colors.black,
             iconSize: 30.0,
             alignment: Alignment.centerRight,
             onPressed: () {
@@ -156,13 +149,11 @@ class _AddMobilePageState extends State<AddMobilePage> {
           ),
           ignoreBlank: false,
           autoValidateMode: AutovalidateMode.disabled,
-          selectorTextStyle: TextStyle(color: Colors.black),
+          // selectorTextStyle: TextStyle(color: Colors.black),
           initialValue: number,
           textFieldController: _mobileNumberController,
           formatInput: false,
           keyboardType: TextInputType.number,
-          // keyboardType: TextInputType.numberWithOptions(
-          //     signed: true, decimal: true),
         ),
       ),
       new Container(
@@ -255,16 +246,19 @@ class _AddMobilePageState extends State<AddMobilePage> {
         phoneNumber: _phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
           print('verificationCompleted');
-          await FirebaseAuth.instance
-              .signInWithCredential(credential); //auto retrive otp
+          await FirebaseAuth.instance.signInWithCredential(
+            credential,
+          ); //auto retrive otp
           print('auto signed in');
           print('new');
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
           await _updateMysql();
-          await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
+          await GlobalVariables.setMobileNumber(
+            mobileNumber: _mobileNumber,
+          );
           setState(() {
-         //   _signedin = true;
+            //   _signedin = true;
             _isLoading = false;
           });
         },
@@ -290,13 +284,13 @@ class _AddMobilePageState extends State<AddMobilePage> {
         },
         codeAutoRetrievalTimeout: (String verificationid) {
           print('codeautoretrievaltimeout');
-        //  if (_signedin == true) {
+          //  if (_signedin == true) {
           //} else {
-            setState(() {
-              _verificationId = verificationid;
-              print('verificationid: ' + _verificationId);
-              _isLoading = false;
-            });
+          setState(() {
+            _verificationId = verificationid;
+            print('verificationid: ' + _verificationId);
+            _isLoading = false;
+          });
           //}
         },
         timeout: Duration(seconds: 120),
@@ -316,12 +310,12 @@ class _AddMobilePageState extends State<AddMobilePage> {
       print('lobin success');
       print('new');
       FirebaseAuthenticate().getfirebaseuid();
-      FirebaseAuthenticate().getfirebasefcmtoken();
+      await FirebaseAuthenticate().getfirebasefcmtoken();
       await _updateMysql();
       await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
-     // setState(() {
-       // _signedin = true;
-     // });
+      // setState(() {
+      // _signedin = true;
+      // });
     } on FirebaseAuthException catch (e) {
       // setState(() {
       //   _signedin = false;
@@ -349,7 +343,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -367,7 +361,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
             ),
             title: Text('New Mobile'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, MobilePage.route),
           body: _body(),

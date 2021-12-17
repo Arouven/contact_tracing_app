@@ -144,7 +144,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     //var moblies = ApiNotification.getNotifications();
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -152,7 +152,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           appBar: AppBar(
             title: Text('Notifications'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, NotificationsPage.route),
           body: _body(),

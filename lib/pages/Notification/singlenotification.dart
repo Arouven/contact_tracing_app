@@ -81,7 +81,7 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      //  color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -98,7 +98,7 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
             ),
             title: Text('Notification'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, NotificationsPage.route),
           body: _body(),

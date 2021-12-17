@@ -72,7 +72,7 @@ class _MobilePageState extends State<MobilePage> {
               child: const Text('Modify'),
               onPressed: () {
                 // open a UpdateMobilePage with parameter [mobile]
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (BuildContext context) =>
                         UpdateMobilePage(mobile: mobile),
@@ -186,6 +186,7 @@ class _MobilePageState extends State<MobilePage> {
                       mobileNumber: mobile.mobileNumber,
                     );
                     setState(() {
+                      _mymobileNumber = mobile.mobileNumber;
                       _isLoading = false;
                     });
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -286,7 +287,7 @@ class _MobilePageState extends State<MobilePage> {
                                     child: TextButton(
                                       child: const Text(
                                         'Set Active',
-                                        style: TextStyle(color: Colors.black),
+                                        // style: TextStyle(color: Colors.black),
                                       ),
                                       onPressed: () {
                                         setActive(_mobiles[index]);
@@ -297,7 +298,7 @@ class _MobilePageState extends State<MobilePage> {
                                     child: TextButton(
                                       child: const Text(
                                         'Edit Mobile',
-                                        style: TextStyle(color: Colors.black),
+                                        // style: TextStyle(color: Colors.black),
                                       ),
                                       onPressed: () {
                                         editmobile(_mobiles[index]);
@@ -326,11 +327,7 @@ class _MobilePageState extends State<MobilePage> {
   Widget? _floatingActionButton() {
     if (_isLoading) {
       return null;
-    }
-    // else if (_showReload) {
-    //   return null;
-    // }
-    else {
+    } else {
       return FloatingActionButton(
           child: Icon(
             Icons.add,
@@ -346,41 +343,36 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
-  Future _checkServices() async {
-    final email = await GlobalVariables.getEmail();
+  Future _getMobileNumber() async {
     final mobileNumber = await GlobalVariables.getMobileNumber();
-    if ((email != null) && (mobileNumber != null)) {
-      var isRunning = await FlutterBackgroundService().isServiceRunning();
-      if (isRunning == false) {
-        FlutterBackgroundService.initialize(onStart);
-      }
-    }
     return (mobileNumber != null) ? mobileNumber : '';
   }
 
   @override
   void initState() {
-    _checkServices().then((value) => setState(() {
-          _mymobileNumber = value;
-        }));
-    ApiMobile.getMobiles().then((mobileList) {
-      setState(() {
-        _mobiles = mobileList;
-        _mobiles.add(new Mobile(
-          mobileNumber: '',
-          mobileName: '',
-          email: '',
-          fcmtoken: '',
-        ));
-        _isLoading = false;
+    startServices().whenComplete(() {
+      _getMobileNumber().then((value) => setState(() {
+            _mymobileNumber = value;
+          }));
+      ApiMobile.getMobiles().then((mobileList) {
+        setState(() {
+          _mobiles = mobileList;
+          _mobiles.add(new Mobile(
+            mobileNumber: '',
+            mobileName: '',
+            email: '',
+            fcmtoken: '',
+          ));
+          _isLoading = false;
+        });
+        if (mobileList.isEmpty) {
+          DialogBox.showErrorDialog(
+            context: context,
+            title: 'No Mobile!',
+            body: 'Click on the plus sign below to add your mobile',
+          );
+        }
       });
-      if (mobileList.isEmpty) {
-        DialogBox.showErrorDialog(
-          context: context,
-          title: 'No Mobile!',
-          body: 'Click on the plus sign below to add your mobile',
-        );
-      }
     });
 
     super.initState();
@@ -389,7 +381,7 @@ class _MobilePageState extends State<MobilePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -397,7 +389,7 @@ class _MobilePageState extends State<MobilePage> {
           appBar: AppBar(
             title: Text('Mobiles'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, MobilePage.route),
           body: _body(),

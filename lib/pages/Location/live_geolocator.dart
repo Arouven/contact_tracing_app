@@ -374,7 +374,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                     ),
                     IconButton(
                       icon: Icon(Icons.refresh),
-                      color: Colors.black,
+                      //  color: Colors.black,
                       iconSize: 30.0,
                       alignment: Alignment.centerRight,
                       onPressed: () {
@@ -385,7 +385,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                     IconButton(
                       icon: Icon(Icons.info),
                       alignment: Alignment.centerRight,
-                      color: Colors.black,
+                      //   color: Colors.black,
                       iconSize: 30.0,
                       onPressed: () {
                         _showLegendDialog();
@@ -559,7 +559,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           appBar: AppBar(
             title: Text('GPS Live Location'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, LiveGeolocatorPage.route),
           body: _body(currentLatLng),

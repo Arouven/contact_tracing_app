@@ -94,19 +94,15 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     );
     if (data != 'Error') {
       print(data);
-      try {
-        Navigator.of(context).pushAndRemoveUntil(
+      final mobileNumber = await GlobalVariables.getMobileNumber();
+      if (mobileNumber == null) {
+        await GlobalVariables.setMobileNumber(mobileNumber: mobileNumber);
+      }
+      Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => MobilePage(),
           ),
-          (e) => false,
-        );
-      } catch (e) {
-        setState(() {
-          _isLoading = false;
-        });
-        print(e.toString());
-      }
+          (e) => false);
     } else {
       setState(() {
         _isLoading = false;
@@ -131,7 +127,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
           ),
           IconButton(
             icon: Icon(Icons.info),
-            color: Colors.black,
+            // color: Colors.black,
             iconSize: 30.0,
             alignment: Alignment.centerRight,
             onPressed: () {
@@ -170,13 +166,11 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
           ),
           ignoreBlank: false,
           autoValidateMode: AutovalidateMode.disabled,
-          selectorTextStyle: TextStyle(color: Colors.black),
+          // selectorTextStyle: TextStyle(color: Colors.black),
           initialValue: number,
           textFieldController: _mobileNumberController,
           formatInput: false,
           keyboardType: TextInputType.number,
-          // keyboardType: TextInputType.numberWithOptions(
-          //     signed: true, decimal: true),
         ),
       ),
       new Container(
@@ -346,7 +340,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      //  color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -364,7 +358,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
             ),
             title: Text('Update Mobile'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, MobilePage.route),
           body: _body(),
