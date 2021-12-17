@@ -1,7 +1,9 @@
 import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/assets/thememanager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/drawer.dart';
 
 class SettingPage extends StatefulWidget {
@@ -15,6 +17,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   bool _isForground = false;
+  bool _isDarkMode = false;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getBackgroundServices();
@@ -36,6 +39,11 @@ class _SettingPageState extends State<SettingPage> {
     await GlobalVariables.setBackgroundServices(backgroundServices: service);
   }
 
+  Future _setDarkMode({required bool mode}) async {
+    if (mode == true) {
+    } else {}
+  }
+
   @override
   void initState() {
     _checkServices().whenComplete(() => setState(() {}));
@@ -43,10 +51,12 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   _body() {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
+          height: 40.0,
           padding: EdgeInsets.all(12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,6 +83,37 @@ class _SettingPageState extends State<SettingPage> {
             ],
           ),
         ),
+        Container(
+          height: 40.0,
+          padding: EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  'Dark Mode:',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
+              Switch.adaptive(
+                value: themeProvider.isDarkMode,
+                onChanged: (value) async {
+                  final provider =
+                      Provider.of<ThemeProvider>(context, listen: false);
+                  provider.toggleTheme(value);
+                  // await _setDarkMode(mode: value);
+                  // setState(() {
+                  //   _isDarkMode = value;
+                  // });
+                },
+                // activeTrackColor: Colors.lightGreenAccent,
+                //activeColor: Colors.green,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -81,7 +122,7 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     //var moblies = ApiProfile.getProfiles();
     return Container(
-      color: Colors.white,
+      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
@@ -89,7 +130,7 @@ class _SettingPageState extends State<SettingPage> {
           appBar: AppBar(
             title: Text('Settings'),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            //backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(
             context,

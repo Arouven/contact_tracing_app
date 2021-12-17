@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/assets/thememanager.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,6 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'models/pushnotification.dart';
 import 'pages/Location/live_geolocator.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/Login/login.dart';
 import './pages/splash.dart';
@@ -138,7 +140,7 @@ late AndroidNotificationChannel channel;
 late NotificationSettings settings;
 late FirebaseMessaging _messaging;
 
-Future<void> setFirebase() async {
+Future<void> _setFirebase() async {
   channel = NotificationServices().androidNotificationChannel();
   flutterLNP = FlutterLocalNotificationsPlugin();
   await flutterLNP
@@ -157,30 +159,30 @@ Future<void> setFirebase() async {
   );
 }
 
-void openAppMessage() {
+void _openAppMessage() {
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Parse the message received
-      sendMsg(message);
+      _sendMsg(message);
     });
   } else {
     print('User declined or has not accepted permission');
   }
 }
 
-Future<void> messageHandler(RemoteMessage message) async {
+Future<void> _messageHandler(RemoteMessage message) async {
   print('background message ${message.notification!.body}');
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
     // Parse the message received
-    sendMsg(message);
+    _sendMsg(message);
   } else {
     print('User declined or has not accepted permission');
   }
 }
 
-Future<void> sendMsg(RemoteMessage message) async {
+Future<void> _sendMsg(RemoteMessage message) async {
   //Notif.notifications.insert(0, message);
   await BadgeServices.updateBadge();
   PushNotification notification = PushNotification(
@@ -197,6 +199,21 @@ Future<void> sendMsg(RemoteMessage message) async {
   );
 }
 
+Future<void> startServices() async {
+  final email = await GlobalVariables.getEmail();
+  final mobileNumber = await GlobalVariables.getMobileNumber();
+  if ((email != null) && (mobileNumber != null)) {
+    var isRunning = await FlutterBackgroundService().isServiceRunning();
+    if (isRunning == false) {
+      FlutterBackgroundService.initialize(onStart);
+      await NotificationServices().showNotification(
+        'Services Started',
+        'You are now connected to our app',
+      );
+    }
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
@@ -205,19 +222,19 @@ void main() async {
   // await prefs.setDouble("lastlat", position.latitude);
   // await prefs.setDouble("lastlng", position.longitude);
 
-  await setFirebase();
-  openAppMessage();
+  await _setFirebase();
+  _openAppMessage();
 
-  FirebaseMessaging.onBackgroundMessage(messageHandler);
+  FirebaseMessaging.onBackgroundMessage(_messageHandler);
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     print('Message clicked!');
   });
-  final email = await GlobalVariables.getEmail();
-  final mobileNumber = await GlobalVariables.getMobileNumber();
-  if ((email != null) && (mobileNumber != null)) {
-    FlutterBackgroundService.initialize(onStart);
-  }
+  await startServices();
   await BadgeServices.updateBadge();
+  runApp(ChangeNotifierProvider<ThemeProvider>(
+    create: (_) => new ThemeProvider(),
+    child: MyApp(),
+  ));
   runApp(MyApp());
 }
 
@@ -225,46 +242,59 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Contact tracing',
-      theme: ThemeData(
-        primarySwatch: mapBoxBlue,
-      ),
-      home: SplashPage(),
-      routes: <String, WidgetBuilder>{
-        //HomePage.route: (context) => HomePage(),
-        LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
-        // SplashPage.route: (context) => SplashPage(),
-        //  RegisterPage.route: (context) => RegisterPage(),
-        LoginPage.route: (context) => LoginPage(),
-        MobilePage.route: (context) => MobilePage(),
-        //  AddMobilePage.route: (context) => AddMobilePage(),
-        //  UpdateMobilePage.route: (context) => UpdateMobilePage(),
-        //  FilterPage.route: (context) => FilterPage(),
-        NotificationsPage.route: (context) => NotificationsPage(),
-        ProfilePage.route: (context) => ProfilePage(),
-        SettingPage.route: (context) => SettingPage(),
+    // final themeProvider = Provider.of<ThemeProvider>(context);
+    return ChangeNotifierProvider<ThemeProvider>(
+      create: (context) => new ThemeProvider(),
+      builder: (context, _) {
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        return MaterialApp(
+          title: 'Contact tracing',
+          theme: lightMode,
+          darkTheme: darkMode,
+          themeMode: themeProvider.themeMode,
+          //  ThemeData(
+          //   primarySwatch: mapBoxBlue,
+          // ),
+          home: SplashPage(),
+          routes: <String, WidgetBuilder>{
+            //HomePage.route: (context) => HomePage(),
+            LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
+            // SplashPage.route: (context) => SplashPage(),
+            //  RegisterPage.route: (context) => RegisterPage(),
+            LoginPage.route: (context) => LoginPage(),
+            MobilePage.route: (context) => MobilePage(),
+            //  AddMobilePage.route: (context) => AddMobilePage(),
+            //  UpdateMobilePage.route: (context) => UpdateMobilePage(),
+            //  FilterPage.route: (context) => FilterPage(),
+            NotificationsPage.route: (context) => NotificationsPage(),
+            ProfilePage.route: (context) => ProfilePage(),
+            SettingPage.route: (context) => SettingPage(),
+          },
+        );
       },
     );
   }
 }
 
-const int _bluePrimary = 0xFF395afa;
-const MaterialColor mapBoxBlue = MaterialColor(
-  _bluePrimary,
-  <int, Color>{
-    50: Color(0xFFE7EBFE),
-    100: Color(0xFFC4CEFE),
-    200: Color(0xFF9CADFD),
-    300: Color(0xFF748CFC),
-    400: Color(0xFF5773FB),
-    500: Color(_bluePrimary),
-    600: Color(0xFF3352F9),
-    700: Color(0xFF2C48F9),
-    800: Color(0xFF243FF8),
-    900: Color(0xFF172EF6),
-  },
-);
+final darkMode = ThemeData.dark();
+final lightMode = ThemeData.light();
+
+
+// const MaterialColor mapBoxBlue = MaterialColor(
+//   0xFF395afa,
+//   <int, Color>{
+//     50: Color(0xFFE7EBFE),
+//     100: Color(0xFFC4CEFE),
+//     200: Color(0xFF9CADFD),
+//     300: Color(0xFF748CFC),
+//     400: Color(0xFF5773FB),
+//     500: Color(0xFF395afa),
+//     600: Color(0xFF3352F9),
+//     700: Color(0xFF2C48F9),
+//     800: Color(0xFF243FF8),
+//     900: Color(0xFF172EF6),
+//   },
+// );
 ////////////////////////////////////////////////////
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
