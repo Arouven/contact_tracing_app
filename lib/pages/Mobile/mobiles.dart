@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -345,17 +346,21 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
-  Future getMobileNumber() async {
-    final mNum = await GlobalVariables.getMobileNumber();
-    if (mNum != null) {
-      return mNum;
+  Future _checkServices() async {
+    final email = await GlobalVariables.getEmail();
+    final mobileNumber = await GlobalVariables.getMobileNumber();
+    if ((email != null) && (mobileNumber != null)) {
+      var isRunning = await FlutterBackgroundService().isServiceRunning();
+      if (isRunning == false) {
+        FlutterBackgroundService.initialize(onStart);
+      }
     }
-    return '';
+    return (mobileNumber != null) ? mobileNumber : '';
   }
 
   @override
   void initState() {
-    getMobileNumber().then((value) => setState(() {
+    _checkServices().then((value) => setState(() {
           _mymobileNumber = value;
         }));
     ApiMobile.getMobiles().then((mobileList) {

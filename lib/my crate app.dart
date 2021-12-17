@@ -1,9 +1,11 @@
 
 
 //todo app
-//reset password
 //live geolocation - on tap markers
 //profile
+//update mobile
+//add mobile
+
 
 //todo web
 //datatables

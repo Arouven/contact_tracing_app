@@ -95,11 +95,11 @@ class _SplashPageState extends State<SplashPage> {
 
     final email = await GlobalVariables.getEmail();
     final mobileNumber = await GlobalVariables.getMobileNumber();
-    return Future.value(LoginPage());
+    // return Future.value(LoginPage());
     if (email != null && mobileNumber != null) {
       print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());
-    } else if (email != null && mobileNumber == null) {
+    } else if (email != null) {
       print("MobilePage");
       return Future.value(MobilePage());
     } else {

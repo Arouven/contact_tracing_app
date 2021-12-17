@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_database/firebase_database.dart';
@@ -26,43 +27,52 @@ Writefile _wf = new Writefile();
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
-  late Timer myTimer;
+  // late Timer myTimer;
   final service = FlutterBackgroundService();
-  service.onDataReceived.listen((event) {
+  service.onDataReceived.listen((event) async {
     if (event!["action"] == "setAsForeground") {
       print("event = setAsForeground");
       // bring to foreground
       service.setForegroundMode(true);
+      await GlobalVariables.setBackgroundServices(
+        backgroundServices: 'setAsForeground',
+      );
       return;
     }
     if (event["action"] == "setAsBackground") {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
+      await GlobalVariables.setBackgroundServices(
+        backgroundServices: 'setAsBackground',
+      );
     }
 
     if (event["action"] == "stopService") {
       print("event action == stopService");
-      myTimer.cancel();
       service.stopBackgroundService();
+      await GlobalVariables.setBackgroundServices(
+        backgroundServices: 'stopService',
+      );
     }
   });
+  // bring to foreground
   service.setForegroundMode(true);
-  myTimer = Timer.periodic(
+  Timer.periodic(
     Duration(minutes: timeToGetLocationPerMinute),
     (timer) async {
       print("in timer");
       if (!(await service.isServiceRunning())) {
         print("cancel timer");
         timer.cancel();
-        myTimer.cancel();
       }
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: geolocatorAccuracy,
-      );
       final email = await GlobalVariables.getEmail();
       final mobileNumber = await GlobalVariables.getMobileNumber();
       if ((email != null) && (mobileNumber != null)) {
         print("email and mobileid not null at start of service");
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: geolocatorAccuracy,
+        );
+
         _wf.writeToFile(
           '${position.latitude.toString()}',
           '${position.longitude.toString()}',
@@ -74,17 +84,13 @@ void onStart() {
           print("file uploaded and counter set to 0");
           counter = 0;
         }
-
         service.setNotificationInfo(
           title: "Contact tracing",
           content:
               "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
         );
-      } else {
-        timer.cancel();
-        myTimer.cancel();
+        counter = counter + 1;
       }
-      counter = counter + 1;
     },
   );
 }
@@ -194,7 +200,7 @@ Future<void> sendMsg(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Geolocator.requestPermission();
-  Position position = await _determinePosition();
+  //Position position = await _determinePosition();
   // final SharedPreferences prefs = await SharedPreferences.getInstance();
   // await prefs.setDouble("lastlat", position.latitude);
   // await prefs.setDouble("lastlng", position.longitude);
@@ -206,7 +212,11 @@ void main() async {
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     print('Message clicked!');
   });
-  FlutterBackgroundService.initialize(onStart);
+  final email = await GlobalVariables.getEmail();
+  final mobileNumber = await GlobalVariables.getMobileNumber();
+  if ((email != null) && (mobileNumber != null)) {
+    FlutterBackgroundService.initialize(onStart);
+  }
   await BadgeServices.updateBadge();
   runApp(MyApp());
 }
@@ -224,7 +234,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         //HomePage.route: (context) => HomePage(),
         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
-        SplashPage.route: (context) => SplashPage(),
+        // SplashPage.route: (context) => SplashPage(),
         //  RegisterPage.route: (context) => RegisterPage(),
         LoginPage.route: (context) => LoginPage(),
         MobilePage.route: (context) => MobilePage(),
@@ -233,6 +243,7 @@ class MyApp extends StatelessWidget {
         //  FilterPage.route: (context) => FilterPage(),
         NotificationsPage.route: (context) => NotificationsPage(),
         ProfilePage.route: (context) => ProfilePage(),
+        SettingPage.route: (context) => SettingPage(),
       },
     );
   }

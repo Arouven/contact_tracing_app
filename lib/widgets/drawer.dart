@@ -4,6 +4,7 @@ import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
+import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:flutter/material.dart';
 import '../pages/Location/live_geolocator.dart';
@@ -72,6 +73,13 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           const Text('Profile'),
           const Icon(Icons.person),
           ProfilePage.route,
+          currentRoute,
+        ),
+        _buildMenuItem(
+          context,
+          const Text('Setting'),
+          const Icon(Icons.settings),
+          SettingPage.route,
           currentRoute,
         ),
       ],

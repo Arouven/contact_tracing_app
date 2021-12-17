@@ -90,6 +90,12 @@ class GlobalVariables {
     await prefs.setString('fileDirectory', fileDirectory);
   }
 
+  static Future setBackgroundServices(
+      {required String backgroundServices}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('backgroundServices', backgroundServices);
+  }
+
 /////////////////// getters
   static Future getEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -139,5 +145,10 @@ class GlobalVariables {
   static Future getFileDirectory() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('fileDirectory');
+  }
+
+  static Future getBackgroundServices() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('backgroundServices');
   }
 }

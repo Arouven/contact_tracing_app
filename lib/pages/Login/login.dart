@@ -64,7 +64,7 @@ class _LoginState extends State<LoginPage> {
           final mobileNumber = await GlobalVariables.getMobileNumber();
 
           print("credential save");
-          print("mobileNumber is " + mobileNumber);
+          //print("mobileNumber is " + mobileNumber);
           if (mobileNumber == '' || mobileNumber == null) {
             print("mobile id is null");
             Navigator.of(context).pushAndRemoveUntil(
