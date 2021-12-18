@@ -41,10 +41,12 @@ class UploadFile {
             fcmtoken: fcmtoken,
           );
         }
-        await NotificationServices().showNotification(
-          'File Uploaded',
-          '$fileName was uploaded',
-        );
+        if (await GlobalVariables.getNotifier() == true) {
+          await NotificationServices().showNotification(
+            'File Uploaded',
+            '$fileName was uploaded',
+          );
+        }
       } else {
         await NotificationServices().showNotification(
           'Please Login',

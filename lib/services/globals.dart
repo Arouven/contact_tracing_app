@@ -96,6 +96,11 @@ class GlobalVariables {
     await prefs.setString('backgroundServices', backgroundServices);
   }
 
+  static Future setNotifier({required bool notifier}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notifier', notifier);
+  }
+
 /////////////////// getters
   static Future getEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -150,5 +155,10 @@ class GlobalVariables {
   static Future getBackgroundServices() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('backgroundServices');
+  }
+
+  static Future getNotifier() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notifier');
   }
 }

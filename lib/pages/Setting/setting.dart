@@ -1,5 +1,5 @@
+import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/globals.dart';
-import 'package:contact_tracing/assets/thememanager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -17,7 +17,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   bool _isForground = false;
-  bool _isDarkMode = false;
+  bool _notifier = false;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getBackgroundServices();
@@ -39,19 +39,22 @@ class _SettingPageState extends State<SettingPage> {
     await GlobalVariables.setBackgroundServices(backgroundServices: service);
   }
 
-  Future _setDarkMode({required bool mode}) async {
-    if (mode == true) {
-    } else {}
+  Future _getNotifier() async {
+    return await GlobalVariables.getNotifier();
   }
 
   @override
   void initState() {
     _checkServices().whenComplete(() => setState(() {}));
+    _getNotifier().then((value) => setState(() {
+          _notifier = value;
+        }));
     super.initState();
   }
 
   _body() {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final provider = Provider.of<ThemeProvider>(context, listen: false);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -63,22 +66,19 @@ class _SettingPageState extends State<SettingPage> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  'Hide Services:',
+                  'Dark Mode:',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headline6,
+                  // style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-              Switch(
-                value: _isForground,
+              Switch.adaptive(
+                value: themeProvider.isDarkMode,
                 onChanged: (value) async {
-                  await _setServices(value);
-                  setState(() {
-                    _isForground = value;
-                  });
+                  provider.toggleTheme(value);
                 },
-                // activeTrackColor: Colors.lightGreenAccent,
-                //activeColor: Colors.green,
+                activeTrackColor: Theme.of(context).backgroundColor,
+                activeColor: Theme.of(context).accentColor,
               ),
             ],
           ),
@@ -91,25 +91,49 @@ class _SettingPageState extends State<SettingPage> {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  'Dark Mode:',
+                  'Hide Services:',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headline6,
+                  //    style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-              Switch.adaptive(
-                value: themeProvider.isDarkMode,
+              Switch(
+                value: _isForground,
                 onChanged: (value) async {
-                  final provider =
-                      Provider.of<ThemeProvider>(context, listen: false);
-                  provider.toggleTheme(value);
-                  // await _setDarkMode(mode: value);
-                  // setState(() {
-                  //   _isDarkMode = value;
-                  // });
+                  await _setServices(value);
+                  setState(() {
+                    _isForground = value;
+                  });
                 },
-                // activeTrackColor: Colors.lightGreenAccent,
-                //activeColor: Colors.green,
+                activeTrackColor: Theme.of(context).backgroundColor,
+                activeColor: Theme.of(context).accentColor,
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 40.0,
+          padding: EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  'Notify when upload:',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Switch(
+                value: _notifier,
+                onChanged: (value) async {
+                  await GlobalVariables.setNotifier(notifier: value);
+                  setState(() {
+                    _notifier = value;
+                  });
+                },
+                activeTrackColor: Theme.of(context).backgroundColor,
+                activeColor: Theme.of(context).accentColor,
               ),
             ],
           ),

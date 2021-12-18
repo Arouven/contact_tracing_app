@@ -329,6 +329,9 @@ class _MobilePageState extends State<MobilePage> {
       return null;
     } else {
       return FloatingActionButton(
+
+          // backgroundColor: Theme.of(context).backgroundColor,
+          //foregroundColor: Theme.of(context).floatingActionButtonTheme,
           child: Icon(
             Icons.add,
           ),

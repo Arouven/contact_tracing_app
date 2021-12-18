@@ -104,6 +104,8 @@ class _LoginState extends State<LoginPage> {
 
   void _createAccountPressed() {
     print("_createAccountPressed function");
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) => RegisterPage()), (e) => false);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RegisterPage()));
   }

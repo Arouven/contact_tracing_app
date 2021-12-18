@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
-import 'package:contact_tracing/assets/thememanager.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -19,6 +18,7 @@ import './pages/splash.dart';
 import 'pages/Mobile/mobiles.dart';
 import 'pages/Notification/notifications.dart';
 import 'pages/Profile/profile.dart';
+import 'providers/thememanager.dart';
 import 'services/globals.dart';
 import 'services/notification.dart';
 import 'services/uploadClass.dart';
@@ -216,6 +216,9 @@ Future<void> startServices() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if ((await GlobalVariables.getNotifier()) == null) {
+    await GlobalVariables.setNotifier(notifier: true);
+  }
   await Geolocator.requestPermission();
   //Position position = await _determinePosition();
   // final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -231,10 +234,7 @@ void main() async {
   });
   await startServices();
   await BadgeServices.updateBadge();
-  runApp(ChangeNotifierProvider<ThemeProvider>(
-    create: (_) => new ThemeProvider(),
-    child: MyApp(),
-  ));
+
   runApp(MyApp());
 }
 
@@ -242,7 +242,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // final themeProvider = Provider.of<ThemeProvider>(context);
     return ChangeNotifierProvider<ThemeProvider>(
       create: (context) => new ThemeProvider(),
       builder: (context, _) {
@@ -252,20 +251,11 @@ class MyApp extends StatelessWidget {
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: themeProvider.themeMode,
-          //  ThemeData(
-          //   primarySwatch: mapBoxBlue,
-          // ),
           home: SplashPage(),
           routes: <String, WidgetBuilder>{
-            //HomePage.route: (context) => HomePage(),
             LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
-            // SplashPage.route: (context) => SplashPage(),
-            //  RegisterPage.route: (context) => RegisterPage(),
             LoginPage.route: (context) => LoginPage(),
             MobilePage.route: (context) => MobilePage(),
-            //  AddMobilePage.route: (context) => AddMobilePage(),
-            //  UpdateMobilePage.route: (context) => UpdateMobilePage(),
-            //  FilterPage.route: (context) => FilterPage(),
             NotificationsPage.route: (context) => NotificationsPage(),
             ProfilePage.route: (context) => ProfilePage(),
             SettingPage.route: (context) => SettingPage(),
@@ -276,25 +266,51 @@ class MyApp extends StatelessWidget {
   }
 }
 
-final darkMode = ThemeData.dark();
-final lightMode = ThemeData.light();
+//final darkMode = ThemeData.dark();
+final darkMode = ThemeData(
+  primarySwatch: Colors.grey,
+  primaryColor: Colors.black,
+  brightness: Brightness.dark,
+  backgroundColor: const Color(0xFF212121),
+  accentColor: Colors.white,
+  accentIconTheme: IconThemeData(color: Colors.black),
+  dividerColor: Colors.black12,
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    foregroundColor: Colors.black,
+    backgroundColor: Colors.grey,
+  ),
+);
 
-
-// const MaterialColor mapBoxBlue = MaterialColor(
-//   0xFF395afa,
-//   <int, Color>{
-//     50: Color(0xFFE7EBFE),
-//     100: Color(0xFFC4CEFE),
-//     200: Color(0xFF9CADFD),
-//     300: Color(0xFF748CFC),
-//     400: Color(0xFF5773FB),
-//     500: Color(0xFF395afa),
-//     600: Color(0xFF3352F9),
-//     700: Color(0xFF2C48F9),
-//     800: Color(0xFF243FF8),
-//     900: Color(0xFF172EF6),
-//   },
+final lightMode = ThemeData(primarySwatch: lightBlueTheme);
+// final lightMode = ThemeData(
+//   primarySwatch: Colors.lightBlue,
+//   primaryColor: Colors.blue,
+//   brightness: Brightness.light,
+//   backgroundColor: const Color(0xFFE5E5E5),
+//   accentColor: Colors.black,
+//   accentIconTheme: IconThemeData(color: Colors.white),
+//   dividerColor: Colors.white54,
+//   floatingActionButtonTheme: FloatingActionButtonThemeData(
+//     foregroundColor: Colors.white,
+//     backgroundColor: Colors.blue[900],
+//   ),
 // );
+
+const MaterialColor lightBlueTheme = MaterialColor(
+  0xFF395afa,
+  <int, Color>{
+    50: Color(0xFFE7EBFE),
+    100: Color(0xFFC4CEFE),
+    200: Color(0xFF9CADFD),
+    300: Color(0xFF748CFC),
+    400: Color(0xFF5773FB),
+    500: Color(0xFF395afa),
+    600: Color(0xFF3352F9),
+    700: Color(0xFF2C48F9),
+    800: Color(0xFF243FF8),
+    900: Color(0xFF172EF6),
+  },
+);
 ////////////////////////////////////////////////////
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';

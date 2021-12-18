@@ -12,9 +12,251 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String _email = 'areouvlasjfldsjflsdkfjlsdkjdd';
+  String _address = 'bambousssss';
+  String _dateOfBirth = '1996-06-14';
+  var _phones = [
+    'bambousssss',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545',
+    '+23057681285',
+    '+2858786545'
+  ];
+
   @override
   void initState() {
     super.initState();
+  }
+
+  _body() {
+    List<Widget> widgetList = [];
+    widgetList.clear();
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                'Email: ',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              width: 20.0,
+            ),
+            Expanded(
+              child: Text(
+                _email,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                // style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                'Address: ',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            IconButton(
+              iconSize: 20.0,
+              icon: Icon(
+                Icons.edit,
+              ),
+              onPressed: () {
+                print('logout');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 60.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              width: 20.0,
+            ),
+            Expanded(
+              child: Text(
+                _address,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                'Date of birth:',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            IconButton(
+              iconSize: 20.0,
+              icon: Icon(
+                Icons.edit,
+              ),
+              onPressed: () {
+                print('logout');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                _dateOfBirth,
+                textAlign: TextAlign.center,
+                // style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    widgetList.add(
+      Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                'Phone(s):',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            IconButton(
+              iconSize: 20.0,
+              icon: Icon(
+                Icons.edit,
+              ),
+              onPressed: () {
+                print('logout');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+    for (String phoneNumber in _phones) {
+      widgetList.add(Container(
+        height: 40.0,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              width: 20.0,
+            ),
+            Expanded(
+              child: Text(
+                phoneNumber,
+                textAlign: TextAlign.center,
+                // style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          ],
+        ),
+      ));
+    }
+    return Scrollbar(
+      child: SingleChildScrollView(
+        // scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: widgetList,
+        ),
+      ),
+    );
   }
 
   @override
@@ -29,10 +271,21 @@ class _ProfilePageState extends State<ProfilePage> {
           appBar: AppBar(
             title: Text('Profile'),
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.power_settings_new_rounded,
+                ),
+                onPressed: () {
+                  print('logout');
+                },
+              ),
+            ],
+
             // backgroundColor: Colors.blue,
           ),
           drawer: buildDrawer(context, ProfilePage.route),
-          //body:
+          body: _body(),
         ),
       ),
     );
