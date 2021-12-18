@@ -185,6 +185,7 @@ class _MobilePageState extends State<MobilePage> {
                     await GlobalVariables.setMobileNumber(
                       mobileNumber: mobile.mobileNumber,
                     );
+                    await startServices();
                     setState(() {
                       _mymobileNumber = mobile.mobileNumber;
                       _isLoading = false;

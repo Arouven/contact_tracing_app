@@ -191,6 +191,7 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
+  bool _obscureText = true;
   Widget _displayLogin() {
     return Container(
       child: ListView(
@@ -214,6 +215,18 @@ class _LoginState extends State<LoginPage> {
             ),
           ),
           ListTile(
+            trailing: IconButton(
+              // iconSize: 20.0,
+              icon: Icon(
+                Icons.remove_red_eye,
+              ),
+
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
+              },
+            ),
             title: new TextField(
               controller: _passwordController,
               decoration: new InputDecoration(
@@ -226,7 +239,7 @@ class _LoginState extends State<LoginPage> {
                   _invalidPassword = s.isEmpty ? true : false;
                 });
               },
-              obscureText: true,
+              obscureText: _obscureText,
             ),
           ),
           ListTile(

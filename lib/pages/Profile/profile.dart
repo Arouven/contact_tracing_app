@@ -1,3 +1,4 @@
+import 'package:contact_tracing/pages/Profile/updateDate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
@@ -174,7 +175,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icons.edit,
               ),
               onPressed: () {
-                print('logout');
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => UpdateDatePage(
+                    dateOfBirth: _dateOfBirth,
+                  ),
+                ));
               },
             ),
           ],

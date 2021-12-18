@@ -204,6 +204,7 @@ Future<void> startServices() async {
   final mobileNumber = await GlobalVariables.getMobileNumber();
   if ((email != null) && (mobileNumber != null)) {
     var isRunning = await FlutterBackgroundService().isServiceRunning();
+    print('is running ' + isRunning.toString());
     if (isRunning == false) {
       FlutterBackgroundService.initialize(onStart);
       await NotificationServices().showNotification(

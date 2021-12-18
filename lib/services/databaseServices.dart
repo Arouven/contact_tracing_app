@@ -52,6 +52,20 @@ class DatabaseMySQLServices {
     }
   }
 
+  static Future updateDateOfBirth(
+      {required String email, required String dateOfBirth}) async {
+    final res = await http.post(
+      Uri.parse(updateDateOfBirthUrl),
+      body: {
+        "email": email,
+        'dateOfBirth': dateOfBirth.trim(),
+      },
+    );
+    final body = json.decode(res.body);
+    print(body);
+    return body;
+  }
+
   static Future addMobile({
     required String mobileName,
     required String email,

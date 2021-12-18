@@ -17,7 +17,8 @@ const String updateMobilefmcTokenUrl =
     website + "apis/updateMobilefmcToken.php";
 const String addMobileUrl = website + "apis/addMobile.php";
 const String registerUrl = website + "flutter_login/register.php";
-//const String checkEmailUrl = website + "flutter_login/checkUsername.php";
+const String updateDateOfBirthUrl =
+    website + "flutter_login/updateDateOfBirth.php";
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
