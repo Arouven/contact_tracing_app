@@ -52,6 +52,20 @@ class DatabaseMySQLServices {
     }
   }
 
+  static Future getUserInfo({required String email}) async {
+    try {
+      final res = await http.post(
+        Uri.parse(getUserInfoUrl),
+        body: {
+          'email': email,
+        },
+      );
+      return res.body;
+    } catch (e) {
+      return 'Error';
+    }
+  }
+
   static Future updateDateOfBirth(
       {required String email, required String dateOfBirth}) async {
     final res = await http.post(

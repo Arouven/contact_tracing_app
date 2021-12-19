@@ -33,7 +33,7 @@ class Aesthetic {
   //   );
   // }
 
-  static Widget refreshButton({context, route}) {
+  static Widget refreshButton({required BuildContext context, required route}) {
     return Center(
       child: FloatingActionButton(
           foregroundColor: Colors.red,

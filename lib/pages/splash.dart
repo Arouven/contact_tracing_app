@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 import 'Login/login.dart';
 import 'Mobile/mobiles.dart';
+import 'Profile/profile.dart';
+import 'Profile/updateDate.dart';
 
 class SplashPage extends StatefulWidget {
   static const String route = '/splash';
@@ -95,7 +97,8 @@ class _SplashPageState extends State<SplashPage> {
 
     final email = await GlobalVariables.getEmail();
     final mobileNumber = await GlobalVariables.getMobileNumber();
-    // return Future.value(LoginPage());
+
+    return Future.value(ProfilePage());
     if (email != null && mobileNumber != null) {
       print("LiveGeolocatorPage");
       return Future.value(LiveGeolocatorPage());

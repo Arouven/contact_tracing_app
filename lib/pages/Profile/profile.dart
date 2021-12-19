@@ -1,8 +1,13 @@
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/pages/Profile/updateAddress.dart';
 import 'package:contact_tracing/pages/Profile/updateDate.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
 import 'package:intl/intl.dart'; // for date format
+import 'package:lipsum/lipsum.dart' as lipsum;
 
 class ProfilePage extends StatefulWidget {
   static const String route = '/profile';
@@ -14,52 +19,23 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _email = 'areouvlasjfldsjflsdkfjlsdkjdd';
-  String _address = 'bambousssss';
-  String _dateOfBirth = '1996-06-14';
-  var _phones = [
-    'bambousssss',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545',
-    '+23057681285',
-    '+2858786545'
-  ];
+  String _email = '';
+  String _address = '';
+  String _dateOfBirth = '';
+  String _phones = '';
+  String _firstName = "";
+  String _lastName = "";
   Future _getData() async {
-    var dateFormate =
-        DateFormat("dd-MMM-yyyy").format(DateTime.parse("1996-12-16"));
-    _dateOfBirth = dateFormate;
+    final email = await GlobalVariables.getEmail();
+    final response = await DatabaseMySQLServices.getUserInfo(email: email);
+    if (response != null) {
+      _address = response['Address'];
+      _firstName = response['firstName'];
+      _lastName = response['lastName'];
+      _address = response['address'];
+      _dateOfBirth = response['dateOfBirth'];
+      _phones = response['mobiles'];
+    }
   }
 
   @override
@@ -71,207 +47,139 @@ class _ProfilePageState extends State<ProfilePage> {
   _body() {
     List<Widget> widgetList = [];
     widgetList.clear();
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                'Email: ',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
+    var listview = ListView(
+      children: [
+        ListTile(
+          title: Text(
+            'Email:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            _email,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-    );
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: 20.0,
-            ),
-            Expanded(
-              child: Text(
-                _email,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                // style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-          ],
+        ListTile(
+          title: Text(
+            'Name:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            "$_firstName $_lastName",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-    );
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                'Address: ',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+        ListTile(
+          title: Text(
+            'Address:',
+            // maxLines: 1,
+            //overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            lipsum.createText(numParagraphs: 10, numSentences: 5),
+            //_address,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.justify,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          trailing: IconButton(
+            iconSize: 20.0,
+            icon: Icon(
+              Icons.edit,
             ),
-            IconButton(
-              iconSize: 20.0,
-              icon: Icon(
-                Icons.edit,
-              ),
-              onPressed: () {
-                print('logout');
-              },
-            ),
-          ],
+            onPressed: () {
+              print('pressed');
+
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => UpdateAddressPage(
+                  address: _address,
+                ),
+              ));
+            },
+          ),
         ),
-      ),
-    );
-    widgetList.add(
-      Container(
-        height: 60.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: 20.0,
+        ListTile(
+          title: Text(
+            'Date of birth:',
+            // maxLines: 1,
+            //overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            _dateOfBirth,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          trailing: IconButton(
+            iconSize: 20.0,
+            icon: Icon(
+              Icons.edit,
             ),
-            Expanded(
-              child: Text(
-                _address,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                'Date of birth:',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            IconButton(
-              iconSize: 20.0,
-              icon: Icon(
-                Icons.edit,
-              ),
-              onPressed: () {
-                //  setState(() {
-                print(_dateOfBirth);
-                //});
+            onPressed: () {
+              print('pressed');
+              try {
+                var strDate = '1974-03-20 00:00:00.000';
+                //  strDate = '14-Jun-1996';
+                var dateParse = DateTime.parse(strDate);
+                // var formatter = DateFormat('yyyy-MM-dd');
+                var formatter = DateFormat('dd-MMM-yyyy');
+                print(formatter.format(dateParse));
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => UpdateDatePage(
-                    dateOfBirth: '14-jun-1996',
+                    dateOfBirth: strDate,
                   ),
                 ));
-              },
-            ),
-          ],
+              } catch (e) {
+                print(e);
+              }
+            },
+          ),
         ),
-      ),
+        ListTile(
+          title: Text(
+            'Phone(s):',
+            // maxLines: 1,
+            //overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            _phones,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          trailing: IconButton(
+            iconSize: 20.0,
+            icon: Icon(
+              Icons.edit,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => MobilePage(),
+              ));
+            },
+          ),
+        ),
+      ],
     );
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                _dateOfBirth,
-                textAlign: TextAlign.center,
-                // style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    widgetList.add(
-      Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                'Phone(s):',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            IconButton(
-              iconSize: 20.0,
-              icon: Icon(
-                Icons.edit,
-              ),
-              onPressed: () {
-                print('logout');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-    for (String phoneNumber in _phones) {
-      widgetList.add(Container(
-        height: 40.0,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Container(
-              width: 20.0,
-            ),
-            Expanded(
-              child: Text(
-                phoneNumber,
-                textAlign: TextAlign.center,
-                // style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-          ],
-        ),
-      ));
-    }
-    return Scrollbar(
-      child: SingleChildScrollView(
-        // scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: widgetList,
-        ),
-      ),
-    );
+    return listview;
+    //  Expanded(
+    //       child: Scrollbar(
+    //         child: SingleChildScrollView(
+    //           scrollDirection: Axis.vertical,
+    //           padding: EdgeInsets.all(8.0),
+    //           child: listview,
+    //         ),
+    //       ),
+    //     ),
+    // return listview;
   }
 
   @override
@@ -306,8 +214,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-
 
 // import 'package:flutter/material.dart';
 

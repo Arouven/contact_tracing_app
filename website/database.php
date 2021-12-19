@@ -131,6 +131,23 @@ class database
         );
     }
 
+    public function selectStored($sql)
+    {
+        try {
+            $pdo = new PDO("mysql:host=" . HOST . ";dbname=" . DATABASENAME . "", USERNAME, PASSWORD);
+            // execute the stored procedure
+            // $sql = "CALL GETUSERINFO('aroupoolian')";
+            // call the stored procedure
+            $q = $pdo->query($sql);
+            $q->setFetchMode(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Error occurred:" . $e->getMessage());
+        }
+        while ($r = $q->fetch()) {
+            $resultset[] = $r;
+        }
+        return $resultset;
+    }
     /**
      * To get database results
      *

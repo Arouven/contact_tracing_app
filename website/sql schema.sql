@@ -452,3 +452,22 @@ VALUES
     '57.497987',
     '1'
   );
+
+-- create stored procedure
+DELIMITER / / CREATE PROCEDURE GETUSERINFO(IN email VARCHAR(255)) BEGIN
+SELECT
+  u.email,
+  u.firstName,
+  u.lastName,
+  u.dateOfBirth,
+  u.address,
+  GROUP_CONCAT(DISTINCT m.mobileNumber SEPARATOR '\n') AS mobiles
+FROM
+  `User` u
+  INNER JOIN `Mobile` m ON u.email = m.email
+WHERE
+  u.email = email;
+
+END;
+
+/ / DELIMITER;

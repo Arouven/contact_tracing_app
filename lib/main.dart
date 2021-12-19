@@ -200,12 +200,15 @@ Future<void> _sendMsg(RemoteMessage message) async {
 }
 
 Future<void> startServices() async {
+  print('start services');
   final email = await GlobalVariables.getEmail();
   final mobileNumber = await GlobalVariables.getMobileNumber();
   if ((email != null) && (mobileNumber != null)) {
+    print('email and mobile number not null');
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
     if (isRunning == false) {
+      print('start the service');
       FlutterBackgroundService.initialize(onStart);
       await NotificationServices().showNotification(
         'Services Started',
@@ -218,6 +221,7 @@ Future<void> startServices() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if ((await GlobalVariables.getNotifier()) == null) {
+    print('null notifier');
     await GlobalVariables.setNotifier(notifier: true);
   }
   await Geolocator.requestPermission();
