@@ -2,6 +2,7 @@ import 'package:contact_tracing/pages/Profile/updateDate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
+import 'package:intl/intl.dart'; // for date format
 
 class ProfilePage extends StatefulWidget {
   static const String route = '/profile';
@@ -55,9 +56,15 @@ class _ProfilePageState extends State<ProfilePage> {
     '+23057681285',
     '+2858786545'
   ];
+  Future _getData() async {
+    var dateFormate =
+        DateFormat("dd-MMM-yyyy").format(DateTime.parse("1996-12-16"));
+    _dateOfBirth = dateFormate;
+  }
 
   @override
   void initState() {
+    _getData().whenComplete(() => setState(() {}));
     super.initState();
   }
 
@@ -175,9 +182,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 Icons.edit,
               ),
               onPressed: () {
+                //  setState(() {
+                print(_dateOfBirth);
+                //});
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => UpdateDatePage(
-                    dateOfBirth: _dateOfBirth,
+                    dateOfBirth: '14-jun-1996',
                   ),
                 ));
               },

@@ -24,24 +24,27 @@ class UpdateDatePage extends StatefulWidget {
 class _UpdateDatePageState extends State<UpdateDatePage> {
   bool _isLoading = false;
   bool _showReload = false;
-  String _dateOfBirth = '14-jun-1996';
+  String _dateOfBirth = '14-jun-1996'; //2002-12-19 00:00:00.000
   Future _getDOB() async {
     _dateOfBirth = widget.dateOfBirth;
   }
 
   @override
   void initState() {
-    _getDOB().whenComplete(() => setState(() {}));
+    //_getDOB().whenComplete(() => setState(() {}));
     super.initState();
   }
 
   DateTime _initialDate(DateTime dateNow) {
+    print(widget.dateOfBirth.toString());
+    print(_dateOfBirth.toString());
     try {
-      var existing = DateTime.parse(_dateOfBirth);
+      var existing = DateTime.parse(_dateOfBirth.toLowerCase());
+      print(_dateOfBirth);
       print('already have dob in var');
       return DateTime(existing.year, existing.month, existing.day);
-    } on Exception {
-      print('exception');
+    } catch (e) {
+      print('exception: ' + e.toString());
       return DateTime(dateNow.year - 18, dateNow.month, dateNow.day);
     }
   }
@@ -85,10 +88,13 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
                     print(_dateOfBirth);
                   },
                   pickerTheme: DateTimePickerTheme(
-                      // backgroundColor: Colors.transparent,
-                      // itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
-                      // dividerColor: Colors.blue,
-                      ),
+                    backgroundColor: Colors.transparent,
+                    itemTextStyle: TextStyle(
+                      fontSize: 19,
+                      color: Theme.of(context).accentColor,
+                    ),
+                    // dividerColor: Colors.blue,
+                  ),
                 ),
               ),
             ),

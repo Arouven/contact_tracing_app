@@ -3,7 +3,7 @@ import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/drawer.dart';
-import 'package:lipsum/lipsum.dart' as lipsum;
+//import 'package:lipsum/lipsum.dart' as lipsum;
 
 class SingleNotificationPage extends StatefulWidget {
   static const String route = '/singlenotif';
@@ -41,7 +41,7 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
       0,
       humanReadableTimeStamp.length - 4,
     );
-    var testText = lipsum.createText(numParagraphs: 10, numSentences: 5);
+    //var testText = lipsum.createText(numParagraphs: 10, numSentences: 5);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
