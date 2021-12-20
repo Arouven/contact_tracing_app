@@ -1,10 +1,9 @@
 
 
 //todo app
+//internet conn
 //live geolocation - on tap markers
 //profile
-//update mobile
-//add mobile
 //set active mobile
 //ignore in mysql php
 //darkmode

@@ -43,15 +43,19 @@ const String channelDescription = 'your channel description';
 const String flutterIcon = '@mipmap/ic_launcher';
 
 class GlobalVariables {
+  static String emailProp = '';
+
   ///unset all
   static Future unsetAll() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    emailProp = '';
     await prefs.clear();
   }
 
   ////////Setters
   static Future setEmail({required String email}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    emailProp = email;
     await prefs.setString('email', email);
   }
 
