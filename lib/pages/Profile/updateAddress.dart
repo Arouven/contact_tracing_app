@@ -7,6 +7,8 @@ import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../widgets/drawer.dart';
 
 class UpdateAddressPage extends StatefulWidget {
@@ -64,10 +66,23 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
           physics: AlwaysScrollableScrollPhysics(),
           children: [
             ListTile(
+              title: Text(
+                'Address',
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.location_on,
+                ),
+                onPressed: () async {
+                  await _fillAddresses();
+                },
+              ),
+            ),
+            ListTile(
               title: TextField(
                 controller: _addressController,
                 decoration: new InputDecoration(
-                  labelText: 'Address',
+                  //labelText: 'Address',
                   errorText: _invalidAddress ? 'Address Can\'t Be Empty' : null,
                 ),
               ),
@@ -75,6 +90,32 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
           ],
         ),
       );
+    }
+  }
+
+  Future _fillAddresses() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: geolocatorAccuracy);
+
+      final coordinates =
+          new Coordinates(position.latitude, position.longitude);
+      final addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      final instance = addresses.first;
+
+      setState(() {
+        _addressController.text = (instance.locality +
+            ', ' +
+            instance.adminArea +
+            ', ' +
+            instance.countryName);
+      });
+    } catch (e) {
+      print('problem in try' + e.toString());
+      // setState(() {
+      //   _defaultCountry = null;
+      // });
     }
   }
 
