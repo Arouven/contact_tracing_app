@@ -9,28 +9,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import '../../widgets/drawer.dart';
 
-class UpdateAddressPage extends StatefulWidget {
-  static const String route = '/updateAddress';
+class UpdateNamePage extends StatefulWidget {
+  static const String route = '/updateName';
 
-  final String address;
-  const UpdateAddressPage({
-    required this.address,
+  final String firstName;
+  final String lastName;
+  const UpdateNamePage({
+    required this.firstName,
+    required this.lastName,
   });
   @override
-  _UpdateAddressPageState createState() {
-    return _UpdateAddressPageState();
+  _UpdateNamePageState createState() {
+    return _UpdateNamePageState();
   }
 }
 
-class _UpdateAddressPageState extends State<UpdateAddressPage> {
+class _UpdateNamePageState extends State<UpdateNamePage> {
   bool _showReload = false;
   bool _isLoading = true;
   // String _firstName = '';
   // String _lastName = '';
-  bool _invalidAddress = false;
-  TextEditingController _addressController = TextEditingController();
+  bool _invalidFirstName = false;
+  bool _invalidLastName = false;
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
   Future _getData() async {
-    _addressController.text = widget.address;
+    _firstNameController.text = widget.firstName;
+    _lastNameController.text = widget.lastName;
   }
 
   @override
@@ -65,36 +70,101 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
           children: [
             ListTile(
               title: TextField(
-                controller: _addressController,
+                controller: _firstNameController,
                 decoration: new InputDecoration(
-                  labelText: 'Address',
-                  errorText: _invalidAddress ? 'Address Can\'t Be Empty' : null,
+                  labelText: 'First Name',
+                  errorText:
+                      _invalidFirstName ? 'First Name Can\'t Be Empty' : null,
+                ),
+              ),
+            ),
+            ListTile(
+              title: TextField(
+                controller: _lastNameController,
+                decoration: new InputDecoration(
+                  labelText: 'Last Name',
+                  errorText:
+                      _invalidLastName ? 'Last Name Can\'t Be Empty' : null,
                 ),
               ),
             ),
           ],
         ),
       );
+
+      //   return SingleChildScrollView(
+      //     child: new Column(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       crossAxisAlignment: CrossAxisAlignment.center,
+      //       children: [
+      //         new Container(
+      //           child: new Text(
+      //             'Date of birth',
+      //             style: TextStyle(
+      //               fontSize: 40.0,
+      //             ),
+      //           ),
+      //         ),
+      //         SizedBox(
+      //           height: MediaQuery.of(context).size.height / 2, // / 1.3,
+      //           child: Center(
+      //             child: new Container(
+      //               alignment: Alignment.center,
+      //               child: new DatePickerWidget(
+      //                 looping: true, // default is not looping
+      //                 lastDate: DateTime(
+      //                   dateParse.year,
+      //                   dateParse.month,
+      //                   dateParse.day,
+      //                 ),
+
+      //                 initialDate: initialdate,
+      //                 dateFormat: "dd-MMM-yyyy",
+      //                 locale: DatePicker.localeFromString('en'),
+      //                 onChange: (DateTime newDate, _) {
+      //                   _dateOfBirth = newDate.toString();
+      //                   print(_dateOfBirth);
+      //                 },
+      //                 pickerTheme: DateTimePickerTheme(
+      //                   backgroundColor: Colors.transparent,
+      //                   itemTextStyle: TextStyle(
+      //                     fontSize: 19,
+      //                     color: Theme.of(context).accentColor,
+      //                   ),
+      //                   // dividerColor: Colors.blue,
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   );
     }
   }
 
-  Future _updateAddress() async {
+  Future _updateNames() async {
     setState(() {
       _isLoading = true;
     });
     final email = await GlobalVariables.getEmail();
     try {
-      final response = await DatabaseMySQLServices.updateAddress(
+      final response = await DatabaseMySQLServices.updateName(
         email: email,
-        address: _addressController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
       );
       print(response);
-
+      final data = {
+        "firstName": _firstNameController.text.trim(),
+        "lastName": _lastNameController.text.trim(),
+      };
+      print(data);
       setState(() {
         _isLoading = false;
       });
       print('poping the screen');
-      Navigator.pop(context, _addressController.text.trim());
+      Navigator.pop(context, data);
     } catch (e) {
       print(e);
       setState(() {
@@ -112,7 +182,7 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
         bottom: true,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Update Address'),
+            title: Text('Update Names'),
             centerTitle: true,
             leading: BackButton(
               onPressed: () {
@@ -126,18 +196,24 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
                 ),
                 onPressed: () async {
                   setState(() {
-                    _addressController.text.isEmpty
-                        ? _invalidAddress = true
-                        : _invalidAddress = false;
+                    _firstNameController.text.isEmpty
+                        ? _invalidFirstName = true
+                        : _invalidFirstName = false;
+                    _lastNameController.text.isEmpty
+                        ? _invalidLastName = true
+                        : _invalidLastName = false;
+                    // (_isEmail(_emailController.text.trim()))
+                    //     ? _invalidEmail = false
+                    //     : _invalidEmail = true;
                   });
-                  if (_invalidAddress == false) {
+                  if (_invalidFirstName == false && _invalidLastName == false) {
                     return showDialog<void>(
                       context: context,
                       barrierDismissible: false, // user must tap button!
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Text(
-                            'Update Address',
+                            'Update Names',
                             style: TextStyle(
                               color: Colors.orange,
                             ),
@@ -149,7 +225,7 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                          'Are you sure you want to update the your address?'),
+                                          'Are you sure you want to update the names?'),
                                     ),
                                   ],
                                 ),
@@ -167,7 +243,7 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
                               child: Text('Update'),
                               onPressed: () async {
                                 Navigator.of(context).pop();
-                                await _updateAddress();
+                                await _updateNames();
                               },
                             ),
                           ],

@@ -80,6 +80,39 @@ class DatabaseMySQLServices {
     return body;
   }
 
+  static Future updateName(
+      {required String email,
+      required String firstName,
+      required String lastName}) async {
+    final res = await http.post(
+      Uri.parse(updateNameUrl),
+      body: {
+        "email": email,
+        'firstName': firstName,
+        'lastName': lastName,
+      },
+    );
+    final body = json.decode(res.body);
+    print(body);
+    return body;
+  }
+
+  static Future updateAddress({
+    required String email,
+    required String address,
+  }) async {
+    final res = await http.post(
+      Uri.parse(updateAddressUrl),
+      body: {
+        "email": email,
+        'address': address,
+      },
+    );
+    final body = json.decode(res.body);
+    print(body);
+    return body;
+  }
+
   static Future addMobile({
     required String mobileName,
     required String email,

@@ -207,15 +207,25 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
-    if (isRunning == false) {
-      print('start the service');
-      FlutterBackgroundService.initialize(onStart);
-      await NotificationServices().showNotification(
-        'Services Started',
-        'You are now connected to our app',
-      );
-    }
+    // if (isRunning == false) {
+    print('start the service');
+    FlutterBackgroundService.initialize(onStart);
+    await NotificationServices().showNotification(
+      'Services Started',
+      'You are now connected to our app',
+    );
+    //}
   }
+}
+
+Future logout(context) async {
+  await GlobalVariables.unsetAll();
+  FlutterBackgroundService().sendData({"action": "stopService"});
+  Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => SplashPage(),
+      ),
+      (route) => false);
 }
 
 void main() async {
@@ -237,7 +247,6 @@ void main() async {
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     print('Message clicked!');
   });
-  await startServices();
   await BadgeServices.updateBadge();
 
   runApp(MyApp());

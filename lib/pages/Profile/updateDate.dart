@@ -38,9 +38,31 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
     super.initState();
   }
 
+  _updateDate() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final email = await GlobalVariables.getEmail();
+    try {
+      final response = await DatabaseMySQLServices.updateDateOfBirth(
+          email: email, dateOfBirth: _dateOfBirth);
+      print(response);
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.pop(context, _dateOfBirth);
+    } catch (e) {
+      print(e);
+      setState(() {
+        _isLoading = false;
+        _showReload = true;
+      });
+    }
+  }
+
   Widget _body() {
     var date = new DateTime.now().toString();
-    print(date.toString());
+    // print(date.toString());
     var dateParse = DateTime.parse(date);
 
     var initialdate = DateTime(
@@ -126,29 +148,62 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
             title: Text('Update DOB'),
             centerTitle: true,
             leading: BackButton(
-              onPressed: () async {
-                setState(() {
-                  _isLoading = true;
-                });
-                final email = await GlobalVariables.getEmail();
-                try {
-                  final response =
-                      await DatabaseMySQLServices.updateDateOfBirth(
-                          email: email, dateOfBirth: _dateOfBirth);
-                  final json = jsonDecode(response.body);
-                  setState(() {
-                    _isLoading = false;
-                  });
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  print(e);
-                  setState(() {
-                    _isLoading = false;
-                    _showReload = true;
-                  });
-                }
+              onPressed: () {
+                Navigator.pop(context);
               },
             ),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.done,
+                ),
+                onPressed: () async {
+                  return showDialog<void>(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Update DOB',
+                          style: TextStyle(
+                            color: Colors.orange,
+                          ),
+                        ),
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: <Widget>[
+                              new Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                        'Are you sure you want to update the date of birth?'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Update'),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await _updateDate();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
           drawer: buildDrawer(context, ProfilePage.route),
           body: _body(),

@@ -18,8 +18,13 @@ const String updateMobilefmcTokenUrl =
 const String addMobileUrl = website + "apis/addMobile.php";
 const String registerUrl = website + "flutter_login/register.php";
 const String getUserInfoUrl = website + "apis/getUserInfo.php";
+
 const String updateDateOfBirthUrl =
     website + "flutter_login/updateDateOfBirth.php";
+const String updateAddressUrl = website + "flutter_login/updateAddress.php";
+
+const String updateNameUrl = website + "flutter_login/updateName.php";
+
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
@@ -38,6 +43,12 @@ const String channelDescription = 'your channel description';
 const String flutterIcon = '@mipmap/ic_launcher';
 
 class GlobalVariables {
+  ///unset all
+  static Future unsetAll() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
   ////////Setters
   static Future setEmail({required String email}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

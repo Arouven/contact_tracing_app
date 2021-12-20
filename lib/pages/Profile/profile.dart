@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Profile/updateAddress.dart';
 import 'package:contact_tracing/pages/Profile/updateDate.dart';
+import 'package:contact_tracing/pages/Profile/updateName.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../main.dart';
 import '../../widgets/drawer.dart';
 import 'package:intl/intl.dart'; // for date format
 import 'package:lipsum/lipsum.dart' as lipsum;
@@ -19,6 +24,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  bool _isLoading = true;
+
   String _email = '';
   String _address = '';
   String _dateOfBirth = '';
@@ -27,26 +34,29 @@ class _ProfilePageState extends State<ProfilePage> {
   String _lastName = "";
   Future _getData() async {
     final email = await GlobalVariables.getEmail();
-    final response = await DatabaseMySQLServices.getUserInfo(email: email);
+    print(email);
+    final response =
+        jsonDecode(await DatabaseMySQLServices.getUserInfo(email: email));
+    print(response);
     if (response != null) {
-      _address = response['Address'];
-      _firstName = response['firstName'];
-      _lastName = response['lastName'];
-      _address = response['address'];
-      _dateOfBirth = response['dateOfBirth'];
-      _phones = response['mobiles'];
+      _email = response[0]['email'];
+      _firstName = response[0]['firstName'];
+      _lastName = response[0]['lastName'];
+      _address = response[0]['address'];
+      _dateOfBirth = response[0]['dateOfBirth'];
+      _phones = response[0]['mobiles'];
     }
   }
 
   @override
   void initState() {
-    _getData().whenComplete(() => setState(() {}));
+    _getData().whenComplete(() => setState(() {
+          _isLoading = false;
+        }));
     super.initState();
   }
 
   _body() {
-    List<Widget> widgetList = [];
-    widgetList.clear();
     var listview = ListView(
       children: [
         ListTile(
@@ -74,6 +84,32 @@ class _ProfilePageState extends State<ProfilePage> {
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          trailing: IconButton(
+            iconSize: 20.0,
+            icon: Icon(
+              Icons.edit,
+            ),
+            onPressed: () async {
+              print('pressed');
+
+              final data = await Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => UpdateNamePage(
+                  firstName: _firstName,
+                  lastName: _lastName,
+                ),
+              ));
+//               final data = {
+//                 "firstName": _firstName.trim(),
+//                 "lastName": _lastName.trim(),
+//               };
+              if (data != null) {
+                setState(() {
+                  _firstName = data['firstName'];
+                  _lastName = data['lastName'];
+                });
+              }
+            },
+          ),
         ),
         ListTile(
           title: Text(
@@ -83,8 +119,8 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
-            lipsum.createText(numParagraphs: 10, numSentences: 5),
-            //_address,
+            //lipsum.createText(numParagraphs: 10, numSentences: 5),
+            _address,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.justify,
@@ -95,14 +131,20 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: Icon(
               Icons.edit,
             ),
-            onPressed: () {
+            onPressed: () async {
               print('pressed');
 
-              Navigator.of(context).push(MaterialPageRoute(
+              final address =
+                  await Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => UpdateAddressPage(
                   address: _address,
                 ),
               ));
+              if (address != null) {
+                setState(() {
+                  _address = address;
+                });
+              }
             },
           ),
         ),
@@ -114,7 +156,10 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
-            _dateOfBirth,
+            (_dateOfBirth != '')
+                ? DateFormat('dd-MMM-yyyy')
+                    .format(DateTime.parse(_dateOfBirth + ' 00:00:00.000'))
+                : '',
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -123,20 +168,21 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: Icon(
               Icons.edit,
             ),
-            onPressed: () {
+            onPressed: () async {
               print('pressed');
               try {
-                var strDate = '1974-03-20 00:00:00.000';
-                //  strDate = '14-Jun-1996';
-                var dateParse = DateTime.parse(strDate);
-                // var formatter = DateFormat('yyyy-MM-dd');
-                var formatter = DateFormat('dd-MMM-yyyy');
-                print(formatter.format(dateParse));
-                Navigator.of(context).push(MaterialPageRoute(
+                final String getdate =
+                    await Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => UpdateDatePage(
-                    dateOfBirth: strDate,
+                    dateOfBirth: _dateOfBirth,
                   ),
                 ));
+                if (getdate != null) {
+                  setState(() {
+                    _dateOfBirth = getdate.replaceAll(
+                        ' 00:00:00.000', ''); //remove  ' 00:00:00.000'
+                  });
+                }
               } catch (e) {
                 print(e);
               }
@@ -161,25 +207,37 @@ class _ProfilePageState extends State<ProfilePage> {
               Icons.edit,
             ),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => MobilePage(),
-              ));
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MobilePage(),
+                ),
+                (route) => false,
+              );
             },
           ),
         ),
       ],
     );
-    return listview;
-    //  Expanded(
-    //       child: Scrollbar(
-    //         child: SingleChildScrollView(
-    //           scrollDirection: Axis.vertical,
-    //           padding: EdgeInsets.all(8.0),
-    //           child: listview,
-    //         ),
-    //       ),
-    //     ),
-    // return listview;
+    if (_isLoading) {
+      //loading
+      return Aesthetic.displayCircle();
+    } else {
+      if (_address == '') {
+        return Container();
+      } else {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(Duration(seconds: 2));
+            await _getData();
+            setState(() {
+              print('pull to refresh');
+              _isLoading = false;
+            });
+          },
+          child: listview,
+        );
+      }
+    }
   }
 
   @override
@@ -198,9 +256,11 @@ class _ProfilePageState extends State<ProfilePage> {
               IconButton(
                 icon: Icon(
                   Icons.power_settings_new_rounded,
+                  color: Colors.red,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   print('logout');
+                  await logout(context);
                 },
               ),
             ],

@@ -5,6 +5,9 @@
 //profile
 //update mobile
 //add mobile
+//set active mobile
+//ignore in mysql php
+//darkmode
 
 
 //todo web
