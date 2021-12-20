@@ -73,9 +73,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
     final email = await GlobalVariables.getEmail();
 
     final data = await DatabaseMySQLServices.addMobile(
-      mobileName: _mobileName.text,
+      mobileName: _mobileName.text.trim(),
       email: email!,
-      mobileNumber: _mobileNumber,
+      mobileNumber: _mobileNumber.trim(),
       fcmtoken: fcmtoken!,
     );
     if (data != 'Error') {

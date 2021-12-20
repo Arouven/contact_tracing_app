@@ -5,12 +5,16 @@ import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import '../../widgets/drawer.dart';
 
 class MobilePage extends StatefulWidget {
@@ -30,6 +34,7 @@ class _MobilePageState extends State<MobilePage> {
   //bool _showReload = false;
   //late int _selectedRadioTile;
   late String _mymobileNumber = '';
+  late String _mobileNumberToSetActive = '';
   //bool _findSelected = false;
   var _mobiles = [];
 
@@ -85,55 +90,163 @@ class _MobilePageState extends State<MobilePage> {
       },
     );
   }
-  //    DialogBox.factoryshowErrorDialog(context:context,
-  //    title : 'Add Mobile',
-  //    body : 'It seems that your mobile is not on our database. Please add it!',
-  //    titleColor : Colors.orange,
-  // );
 
-  /// display add mobile dialog
-  // Future<void> _showAddDialog() {
-  //   return showDialog<void>(
-  //     context: context,
-  //     barrierDismissible: false, // user must tap button!
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text(
-  //           'Add Mobile',
-  //           style: TextStyle(
-  //             color: Colors.orange,
-  //           ),
-  //         ),
-  //         content: SingleChildScrollView(
-  //           child: ListBody(
-  //             children: <Widget>[
-  //               new Row(
-  //                 children: [
-  //                   Expanded(
-  //                     child: Text(
-  //                         'Seems that your mobile is not in our database. Please Add it!'),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('Add'),
-  //             onPressed: () {
-  //               Navigator.of(context).pushReplacement(
-  //                 MaterialPageRoute(
-  //                   builder: (BuildContext context) => AddMobilePage(),
-  //                 ),
-  //               );
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  Widget _otpPage() {
+    return Container(
+      height: 80,
+      child: new Column(
+        children: <Widget>[
+          Text('OTP'),
+          OTPTextField(
+            length: 6,
+            width: MediaQuery.of(context).size.width,
+            fieldWidth: 30,
+            style: TextStyle(fontSize: 20),
+            textFieldAlignment: MainAxisAlignment.spaceAround,
+            fieldStyle: FieldStyle.underline,
+            onCompleted: (smsCode) {
+              _verifyPin(smsCode: smsCode);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _codeSent = false;
+  var _verificationId = '';
+  _verifyPhone() async {
+    final email = await GlobalVariables.getEmail();
+
+    if ((email != null)) {
+      print('existing');
+      print(_mobileNumberToSetActive);
+      // FirebaseAuthenticate().getfirebaseuid();
+      //FirebaseAuthenticate().getfirebasefcmtoken();
+
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: _mobileNumberToSetActive,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          print('verificationCompleted');
+          await FirebaseAuth.instance.signInWithCredential(
+            credential,
+          ); //auto retrive otp
+          print('auto signed in');
+          print('new');
+          FirebaseAuthenticate().getfirebaseuid();
+          FirebaseAuthenticate().getfirebasefcmtoken();
+          await _updateMysql();
+          await GlobalVariables.setMobileNumber(
+            mobileNumber: _mobileNumberToSetActive,
+          );
+          setState(() {
+            //   _signedin = true;
+            _isLoading = false;
+          });
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print('verificationFailed');
+          print(e);
+          setState(() {
+            _isLoading = false;
+          });
+          DialogBox.showErrorDialog(
+            context: context,
+            body: e.message.toString(),
+          );
+        },
+        codeSent: (String verificationid, int? resendToken) {
+          print('codesent');
+          setState(() {
+            _codeSent = true;
+            _verificationId = verificationid;
+            print('verificationid: ' + _verificationId);
+            _isLoading = false;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationid) {
+          print('codeautoretrievaltimeout');
+          //  if (_signedin == true) {
+          //} else {
+          setState(() {
+            _verificationId = verificationid;
+            print('verificationid: ' + _verificationId);
+            _isLoading = false;
+          });
+          //}
+        },
+        timeout: Duration(seconds: 120),
+      );
+    }
+  }
+
+  _verifyPin({required String smsCode}) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId,
+      smsCode: smsCode,
+    );
+    print('verificationid: ' + _verificationId);
+    print('smsCode: ' + smsCode);
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      print('lobin success');
+      print('new');
+      FirebaseAuthenticate().getfirebaseuid();
+      await FirebaseAuthenticate().getfirebasefcmtoken();
+      await _updateMysql();
+      await GlobalVariables.setMobileNumber(
+          mobileNumber: _mobileNumberToSetActive);
+      // setState(() {
+      // _signedin = true;
+      // });
+    } on FirebaseAuthException catch (e) {
+      // setState(() {
+      //   _signedin = false;
+      // });
+      print('verifyPin exception');
+      print(e);
+      DialogBox.showErrorDialog(
+        context: context,
+        body: e.message.toString(),
+      );
+    }
+  }
+
+  Future _updateMysql() async {
+    String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    final response = await DatabaseMySQLServices.setMobileActive(
+      mobileNumber: _mobileNumberToSetActive,
+      fcmtoken: fcmtoken!,
+    );
+    if (response != 'Error') {
+      if (response['msg'] == 'success') {
+        await GlobalVariables.setMobileNumber(
+          mobileNumber: _mobileNumberToSetActive,
+        );
+        await startServices();
+        setState(() {
+          _mymobileNumber = _mobileNumberToSetActive;
+          _isLoading = false;
+        });
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (BuildContext context) => MobilePage(),
+        ));
+      } else {
+        DialogBox.showErrorDialog(
+          context: context,
+          title: response['msg'],
+          body: response['error'],
+        );
+      }
+      print('updated successfully');
+    } else {
+      DialogBox.showErrorDialog(
+        context: context,
+        title: 'Error Happened',
+        body: 'An Error occur, please retry',
+      );
+    }
+  }
 
   /// display add mobile dialog
   Future<void> _showSetActiveDialog(Mobile mobile) {
@@ -172,42 +285,11 @@ class _MobilePageState extends State<MobilePage> {
             TextButton(
               child: const Text('Yes'),
               onPressed: () async {
-                String? fcmtoken =
-                    await FirebaseAuthenticate().getfirebasefcmtoken();
-                final response =
-                    await DatabaseMySQLServices.updateMobilefmcToken(
-                  mobileNumber: mobile.mobileNumber,
-                  fcmtoken: fcmtoken!,
-                );
+                setState(() {
+                  _mobileNumberToSetActive = mobile.mobileNumber;
+                });
                 Navigator.of(context).pop();
-                if (response != 'Error') {
-                  if (response['msg'] == 'success') {
-                    await GlobalVariables.setMobileNumber(
-                      mobileNumber: mobile.mobileNumber,
-                    );
-                    await startServices();
-                    setState(() {
-                      _mymobileNumber = mobile.mobileNumber;
-                      _isLoading = false;
-                    });
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) => MobilePage(),
-                    ));
-                  } else {
-                    DialogBox.showErrorDialog(
-                      context: context,
-                      title: response['msg'],
-                      body: response['error'],
-                    );
-                  }
-                  print('updated successfully');
-                } else {
-                  DialogBox.showErrorDialog(
-                    context: context,
-                    title: 'Error Happened',
-                    body: 'An Error occur, please retry',
-                  );
-                }
+                _verifyPhone();
               },
             ),
           ],
@@ -216,32 +298,11 @@ class _MobilePageState extends State<MobilePage> {
     );
   }
 
-  setActive(Mobile mobile) {
-    print('set active');
-    _showSetActiveDialog(mobile);
-    print(mobile.fcmtoken);
-  }
-
-  editmobile(Mobile mobile) {
-    print('editmobile');
-    _showEditDialog(mobile);
-    print(mobile.fcmtoken);
-  }
-
   /// take [mobiles] as List<Mobile>
   /// build the radio buttons with text
   /// return the list<Widget>
   Widget _buildMobiles() {
     print('building mobiles');
-    //List<Widget> widgets = [];
-    // bool inList = false;
-    // for (Mobile mobile in mobiles) {
-    //   if (myfcmtoken.toString() == mobile.fcmtoken.toString()) {
-    //     inList = true;
-    //     break;
-    //   }
-    // }
-
     return Scrollbar(
       child: RefreshIndicator(
         onRefresh: () async {
@@ -279,34 +340,35 @@ class _MobilePageState extends State<MobilePage> {
                             ),
                           )
                         : null,
-                    trailing: // IconButton(onPressed: onPressed, icon: icon)
-
-                        PopupMenuButton(
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry>[
-                                  PopupMenuItem(
-                                    child: TextButton(
-                                      child: const Text(
-                                        'Set Active',
-                                        // style: TextStyle(color: Colors.black),
-                                      ),
-                                      onPressed: () {
-                                        setActive(_mobiles[index]);
-                                      },
-                                    ),
+                    trailing: PopupMenuButton(
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                              PopupMenuItem(
+                                child: TextButton(
+                                  child: const Text(
+                                    'Set Active',
+                                    // style: TextStyle(color: Colors.black),
                                   ),
-                                  PopupMenuItem(
-                                    child: TextButton(
-                                      child: const Text(
-                                        'Edit Mobile',
-                                        // style: TextStyle(color: Colors.black),
-                                      ),
-                                      onPressed: () {
-                                        editmobile(_mobiles[index]);
-                                      },
-                                    ),
-                                  )
-                                ]),
+                                  onPressed: () async {
+                                    print('set active');
+                                    await _showSetActiveDialog(_mobiles[index]);
+                                    print(_mobiles[index].fcmtoken);
+                                  },
+                                ),
+                              ),
+                              PopupMenuItem(
+                                child: TextButton(
+                                  child: const Text(
+                                    'Edit Mobile',
+                                    // style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () async {
+                                    print('editmobile');
+                                    await _showEditDialog(_mobiles[index]);
+                                    print(_mobiles[index].fcmtoken);
+                                  },
+                                ),
+                              )
+                            ]),
                   );
           },
         ),
@@ -319,7 +381,12 @@ class _MobilePageState extends State<MobilePage> {
     if (_isLoading == true) {
       return Center(child: CircularProgressIndicator());
     } else {
-      return _buildMobiles();
+      return Container(
+        padding: EdgeInsets.all(10.0),
+        child: Center(
+          child: _codeSent ? _otpPage() : _buildMobiles(),
+        ),
+      );
     }
   }
 
@@ -330,9 +397,6 @@ class _MobilePageState extends State<MobilePage> {
       return null;
     } else {
       return FloatingActionButton(
-
-          // backgroundColor: Theme.of(context).backgroundColor,
-          //foregroundColor: Theme.of(context).floatingActionButtonTheme,
           child: Icon(
             Icons.add,
           ),

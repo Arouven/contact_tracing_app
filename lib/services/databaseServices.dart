@@ -175,6 +175,25 @@ class DatabaseMySQLServices {
       return 'Error';
     }
   }
+
+  static Future setMobileActive({
+    required String mobileNumber,
+    required String fcmtoken,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse(setMobileActiveUrl),
+        body: {
+          "mobileNumber": mobileNumber,
+          "fcmtoken": fcmtoken,
+        },
+      );
+      return jsonDecode(res.body);
+    } catch (e) {
+      print(e.toString());
+      return 'Error';
+    }
+  }
 }
 
 class DatabaseFirebaseServices {
@@ -186,13 +205,13 @@ class DatabaseFirebaseServices {
     });
   }
 
-  static Future updateFirebaseToken(
-      {required String oldfcmtoken,
-      required String newfcmtoken,
-      required String path}) async {
-    // DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");
-    // await ref.update({
-    //   "read": true,
-    // });
-  }
+  // static Future updateFirebaseToken(
+  //     {required String oldfcmtoken,
+  //     required String newfcmtoken,
+  //     required String path}) async {
+  //   // DatabaseReference ref = FirebaseDatabase.instance.ref("$path${message.id}");
+  //   // await ref.update({
+  //   //   "read": true,
+  //   // });
+  // }
 }
