@@ -209,17 +209,17 @@ class _SettingPageState extends State<SettingPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                DropdownButton<String>(
+                DropdownButton<int>(
                   items: <int>[1, 2, 6, 12].map((int value) {
-                    return DropdownMenuItem<String>(
-                      value: value.toString(),
+                    return DropdownMenuItem<int>(
+                      value: value,
                       child: Text(timeToUploadPerMinute.toString()),
                     );
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
                       if (value != null) {
-                        timeToUploadPerMinute = int.parse(value);
+                        timeToUploadPerMinute = value;
                       }
                     });
                   },
