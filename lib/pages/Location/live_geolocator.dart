@@ -378,8 +378,12 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                       iconSize: 30.0,
                       alignment: Alignment.centerRight,
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SplashPage()));
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => LiveGeolocatorPage(),
+                          ),
+                          (e) => false,
+                        );
                       },
                     ),
                     IconButton(

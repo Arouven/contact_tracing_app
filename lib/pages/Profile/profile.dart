@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import '../../main.dart';
 import '../../widgets/drawer.dart';
 import 'package:intl/intl.dart'; // for date format
-import 'package:lipsum/lipsum.dart' as lipsum;
+//import 'package:lipsum/lipsum.dart' as lipsum;
 
 class ProfilePage extends StatefulWidget {
   static const String route = '/profile';
