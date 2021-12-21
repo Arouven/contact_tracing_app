@@ -7,7 +7,7 @@ import 'globals.dart';
 import 'notification.dart';
 
 class UploadFile {
-  void uploadToServer() async {
+  static Future<void> uploadToServer() async {
     print("in UploadFile");
     FTPConnect ftpConnect = FTPConnect(
       ftpServer,
@@ -41,7 +41,8 @@ class UploadFile {
             fcmtoken: fcmtoken,
           );
         }
-        if (await GlobalVariables.getNotifier() == true) {
+        final bool notify = await GlobalVariables.getNotifier();
+        if (notify == true) {
           await NotificationServices().showNotification(
             'File Uploaded',
             '$fileName was uploaded',

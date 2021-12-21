@@ -213,12 +213,14 @@ class _MobilePageState extends State<MobilePage> {
   }
 
   Future _updateMysql() async {
-    String? fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    final response = await DatabaseMySQLServices.setMobileActive(
-      mobileNumber: _mobileNumberToSetActive,
-      fcmtoken: fcmtoken!,
-    );
-    if (response != 'Error') {
+    final mobileNumber = await GlobalVariables.getMobileNumber();
+    final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    if (fcmtoken != null) {
+      final response = await DatabaseMySQLServices.updateMobilefmcToken(
+        mobileNumber: mobileNumber,
+        fcmtoken: fcmtoken,
+      );
+
       if (response['msg'] == 'success') {
         await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumberToSetActive,
@@ -239,12 +241,6 @@ class _MobilePageState extends State<MobilePage> {
         );
       }
       print('updated successfully');
-    } else {
-      DialogBox.showErrorDialog(
-        context: context,
-        title: 'Error Happened',
-        body: 'An Error occur, please retry',
-      );
     }
   }
 

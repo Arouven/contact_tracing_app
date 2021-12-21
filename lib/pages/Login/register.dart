@@ -716,9 +716,9 @@ class _RegisterState extends State<RegisterPage> {
                     ),
                     child: Text(
                       'Submit',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                      // style: TextStyle(
+                      //   color: Theme.of(context).splashColor,
+                      // ),
                     ),
                     onPressed: () {
                       _submit();
@@ -740,7 +740,7 @@ class _RegisterState extends State<RegisterPage> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TextButton(
+                  ElevatedButton(
                     // style: TextButton.styleFrom(
                     //   backgroundColor: Colors.blue,
                     // ),
@@ -757,7 +757,7 @@ class _RegisterState extends State<RegisterPage> {
                       print('after ' + (_currentPosition.toString()));
                     },
                   ),
-                  TextButton(
+                  ElevatedButton(
                     // style: TextButton.styleFrom(
                     //   backgroundColor: Colors.blue,
                     // ),

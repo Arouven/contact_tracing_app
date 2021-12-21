@@ -81,8 +81,7 @@ void onStart() {
           '${position.accuracy.toString()}',
         );
         if (counter > timeToUploadPerMinute) {
-          UploadFile uploadFile = new UploadFile();
-          uploadFile.uploadToServer();
+          await UploadFile.uploadToServer();
           print("file uploaded and counter set to 0");
           counter = 0;
         }
@@ -207,14 +206,14 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
-    // if (isRunning == false) {
-    print('start the service');
-    FlutterBackgroundService.initialize(onStart);
-    await NotificationServices().showNotification(
-      'Services Started',
-      'You are now connected to our app',
-    );
-    //}
+    if (isRunning == false) {
+      print('start the service');
+      FlutterBackgroundService.initialize(onStart);
+      await NotificationServices().showNotification(
+        'Services Started',
+        'You are now connected to our app',
+      );
+    }
   }
 }
 
@@ -230,8 +229,14 @@ Future logout(context) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if ((await GlobalVariables.getNotifier()) == null) {
-    print('null notifier');
+  try {
+    final bool notif = await GlobalVariables.getNotifier();
+    if (notif == null) {
+      print('null notif');
+      await GlobalVariables.setNotifier(notifier: true);
+    }
+  } catch (e) {
+    print(e);
     await GlobalVariables.setNotifier(notifier: true);
   }
   await Geolocator.requestPermission();

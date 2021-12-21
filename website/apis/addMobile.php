@@ -24,20 +24,39 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 
 
-    $executequery = "INSERT IGNORE INTO `Mobile` (`mobileName`, `mobileNumber`, `email`, `fcmtoken`) VALUES (?, ?, ?, ?);"; //  REPLACE INTO books (id, title, author, year_published) VALUES     (1, 'Green Eggs and Ham', 'Dr. Seuss', 1960);
-    $executeparamType = "ssss";
-    $executeparamArray = array(
-        $mobileName,
-        $mobileNumber,
-        $email,
-        $fcmtoken
-    );
-    $db->insert($executequery, $executeparamType, $executeparamArray);
+    $selectquery = "SELECT * FROM `Mobile` WHERE mobileNumber=?;";
+    $selectparamType = "s";
+    $selectparamArray = array($mobileNumber);
+    $data = $db->select($selectquery, $selectparamType, $selectparamArray);
 
-
-
-    $outputArray = array();
-    $outputArray['msg'] = "added";
-
-    print json_encode($outputArray);
+    if (isset($data)) {
+        $executequery = "UPDATE `Mobile` SET `mobileName`=?, `email`=?, `fcmtoken`=? WHERE `mobileNumber`=?;";
+        $executeparamType = "ssss";
+        $executeparamArray = array(
+            $mobileName,
+            $email,
+            $fcmtoken,
+            $mobileNumber
+        );
+        $db->execute($executequery, $executeparamType, $executeparamArray);
+        $outputArray = array();
+        $outputArray['msg'] = "added";
+        $outputArray['command'] = 'update';
+        print json_encode($outputArray);
+    } else {
+        $executequery = "INSERT INTO `Mobile` (`mobileName`, `mobileNumber`, `email`, `fcmtoken`) VALUES (?, ?, ?, ?);";
+        $executeparamType = "ssss";
+        $executeparamArray = array(
+            $mobileName,
+            $mobileNumber,
+            $email,
+            $fcmtoken
+        );
+        $insertedId = $db->insert($executequery, $executeparamType, $executeparamArray);
+        $outputArray = array();
+        $outputArray['msg'] = "added";
+        $outputArray['command'] = 'insert';
+        $outputArray['id'] = $insertedId;
+        print json_encode($outputArray);
+    }
 }

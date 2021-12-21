@@ -4,12 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 // change as per requirements
 const geolocatorAccuracy = LocationAccuracy.best;
 const int timeToGetLocationPerMinute = 1; // get geolocation every x minutes
-const int timeToUploadPerMinute = 5; //6 * 60;//6 hours
+//const int timeToUploadPerMinute = 5; //6 * 60;//6 hours
 
 //website config
 //login register
 const String website = 'https://contact-tracing-utm.000webhostapp.com/';
-//const String loginUrl = website + "flutter_login/login.php";
 const String resetUrl = website + "flutter_login/reset.php";
 const String getMobilesUrl = website + "apis/getMobiles.php";
 const String updateMobileUrl = website + "apis/updateMobile.php";
@@ -18,13 +17,10 @@ const String updateMobilefmcTokenUrl =
 const String addMobileUrl = website + "apis/addMobile.php";
 const String registerUrl = website + "flutter_login/register.php";
 const String getUserInfoUrl = website + "apis/getUserInfo.php";
-
 const String updateDateOfBirthUrl =
     website + "flutter_login/updateDateOfBirth.php";
 const String updateAddressUrl = website + "flutter_login/updateAddress.php";
-
 const String updateNameUrl = website + "flutter_login/updateName.php";
-
 const String latestUpdateLocationsUrl =
     website + "apis/latestUpdateLocations.php";
 //ftp
@@ -52,38 +48,72 @@ class GlobalVariables {
     await prefs.clear();
   }
 
-  ////////Setters
+  //Email
   static Future setEmail({required String email}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     emailProp = email;
     await prefs.setString('email', email);
   }
 
+  static Future getEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email');
+  }
+
+//MobileNumber
   static Future setMobileNumber({required String mobileNumber}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('mobileNumber', mobileNumber);
   }
 
+  static Future getMobileNumber() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('mobileNumber');
+  }
+
+  //JustLogin
   static Future setJustLogin({required bool justLogin}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('justLogin', justLogin);
   }
 
+  static Future getJustLogin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('justLogin');
+  }
+
+//ShowConfirmInfected
   static Future setShowConfirmInfected(
       {required bool showConfirmInfected}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showConfirmInfected', showConfirmInfected);
   }
 
+  static Future getShowConfirmInfected() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showConfirmInfected');
+  }
+
+//ShowContactWithInfected
   static Future setShowContactWithInfected(
       {required bool showContactWithInfected}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showContactWithInfected', showContactWithInfected);
   }
 
+  static Future getShowContactWithInfected() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showContactWithInfected');
+  }
+
   static Future setShowCleanUsers({required bool showCleanUsers}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showCleanUsers', showCleanUsers);
+  }
+
+  static Future getShowCleanUsers() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showCleanUsers');
   }
 
   static Future setShowTestingCenters(
@@ -92,9 +122,19 @@ class GlobalVariables {
     await prefs.setBool('showTestingCenters', showTestingCenters);
   }
 
+  static Future getShowTestingCenters() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showTestingCenters');
+  }
+
   static Future setShowMyLocation({required bool showMyLocation}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('showMyLocation', showMyLocation);
+  }
+
+  static Future getShowMyLocation() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('showMyLocation');
   }
 
   static Future setLocations({required String locations}) async {
@@ -102,9 +142,19 @@ class GlobalVariables {
     await prefs.setString('Locations', locations);
   }
 
+  static Future getLocations() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('Locations');
+  }
+
   static Future setFileDirectory({required String fileDirectory}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('fileDirectory', fileDirectory);
+  }
+
+  static Future getFileDirectory() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('fileDirectory');
   }
 
   static Future setBackgroundServices(
@@ -113,65 +163,14 @@ class GlobalVariables {
     await prefs.setString('backgroundServices', backgroundServices);
   }
 
-  static Future setNotifier({required bool notifier}) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notifier', notifier);
-  }
-
-/////////////////// getters
-  static Future getEmail() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email');
-  }
-
-  static Future getMobileNumber() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('mobileNumber');
-  }
-
-  static Future getJustLogin() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('justLogin');
-  }
-
-  static Future getShowConfirmInfected() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showConfirmInfected');
-  }
-
-  static Future getShowContactWithInfected() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showContactWithInfected');
-  }
-
-  static Future getShowCleanUsers() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showCleanUsers');
-  }
-
-  static Future getShowTestingCenters() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showTestingCenters');
-  }
-
-  static Future getShowMyLocation() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('showMyLocation');
-  }
-
-  static Future getLocations() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('Locations');
-  }
-
-  static Future getFileDirectory() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('fileDirectory');
-  }
-
   static Future getBackgroundServices() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('backgroundServices');
+  }
+
+  static Future setNotifier({required bool notifier}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notifier', notifier);
   }
 
   static Future getNotifier() async {

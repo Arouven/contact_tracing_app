@@ -176,24 +176,24 @@ class DatabaseMySQLServices {
     }
   }
 
-  static Future setMobileActive({
-    required String mobileNumber,
-    required String fcmtoken,
-  }) async {
-    try {
-      final res = await http.post(
-        Uri.parse(setMobileActiveUrl),
-        body: {
-          "mobileNumber": mobileNumber,
-          "fcmtoken": fcmtoken,
-        },
-      );
-      return jsonDecode(res.body);
-    } catch (e) {
-      print(e.toString());
-      return 'Error';
-    }
-  }
+  // static Future setMobileActive({
+  //   required String mobileNumber,
+  //   required String fcmtoken,
+  // }) async {
+  //   try {
+  //     final res = await http.post(
+  //       Uri.parse(setMobileActiveUrl),
+  //       body: {
+  //         "mobileNumber": mobileNumber,
+  //         "fcmtoken": fcmtoken,
+  //       },
+  //     );
+  //     return jsonDecode(res.body);
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return 'Error';
+  //   }
+  // }
 }
 
 class DatabaseFirebaseServices {

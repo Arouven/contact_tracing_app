@@ -286,11 +286,11 @@ class _AddMobilePageState extends State<AddMobilePage> {
           print('codeautoretrievaltimeout');
           //  if (_signedin == true) {
           //} else {
-          setState(() {
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-            _isLoading = false;
-          });
+          // setState(() {
+          _verificationId = verificationid;
+          print('verificationid: ' + _verificationId);
+          _isLoading = false;
+          // });
           //}
         },
         timeout: Duration(seconds: 120),
