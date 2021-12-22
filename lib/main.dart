@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:contact_tracing/pages/Profile/updateAddress.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -138,6 +139,7 @@ late FlutterLocalNotificationsPlugin flutterLNP;
 late AndroidNotificationChannel channel;
 late NotificationSettings settings;
 late FirebaseMessaging _messaging;
+late var _pageSelected;
 
 Future<void> _setFirebase() async {
   channel = NotificationServices().androidNotificationChannel();
@@ -210,8 +212,8 @@ Future<void> startServices() async {
       print('start the service');
       FlutterBackgroundService.initialize(onStart);
       await NotificationServices().showNotification(
-        'Services Started',
-        'You are now connected to our app',
+        notificationTitle: 'Services Started',
+        notificationBody: 'You are now connected to our app',
       );
     }
   }
@@ -227,6 +229,27 @@ Future logout(context) async {
       (route) => false);
 }
 
+Future pageSelector() async {
+  // return UpdateAddressPage(address: 'suposer marC');
+  try {
+    final email = await GlobalVariables.getEmail();
+    final mobileNumber = await GlobalVariables.getMobileNumber();
+    if (email != null && mobileNumber != null) {
+      print("LiveGeolocatorPage");
+      return LiveGeolocatorPage();
+    } else if (email != null) {
+      print("MobilePage");
+      return MobilePage();
+    } else {
+      print("LoginPage");
+      return LoginPage();
+    }
+  } catch (e) {
+    print(e);
+    return LoginPage();
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -239,7 +262,7 @@ void main() async {
     print(e);
     await GlobalVariables.setNotifier(notifier: true);
   }
-  await Geolocator.requestPermission();
+  // await Geolocator.requestPermission();
   //Position position = await _determinePosition();
   // final SharedPreferences prefs = await SharedPreferences.getInstance();
   // await prefs.setDouble("lastlat", position.latitude);
@@ -253,6 +276,7 @@ void main() async {
     print('Message clicked!');
   });
   await BadgeServices.updateBadge();
+  _pageSelected = await pageSelector();
 
   runApp(MyApp());
 }
@@ -270,7 +294,7 @@ class MyApp extends StatelessWidget {
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: themeProvider.themeMode,
-          home: LiveGeolocatorPage(),
+          home: _pageSelected,
           routes: <String, WidgetBuilder>{
             LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
             LoginPage.route: (context) => LoginPage(),

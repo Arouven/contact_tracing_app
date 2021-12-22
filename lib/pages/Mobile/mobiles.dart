@@ -225,6 +225,7 @@ class _MobilePageState extends State<MobilePage> {
         await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumberToSetActive,
         );
+        print('start services from updatemysql');
         await startServices();
         setState(() {
           _mymobileNumber = _mobileNumberToSetActive;
@@ -415,6 +416,7 @@ class _MobilePageState extends State<MobilePage> {
   @override
   void initState() {
     startServices().whenComplete(() {
+      print("initState()");
       _getMobileNumber().then((value) => setState(() {
             _mymobileNumber = value;
           }));

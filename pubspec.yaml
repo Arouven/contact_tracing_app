@@ -40,6 +40,8 @@ dependencies:
   intl_phone_number_input: ^0.7.0+2
   grouped_buttons: ^1.0.4
   dots_indicator: ^2.0.0
+  geocode: ^1.0.1
+ # geocoder2: ^1.0.0
   geocoder: ^0.2.1
   firebase_core: "^1.10.0"
   firebase_messaging: ^11.2.0

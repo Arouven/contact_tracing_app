@@ -506,6 +506,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> ssss() async {
+    await Geolocator.requestPermission();
     try {
       Position? position = await initPrefs();
       while (position == null) {

@@ -44,14 +44,14 @@ class UploadFile {
         final bool notify = await GlobalVariables.getNotifier();
         if (notify == true) {
           await NotificationServices().showNotification(
-            'File Uploaded',
-            '$fileName was uploaded',
+            notificationTitle: 'File Uploaded',
+            notificationBody: '$fileName was uploaded',
           );
         }
       } else {
         await NotificationServices().showNotification(
-          'Please Login',
-          'Your email is not found!',
+          notificationTitle: 'Please Login',
+          notificationBody: 'Your email is not found!',
         );
       }
     } catch (e) {

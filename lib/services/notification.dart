@@ -9,7 +9,7 @@ class NotificationServices {
   final priority = Priority.high;
   final importance = Importance.max;
 
-  void initialize(BuildContext context) {
+  void initialize({required BuildContext context}) {
     print("in Notif");
     final InitializationSettings initializationSettings =
         InitializationSettings(
@@ -75,10 +75,10 @@ class NotificationServices {
   //   }
   // }
 
-  Future<void> showNotification(
-    String notificationTitle,
-    String notificationBody,
-  ) async {
+  Future<void> showNotification({
+    required String notificationTitle,
+    required String notificationBody,
+  }) async {
     print("in Notif");
     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final platformChannelSpecifics = await getPlatform();

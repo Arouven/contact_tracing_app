@@ -3,6 +3,7 @@ import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/services/notification.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
@@ -293,6 +294,7 @@ class _LoginState extends State<LoginPage> {
   void initState() {
     // _email.text = widget.email!.toString();
     //_password.text = widget.password!.toString();
+    NotificationServices().initialize(context: context);
     _emailController.text =
         ((widget.email != null) ? widget.email.toString() : '');
     _passwordController.text =
