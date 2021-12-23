@@ -313,7 +313,8 @@ class MyApp extends StatelessWidget {
 final darkMode = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.grey,
-  primaryColor: Colors.black,
+  // primaryColor: Colors.black,
+  // accentColor: Colors.green,
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -324,8 +325,26 @@ final darkMode = ThemeData(
       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
     ),
   ),
+  // floatingActionButtonTheme: FloatingActionButtonThemeData(
+  //   foregroundColor: Colors.black,
+  //   backgroundColor: Colors.grey,
+  // ),
 );
-final lightMode = ThemeData.light();
+
+var lightMode = ThemeData.light().copyWith(
+  brightness: Brightness.light,
+  //primaryColor: Colors.blue,
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    ),
+  ),
+);
 // final darkMode = ThemeData(
 //   primarySwatch: Colors.grey,
 //   primaryColor: Colors.black,

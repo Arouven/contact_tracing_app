@@ -199,12 +199,14 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
                           ),
                           actions: <Widget>[
                             TextButton(
+                              style: Theme.of(context).textButtonTheme.style,
                               child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             TextButton(
+                              style: Theme.of(context).textButtonTheme.style,
                               child: Text('Update'),
                               onPressed: () async {
                                 Navigator.of(context).pop();

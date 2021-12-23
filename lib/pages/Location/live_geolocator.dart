@@ -336,6 +336,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
           ),
           actions: <Widget>[
             TextButton(
+              style: Theme.of(context).textButtonTheme.style,
               child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();

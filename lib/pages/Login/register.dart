@@ -357,7 +357,7 @@ class _RegisterState extends State<RegisterPage> {
                     backgroundColor: Colors.transparent,
                     itemTextStyle: TextStyle(
                       fontSize: 19,
-                      //  color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -653,6 +653,7 @@ class _RegisterState extends State<RegisterPage> {
   Widget _loginButton() {
     return Container(
       child: TextButton(
+        style: Theme.of(context).textButtonTheme.style,
         child: Text('Already have an account? Tap here to login.'),
         onPressed: () {
           Navigator.of(context).pushReplacement(
@@ -672,19 +673,22 @@ class _RegisterState extends State<RegisterPage> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  new ElevatedButton(
-                    style: Theme.of(context).elevatedButtonTheme.style,
-                    child: new Text('Next'),
-                    onPressed: () {
-                      print('before ' + (_currentPosition.toString()));
-                      _currentPosition = _currentPosition.floorToDouble();
-                      _updatePosition(min(
-                        ++_currentPosition,
-                        _totalDots.toDouble(),
-                      ));
-                      print('after ' + (_currentPosition.toString()));
-                    },
-                  ),
+                  SizedBox(
+                    // width: 200,
+                    child: new ElevatedButton(
+                      style: Theme.of(context).elevatedButtonTheme.style,
+                      child: new Text('Next'),
+                      onPressed: () {
+                        print('before ' + (_currentPosition.toString()));
+                        _currentPosition = _currentPosition.floorToDouble();
+                        _updatePosition(min(
+                          ++_currentPosition,
+                          _totalDots.toDouble(),
+                        ));
+                        print('after ' + (_currentPosition.toString()));
+                      },
+                    ),
+                  )
                 ],
               ),
               subtitle: _dots(),
@@ -727,7 +731,7 @@ class _RegisterState extends State<RegisterPage> {
                     onPressed: () {
                       _submit();
                     },
-                  )
+                  ),
                 ],
               ),
               subtitle: _dots(),
@@ -763,6 +767,7 @@ class _RegisterState extends State<RegisterPage> {
                     },
                   ),
                   ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
                     // style: TextButton.styleFrom(
                     //   backgroundColor: Colors.blue,
                     // ),

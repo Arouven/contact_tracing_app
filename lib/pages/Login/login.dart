@@ -237,6 +237,7 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new TextButton(
+                style: Theme.of(context).textButtonTheme.style,
                 child:
                     new Text("Don\'t have an account? Tap here to register."),
                 onPressed: () {
@@ -248,6 +249,7 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new TextButton(
+                style: Theme.of(context).textButtonTheme.style,
                 child: new Text('Forgot Password?'),
                 onPressed: () {
                   _passwordReset();

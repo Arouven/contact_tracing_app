@@ -68,12 +68,14 @@ class _MobilePageState extends State<MobilePage> {
           ),
           actions: <Widget>[
             TextButton(
+              style: Theme.of(context).textButtonTheme.style,
               child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
+              style: Theme.of(context).textButtonTheme.style,
               child: const Text('Modify'),
               onPressed: () {
                 // open a UpdateMobilePage with parameter [mobile]
@@ -274,12 +276,14 @@ class _MobilePageState extends State<MobilePage> {
           ),
           actions: <Widget>[
             TextButton(
+              style: Theme.of(context).textButtonTheme.style,
               child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
+              style: Theme.of(context).textButtonTheme.style,
               child: const Text('Yes'),
               onPressed: () async {
                 setState(() {
@@ -341,6 +345,8 @@ class _MobilePageState extends State<MobilePage> {
                         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                               PopupMenuItem(
                                 child: TextButton(
+                                  style:
+                                      Theme.of(context).textButtonTheme.style,
                                   child: const Text(
                                     'Set Active',
                                     // style: TextStyle(color: Colors.black),
@@ -354,6 +360,8 @@ class _MobilePageState extends State<MobilePage> {
                               ),
                               PopupMenuItem(
                                 child: TextButton(
+                                  style:
+                                      Theme.of(context).textButtonTheme.style,
                                   child: const Text(
                                     'Edit Mobile',
                                     // style: TextStyle(color: Colors.black),
