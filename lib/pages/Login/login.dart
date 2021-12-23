@@ -103,14 +103,6 @@ class _LoginState extends State<LoginPage> {
     //redirect to home
   }
 
-  void _createAccountPressed() {
-    print("_createAccountPressed function");
-    // Navigator.of(context).pushAndRemoveUntil(
-    //     MaterialPageRoute(builder: (context) => RegisterPage()), (e) => false);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => RegisterPage()));
-  }
-
   _checkEmail(String email) async {
     // Null or empty string is invalid
     if (email == null || email.isEmpty) {
@@ -245,9 +237,15 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new TextButton(
-              child: new Text("Don\'t have an account? Tap here to register."),
-              onPressed: _createAccountPressed,
-            ),
+                child:
+                    new Text("Don\'t have an account? Tap here to register."),
+                onPressed: () {
+                  print("_createAccountPressed function");
+                  // Navigator.of(context).pushAndRemoveUntil(
+                  //     MaterialPageRoute(builder: (context) => RegisterPage()), (e) => false);
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                }),
           ),
           ListTile(
             title: new TextButton(

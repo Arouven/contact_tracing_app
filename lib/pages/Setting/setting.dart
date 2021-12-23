@@ -81,7 +81,7 @@ class _SettingPageState extends State<SettingPage> {
   _listOfSettings() {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final provider = Provider.of<ThemeProvider>(context, listen: false);
-    if (_usermail == '') {
+    if (GlobalVariables.emailProp == '') {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -104,8 +104,8 @@ class _SettingPageState extends State<SettingPage> {
                   onChanged: (value) async {
                     provider.toggleTheme(value);
                   },
-                  activeTrackColor: Theme.of(context).backgroundColor,
-                  activeColor: Theme.of(context).accentColor,
+                  // activeTrackColor: Theme.of(context).backgroundColor,
+                  // activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
@@ -135,8 +135,8 @@ class _SettingPageState extends State<SettingPage> {
                   onChanged: (value) async {
                     provider.toggleTheme(value);
                   },
-                  activeTrackColor: Theme.of(context).backgroundColor,
-                  activeColor: Theme.of(context).accentColor,
+                  //  activeTrackColor: Theme.of(context).backgroundColor,
+                  //activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
@@ -163,8 +163,8 @@ class _SettingPageState extends State<SettingPage> {
                       _isForground = value;
                     });
                   },
-                  activeTrackColor: Theme.of(context).backgroundColor,
-                  activeColor: Theme.of(context).accentColor,
+                  //  activeTrackColor: Theme.of(context).backgroundColor,
+                  //activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
@@ -190,8 +190,8 @@ class _SettingPageState extends State<SettingPage> {
                       _notifier = value;
                     });
                   },
-                  activeTrackColor: Theme.of(context).backgroundColor,
-                  activeColor: Theme.of(context).accentColor,
+                  //  activeTrackColor: Theme.of(context).backgroundColor,
+                  //activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
@@ -209,20 +209,24 @@ class _SettingPageState extends State<SettingPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                DropdownButton<int>(
-                  items: <int>[1, 2, 6, 12].map((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(timeToUploadPerMinute.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value != null) {
-                        timeToUploadPerMinute = value;
-                      }
-                    });
-                  },
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    items: <int>[1, 2, 6, 12].map((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                    isExpanded: false,
+                    value: timeToUploadPerMinute,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value != null) {
+                          timeToUploadPerMinute = value;
+                        }
+                      });
+                    },
+                  ),
                 )
               ],
             ),

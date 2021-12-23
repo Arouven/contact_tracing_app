@@ -272,6 +272,7 @@ class _RegisterState extends State<RegisterPage> {
       dotsCount: _totalDots,
       position: _currentPosition,
       decorator: DotsDecorator(
+        color: Theme.of(context).primaryColor,
         size: const Size.square(9.0),
         activeSize: const Size(18.0, 9.0),
         activeShape: RoundedRectangleBorder(
@@ -354,7 +355,7 @@ class _RegisterState extends State<RegisterPage> {
                     backgroundColor: Colors.transparent,
                     itemTextStyle: TextStyle(
                       fontSize: 19,
-                      color: Theme.of(context).accentColor,
+                      //  color: Theme.of(context).accentColor,
                     ),
                   ),
                 ),
@@ -636,7 +637,6 @@ class _RegisterState extends State<RegisterPage> {
       return Center(
         child: FloatingActionButton(
           foregroundColor: Colors.red,
-          // backgroundColor: Colors.white,
           child: Icon(Icons.replay),
           onPressed: () {
             _submit();
@@ -802,37 +802,72 @@ class _RegisterState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Register"),
-          centerTitle: true,
-          // backgroundColor: Colors.blue,
-          actions: (_currentPosition == 2.0)
-              ? [
-                  IconButton(
-                    onPressed: () async {
-                      _fillAddresses().then((value) {
-                        setState(() {});
-                      });
-                    },
-                    icon: Icon(Icons.location_on),
-                  )
-                ]
-              : null,
-        ),
-        drawer: buildDrawer(context, RegisterPage.route),
-        body: Column(
-          children: [
-            Expanded(
-              child: _body(),
-            ),
-            Container(
-              child: _bottom(),
-            )
-          ],
+    return Container(
+      // color: Colors.white,
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Register"),
+            centerTitle: true,
+            actions: (_currentPosition == 2.0)
+                ? [
+                    IconButton(
+                      onPressed: () async {
+                        _fillAddresses().then((value) {
+                          setState(() {});
+                        });
+                      },
+                      icon: Icon(Icons.location_on),
+                    )
+                  ]
+                : null,
+          ),
+          drawer: buildDrawer(context, RegisterPage.route),
+          body: Column(
+            children: [
+              Expanded(
+                child: _body(),
+              ),
+              Container(
+                child: _bottom(),
+              )
+            ],
+          ),
         ),
       ),
     );
+    // return MaterialApp(
+    //   home: Scaffold(
+    //     appBar: AppBar(
+    //       title: Text("Register"),
+    //       centerTitle: true,
+    //       actions: (_currentPosition == 2.0)
+    //           ? [
+    //               IconButton(
+    //                 onPressed: () async {
+    //                   _fillAddresses().then((value) {
+    //                     setState(() {});
+    //                   });
+    //                 },
+    //                 icon: Icon(Icons.location_on),
+    //               )
+    //             ]
+    //           : null,
+    //     ),
+    //     drawer: buildDrawer(context, RegisterPage.route),
+    //     body: Column(
+    //       children: [
+    //         Expanded(
+    //           child: _body(),
+    //         ),
+    //         Container(
+    //           child: _bottom(),
+    //         )
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

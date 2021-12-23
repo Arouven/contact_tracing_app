@@ -279,6 +279,7 @@ void main() async {
   _pageSelected = await pageSelector();
 
   runApp(MyApp());
+  await Geolocator.requestPermission();
 }
 
 class MyApp extends StatelessWidget {
@@ -309,22 +310,37 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//final darkMode = ThemeData.dark();
 final darkMode = ThemeData(
+  brightness: Brightness.dark,
   primarySwatch: Colors.grey,
   primaryColor: Colors.black,
-  brightness: Brightness.dark,
-  backgroundColor: const Color(0xFF212121),
-  accentColor: Colors.white,
-  accentIconTheme: IconThemeData(color: Colors.black),
-  dividerColor: Colors.black12,
-  floatingActionButtonTheme: FloatingActionButtonThemeData(
-    foregroundColor: Colors.black,
-    backgroundColor: Colors.grey,
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    ),
   ),
 );
+final lightMode = ThemeData.light();
+// final darkMode = ThemeData(
+//   primarySwatch: Colors.grey,
+//   primaryColor: Colors.black,
+//   brightness: Brightness.dark,
+//   backgroundColor: const Color(0xFF212121),
+//   accentColor: Colors.white,
+//   accentIconTheme: IconThemeData(color: Colors.black),
+//   dividerColor: Colors.black12,
+//   floatingActionButtonTheme: FloatingActionButtonThemeData(
+//     foregroundColor: Colors.black,
+//     backgroundColor: Colors.grey,
+//   ),
+// );
 
-final lightMode = ThemeData(primarySwatch: lightBlueTheme);
+// final lightMode = ThemeData(primarySwatch: lightBlueTheme);
 // final lightMode = ThemeData(
 //   primarySwatch: Colors.lightBlue,
 //   primaryColor: Colors.blue,
