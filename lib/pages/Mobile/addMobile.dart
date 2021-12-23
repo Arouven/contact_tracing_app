@@ -162,6 +162,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
       new Container(
         width: 100,
         child: new ElevatedButton(
+          style: Theme.of(context).elevatedButtonTheme.style,
           child: new Text('Next'),
           onPressed: () async {
             await _verifyPhone();

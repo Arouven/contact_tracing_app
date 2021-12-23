@@ -272,7 +272,9 @@ class _RegisterState extends State<RegisterPage> {
       dotsCount: _totalDots,
       position: _currentPosition,
       decorator: DotsDecorator(
-        color: Theme.of(context).primaryColor,
+        activeColor: Theme.of(context).colorScheme.secondary,
+        //  color: Theme.of(context).colorScheme.primary,
+        // color: Theme.of(context).primaryColorDark,
         size: const Size.square(9.0),
         activeSize: const Size(18.0, 9.0),
         activeShape: RoundedRectangleBorder(
@@ -671,6 +673,7 @@ class _RegisterState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   new ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
                     child: new Text('Next'),
                     onPressed: () {
                       print('before ' + (_currentPosition.toString()));
@@ -699,6 +702,7 @@ class _RegisterState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
                     child: Text(
                       'Previous',
                     ),
@@ -741,6 +745,7 @@ class _RegisterState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
+                    style: Theme.of(context).elevatedButtonTheme.style,
                     // style: TextButton.styleFrom(
                     //   backgroundColor: Colors.blue,
                     // ),
@@ -824,7 +829,7 @@ class _RegisterState extends State<RegisterPage> {
                   ]
                 : null,
           ),
-          drawer: buildDrawer(context, RegisterPage.route),
+          drawer: buildDrawer(context, LoginPage.route),
           body: Column(
             children: [
               Expanded(

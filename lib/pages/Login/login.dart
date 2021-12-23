@@ -241,10 +241,9 @@ class _LoginState extends State<LoginPage> {
                     new Text("Don\'t have an account? Tap here to register."),
                 onPressed: () {
                   print("_createAccountPressed function");
-                  // Navigator.of(context).pushAndRemoveUntil(
-                  //     MaterialPageRoute(builder: (context) => RegisterPage()), (e) => false);
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                      (e) => false);
                 }),
           ),
           ListTile(
@@ -256,6 +255,7 @@ class _LoginState extends State<LoginPage> {
           ),
           ListTile(
             title: new ElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style,
               child: new Text('Login'),
               onPressed: () {
                 _loginPressed();
