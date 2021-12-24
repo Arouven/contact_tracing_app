@@ -233,6 +233,7 @@ class _RegisterState extends State<RegisterPage> {
 
   Future _fillAddresses() async {
     try {
+      await Geolocator.requestPermission();
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: geolocatorAccuracy);
 
@@ -639,6 +640,7 @@ class _RegisterState extends State<RegisterPage> {
       return Center(
         child: FloatingActionButton(
           foregroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           child: Icon(Icons.replay),
           onPressed: () {
             _submit();

@@ -423,11 +423,16 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
-    startServices().whenComplete(() {
-      print("initState()");
-      _getMobileNumber().then((value) => setState(() {
-            _mymobileNumber = value;
-          }));
+    _getMobileNumber().then((value) {
+      setState(() {
+        _mymobileNumber = value;
+      });
+      if (_mymobileNumber != '') {
+        startServices().whenComplete(() {
+          print("initState()");
+        });
+      }
+
       ApiMobile.getMobiles().then((mobileList) {
         setState(() {
           _mobiles = mobileList;

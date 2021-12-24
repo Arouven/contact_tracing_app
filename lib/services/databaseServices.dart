@@ -6,6 +6,8 @@ import 'globals.dart';
 import 'package:http/http.dart' as http;
 
 class DatabaseMySQLServices {
+  static int _secondstimeout = 120;
+
   static Future registerUser({
     required String firstName,
     required String lastName,
@@ -23,6 +25,15 @@ class DatabaseMySQLServices {
           'dateOfBirth': dateOfBirth,
           'email': email,
         },
+      ).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
+        },
       );
       print(res.body);
       return jsonDecode(res.body);
@@ -36,6 +47,14 @@ class DatabaseMySQLServices {
     final res = await http.post(
       Uri.parse(getMobilesUrl),
       body: {"email": email},
+    ).timeout(
+      Duration(
+        seconds: _secondstimeout,
+      ),
+      onTimeout: () {
+        // Time has run out, do what you wanted to do.
+        return http.Response('Error', 500); // Replace 500 with your http code.
+      },
     );
     final body = json.decode(res.body);
     print(body);
@@ -45,7 +64,16 @@ class DatabaseMySQLServices {
 
   static Future downloadUpdateLocation() async {
     try {
-      final res = await http.get(Uri.parse(latestUpdateLocationsUrl));
+      final res = await http.get(Uri.parse(latestUpdateLocationsUrl)).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
+        },
+      );
       return res.body;
     } catch (e) {
       return 'Error';
@@ -58,6 +86,15 @@ class DatabaseMySQLServices {
         Uri.parse(getUserInfoUrl),
         body: {
           'email': email,
+        },
+      ).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
         },
       );
       return res.body;
@@ -73,6 +110,14 @@ class DatabaseMySQLServices {
       body: {
         "email": email,
         'dateOfBirth': dateOfBirth.trim(),
+      },
+    ).timeout(
+      Duration(
+        seconds: _secondstimeout,
+      ),
+      onTimeout: () {
+        // Time has run out, do what you wanted to do.
+        return http.Response('Error', 500); // Replace 500 with your http code.
       },
     );
     final body = json.decode(res.body);
@@ -91,6 +136,14 @@ class DatabaseMySQLServices {
         'firstName': firstName,
         'lastName': lastName,
       },
+    ).timeout(
+      Duration(
+        seconds: _secondstimeout,
+      ),
+      onTimeout: () {
+        // Time has run out, do what you wanted to do.
+        return http.Response('Error', 500); // Replace 500 with your http code.
+      },
     );
     final body = json.decode(res.body);
     print(body);
@@ -106,6 +159,14 @@ class DatabaseMySQLServices {
       body: {
         "email": email,
         'address': address,
+      },
+    ).timeout(
+      Duration(
+        seconds: _secondstimeout,
+      ),
+      onTimeout: () {
+        // Time has run out, do what you wanted to do.
+        return http.Response('Error', 500); // Replace 500 with your http code.
       },
     );
     final body = json.decode(res.body);
@@ -125,7 +186,16 @@ class DatabaseMySQLServices {
         "email": email,
         "mobileNumber": mobileNumber,
         "fcmtoken": fcmtoken,
-      });
+      }).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
+        },
+      );
       return jsonDecode(res.body);
     } catch (e) {
       print(e.toString());
@@ -148,6 +218,15 @@ class DatabaseMySQLServices {
           "mobileNumber": mobileNumber,
           "fcmtoken": fcmtoken,
         },
+      ).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
+        },
       );
       return jsonDecode(res.body);
     } catch (e) {
@@ -166,6 +245,15 @@ class DatabaseMySQLServices {
         body: {
           "mobileNumber": mobileNumber,
           "fcmtoken": fcmtoken,
+        },
+      ).timeout(
+        Duration(
+          seconds: _secondstimeout,
+        ),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response(
+              'Error', 500); // Replace 500 with your http code.
         },
       );
 //update firebase too

@@ -201,6 +201,7 @@ Future<void> _sendMsg(RemoteMessage message) async {
 }
 
 Future<void> startServices() async {
+  await Geolocator.requestPermission();
   print('start services');
   final email = await GlobalVariables.getEmail();
   final mobileNumber = await GlobalVariables.getMobileNumber();
@@ -279,7 +280,6 @@ void main() async {
   _pageSelected = await pageSelector();
 
   runApp(MyApp());
-  await Geolocator.requestPermission();
 }
 
 class MyApp extends StatelessWidget {
