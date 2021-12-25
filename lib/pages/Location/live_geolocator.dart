@@ -1,21 +1,14 @@
 import 'dart:convert';
-import 'dart:ui';
-
-import 'package:contact_tracing/pages/splash.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
-
-import 'package:flutter/cupertino.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-
-import '../../widgets/drawer.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';

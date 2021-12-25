@@ -1,9 +1,7 @@
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
-import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/drawer.dart';
-//import 'package:lipsum/lipsum.dart' as lipsum;
 
 class SingleNotificationPage extends StatefulWidget {
   static const String route = '/singlenotif';

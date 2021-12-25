@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Profile/updateAddress.dart';
 import 'package:contact_tracing/pages/Profile/updateDate.dart';
@@ -7,12 +7,9 @@ import 'package:contact_tracing/pages/Profile/updateName.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-import '../../main.dart';
-import '../../widgets/drawer.dart';
 import 'package:intl/intl.dart'; // for date format
-//import 'package:lipsum/lipsum.dart' as lipsum;
 
 class ProfilePage extends StatefulWidget {
   static const String route = '/profile';

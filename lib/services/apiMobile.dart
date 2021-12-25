@@ -1,8 +1,6 @@
-import 'dart:convert';
-//import 'package:http/http.dart' as http;
-import 'databaseServices.dart';
-import 'globals.dart';
-import '../models/mobile.dart';
+import 'package:contact_tracing/models/mobile.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 
 class ApiMobile {
   static Future<List<Mobile>> getMobiles() async {

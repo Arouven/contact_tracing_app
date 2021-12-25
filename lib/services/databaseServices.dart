@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:contact_tracing/models/message.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import 'globals.dart';
 import 'package:http/http.dart' as http;
 
 class DatabaseMySQLServices {

@@ -1,5 +1,3 @@
-//import 'package:meta/meta.dart';
-
 class Mobile {
   final String mobileName;
   final String email;
@@ -19,16 +17,4 @@ class Mobile {
         mobileNumber: json['mobileNumber'],
         fcmtoken: json['fcmtoken'],
       );
-  // static Mobile problem(non) => Mobile(
-  //       mobileId: 0,
-  //       mobileName: 'mobileName',
-  //       mobileDescription: 'mobileDescription',
-  //       mobileNumber: 'mobileNumber',
-  //       fcmtoken: 'fcmtoken',
-  //     );
-  // static Mobile newmobile() => Mobile(
-  //     mobileId: 0,
-  //     mobileName: 'new mobile name',
-  //     mobileDescription: 'mobile description',
-  //     mobileNumber: '+230');
 }

@@ -1,7 +1,6 @@
+import 'package:contact_tracing/services/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'globals.dart';
 
 class NotificationServices {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

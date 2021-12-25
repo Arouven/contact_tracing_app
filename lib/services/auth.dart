@@ -1,31 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthenticate {
-  //final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  // void a() {
-  //   FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //     if (user == null) {
-  //       print(user);
-  //       print('User is currently signed out!');
-  //     } else {
-  //       print(user);
-  //       print('User is signed in!');
-  //     }
-  //   });
-  // }
-
-  // void b() {
-  //   FirebaseAuth.instance.idTokenChanges().listen((User? user) {
-  //     if (user == null) {
-  //       print('User is currently signed out!');
-  //     } else {
-  //       print('User is signed in!');
-  //     }
-  //   });
-  // }
   Future<bool?> emailExist({required String email}) async {
     try {
       await FirebaseAuth.instance
@@ -93,9 +69,6 @@ class FirebaseAuthenticate {
     required String email,
     required String password,
   }) async {
-    //print('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-    //print(FirebaseAuth.instance.currentUser!.uid);
-    //print('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
     try {
       print('in try');
 

@@ -1,29 +1,24 @@
 import 'dart:async';
-import 'package:contact_tracing/pages/Profile/updateAddress.dart';
+import 'package:contact_tracing/models/pushnotification.dart';
+import 'package:contact_tracing/pages/Location/live_geolocator.dart';
+import 'package:contact_tracing/pages/Login/login.dart';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/pages/Notification/notifications.dart';
+import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
+import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/services/notification.dart';
+import 'package:contact_tracing/services/uploadClass.dart';
+import 'package:contact_tracing/services/write.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'models/pushnotification.dart';
-import 'pages/Location/live_geolocator.dart';
 import 'package:provider/provider.dart';
-
-import 'pages/Login/login.dart';
-//import './pages/splash.dart';
-import 'pages/Mobile/mobiles.dart';
-import 'pages/Notification/notifications.dart';
-import 'pages/Profile/profile.dart';
-import 'providers/thememanager.dart';
-import 'services/globals.dart';
-import 'services/notification.dart';
-import 'services/uploadClass.dart';
-import 'services/write.dart';
 
 Writefile _wf = new Writefile();
 
@@ -209,14 +204,14 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
-    if (isRunning == false) {
-      print('start the service');
-      FlutterBackgroundService.initialize(onStart);
-      await NotificationServices().showNotification(
-        notificationTitle: 'Services Started',
-        notificationBody: 'You are now connected to our app',
-      );
-    }
+    //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
+    print('start the service');
+    FlutterBackgroundService.initialize(onStart);
+    await NotificationServices().showNotification(
+      notificationTitle: 'Services Started',
+      notificationBody: 'You are now connected to our app',
+    );
+    //  }
   }
 }
 

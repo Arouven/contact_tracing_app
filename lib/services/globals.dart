@@ -57,7 +57,12 @@ class GlobalVariables {
 
   static Future getEmail() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('email');
+    final email = prefs.getString('email');
+    if (email == null || email == '') {
+    } else {
+      emailProp = email;
+    }
+    return email;
   }
 
 //MobileNumber

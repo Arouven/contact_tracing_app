@@ -1,11 +1,10 @@
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/drawer.dart';
 
 int timeToUploadPerMinute = 2;
 

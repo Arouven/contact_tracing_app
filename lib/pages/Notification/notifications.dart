@@ -1,12 +1,10 @@
 import 'package:contact_tracing/models/message.dart';
+import 'package:contact_tracing/pages/Notification/singlenotification.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import 'singlenotification.dart';
 
 String path = "notification/+23057775794/";
 

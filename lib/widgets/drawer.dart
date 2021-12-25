@@ -1,5 +1,4 @@
-import 'package:badges/badges.dart';
-import 'package:contact_tracing/main.dart';
+import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
@@ -8,8 +7,6 @@ import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:flutter/material.dart';
-import '../pages/Location/live_geolocator.dart';
-import '../pages/Login/login.dart';
 
 /// used to build the burger button
 /// return [ListTile]

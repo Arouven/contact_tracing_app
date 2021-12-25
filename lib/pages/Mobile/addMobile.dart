@@ -1,19 +1,21 @@
 import 'dart:io';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'mobiles.dart';
+import 'package:otp_text_field/otp_field_style.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import '../../widgets/commonWidgets.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:provider/provider.dart';
 
 class AddMobilePage extends StatefulWidget {
   static const String route = '/addMobile';
@@ -183,6 +185,25 @@ class _AddMobilePageState extends State<AddMobilePage> {
                   children: <Widget>[
                     Text('OTP'),
                     OTPTextField(
+                      otpFieldStyle:
+                          Provider.of<ThemeProvider>(context).themeMode ==
+                                  ThemeMode.dark
+                              ? OtpFieldStyle(
+                                  backgroundColor: Colors.transparent,
+                                  borderColor: Colors.grey,
+                                  focusBorderColor: Colors.white,
+                                  disabledBorderColor: Colors.white54,
+                                  enabledBorderColor: Colors.white,
+                                  errorBorderColor: Colors.red,
+                                )
+                              : OtpFieldStyle(
+                                  backgroundColor: Colors.transparent,
+                                  borderColor: Colors.black26,
+                                  focusBorderColor: Colors.blue,
+                                  disabledBorderColor: Colors.grey,
+                                  enabledBorderColor: Colors.black26,
+                                  errorBorderColor: Colors.red,
+                                ),
                       length: 6,
                       width: MediaQuery.of(context).size.width,
                       fieldWidth: 30,

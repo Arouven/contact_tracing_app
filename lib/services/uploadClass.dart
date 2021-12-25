@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
+import 'package:contact_tracing/services/notification.dart';
 import 'package:ftpconnect/ftpconnect.dart';
-
-import 'globals.dart';
-import 'notification.dart';
 
 class UploadFile {
   static Future<void> uploadToServer() async {

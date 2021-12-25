@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'dart:math';
+import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:geolocator/geolocator.dart';
-import 'login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 
@@ -82,6 +80,38 @@ class _RegisterState extends State<RegisterPage> {
     }
   }
 
+  _insertMYSQL() async {
+    final data = await DatabaseMySQLServices.registerUser(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        address: _addressController.text.trim(),
+        dateOfBirth: _dateOfBirth,
+        email: _emailController.text.trim());
+    if (data != 'Error') {
+      if (data['msg'] == 'email already existed') {
+        var msg = 'email already taken please change the email or login.';
+        DialogBox.showErrorDialog(
+          context: context,
+          title: 'Already Exist',
+          body: msg,
+        );
+        print(msg);
+      } else if (data['msg'] == 'user inserted') {
+        //user inserted
+        //redirect to home
+        print('user inserted');
+        await GlobalVariables.setEmail(email: _emailController.text.trim());
+
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => MobilePage()));
+      }
+    } else {
+      setState(() {
+        _showReload = true;
+      });
+    }
+  }
+
   void _submit() async {
     if (_passwordController.text.isEmpty) {
       setState(() {
@@ -113,45 +143,45 @@ class _RegisterState extends State<RegisterPage> {
       );
 
       if (response == true) {
-        final data = await DatabaseMySQLServices.registerUser(
-            firstName: _firstNameController.text.trim(),
-            lastName: _lastNameController.text.trim(),
-            address: _addressController.text.trim(),
-            dateOfBirth: _dateOfBirth,
-            email: _emailController.text.trim());
-        if (data != 'Error') {
-          if (data['msg'] == 'email already existed') {
-            var msg = 'email already taken please change the email or login.';
-            DialogBox.showErrorDialog(
-              context: context,
-              title: 'Already Exist',
-              body: msg,
-            );
-            print(msg);
-          } else if (data['msg'] == 'user inserted') {
-            //user inserted
-            //redirect to home
-            print('user inserted');
-            await GlobalVariables.setEmail(email: _emailController.text.trim());
-
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => MobilePage()));
-          }
-        } else {
-          setState(() {
-            _showReload = true;
-          });
-        }
+        //means that firebase already have the username then add the username to mysql
+        await _insertMYSQL();
       } else {
         //cannot register on firebase
-        DialogBox.showErrorDialog(
-          context: context,
-          title: FirebaseAuthenticate().geterrors().code,
-          body: FirebaseAuthenticate().geterrors().message!,
-        );
-        setState(() {
-          _isLoading = false;
-        });
+        if ((FirebaseAuthenticate().geterrors().code) ==
+            'email-already-exists') {
+          //means that either using other persons mail or have not inserted to mysql
+          bool firebaseLoggedIn =
+              await FirebaseAuthenticate().firebaseLoginUser(
+            email: _emailController.text,
+            password: _confirmPasswordController.text,
+          );
+          if (firebaseLoggedIn == true) {
+            //if can login to firebase with the user credential -- sql not inserted
+            await _insertMYSQL();
+            setState(() {
+              _isLoading = false;
+            });
+          } else {
+            //trying to use other persons mail
+            DialogBox.showErrorDialog(
+              context: context,
+              title: FirebaseAuthenticate().geterrors().code,
+              body: FirebaseAuthenticate().geterrors().message!,
+            );
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        } else {
+          DialogBox.showErrorDialog(
+            context: context,
+            title: FirebaseAuthenticate().geterrors().code,
+            body: FirebaseAuthenticate().geterrors().message!,
+          );
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
       setState(() {
         _isLoading = false;

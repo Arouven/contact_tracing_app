@@ -1,5 +1,3 @@
-//import 'package:meta/meta.dart';
-
 class Location {
   final int locationId;
   final String locationName;
@@ -18,9 +16,4 @@ class Location {
       locationName: json['locationName'],
       locationDescription: json['locationDescription'],
       locationNumber: json['locationNumber']);
-  // static location newlocation() => location(
-  //     locationId: 0,
-  //     locationName: 'new location name',
-  //     locationDescription: 'location description',
-  //     locationNumber: '+230');
 }

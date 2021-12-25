@@ -1,7 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 

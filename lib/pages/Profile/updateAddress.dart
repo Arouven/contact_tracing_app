@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../widgets/drawer.dart';
 
 class UpdateAddressPage extends StatefulWidget {
   static const String route = '/updateAddress';
