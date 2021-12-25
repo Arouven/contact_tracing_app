@@ -143,12 +143,15 @@ class _RegisterState extends State<RegisterPage> {
       );
 
       if (response == true) {
+        print('response is true');
         //means that firebase already have the username then add the username to mysql
         await _insertMYSQL();
       } else {
+        print('cannot register on firebase');
         //cannot register on firebase
         if ((FirebaseAuthenticate().geterrors().code) ==
-            'email-already-exists') {
+            'email-already-in-use') {
+          print('email already exist error code');
           //means that either using other persons mail or have not inserted to mysql
           bool firebaseLoggedIn =
               await FirebaseAuthenticate().firebaseLoginUser(
@@ -162,6 +165,7 @@ class _RegisterState extends State<RegisterPage> {
               _isLoading = false;
             });
           } else {
+            print('you are trying to use other person account');
             //trying to use other persons mail
             DialogBox.showErrorDialog(
               context: context,

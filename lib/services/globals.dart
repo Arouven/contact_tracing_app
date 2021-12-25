@@ -182,4 +182,14 @@ class GlobalVariables {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('notifier');
   }
+
+  static Future setService({required bool service}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('service', service);
+  }
+
+  static Future getService() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('service');
+  }
 }

@@ -355,6 +355,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
   void initState() {
     super.initState();
     initPlatformState().whenComplete(() => setState(() {
+          _verificationId = '';
+          _phoneNumber = '';
+          _codeSent = false;
           _mobileName.text = _deviceData;
           _isLoading = false;
         }));

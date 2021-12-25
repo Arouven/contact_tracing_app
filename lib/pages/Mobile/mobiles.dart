@@ -26,7 +26,7 @@ class MobilePage extends StatefulWidget {
 
 class _MobilePageState extends State<MobilePage> {
   //declaring variables
-
+  late bool _service = false;
   bool _isLoading = true;
   //bool _showReload = false;
   //late int _selectedRadioTile;
@@ -414,17 +414,47 @@ class _MobilePageState extends State<MobilePage> {
   }
 
   Future _getMobileNumber() async {
-    final mobileNumber = await GlobalVariables.getMobileNumber();
-    return (mobileNumber != null) ? mobileNumber : '';
+    try {
+      final mobileNumber = await GlobalVariables.getMobileNumber();
+      if (mobileNumber != null) {
+        setState(() {
+          _mymobileNumber = mobileNumber;
+        });
+      } else {
+        setState(() {
+          _mymobileNumber = '';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _mymobileNumber = '';
+      });
+    }
+
+    try {
+      final service = await GlobalVariables.getService();
+      if (service == true) {
+        setState(() {
+          _service = true;
+        });
+      } else {
+        setState(() {
+          _service = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        _service = false;
+      });
+    }
   }
 
   @override
   void initState() {
-    _getMobileNumber().then((value) {
-      setState(() {
-        _mymobileNumber = value;
-      });
-      if (_mymobileNumber != '') {
+    _getMobileNumber().whenComplete(() {
+      setState(() {});
+      if ((_mymobileNumber != '') && (_service == false)) {
         startServices().whenComplete(() {
           print("initState()");
         });

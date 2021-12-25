@@ -205,12 +205,15 @@ Future<void> startServices() async {
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
-    print('start the service');
-    FlutterBackgroundService.initialize(onStart);
-    await NotificationServices().showNotification(
-      notificationTitle: 'Services Started',
-      notificationBody: 'You are now connected to our app',
-    );
+    if ((await GlobalVariables.getService()) == false) {
+      print('start the service');
+      FlutterBackgroundService.initialize(onStart);
+      await NotificationServices().showNotification(
+        notificationTitle: 'Services Started',
+        notificationBody: 'You are now connected to our app',
+      );
+      await GlobalVariables.setService(service: true);
+    }
     //  }
   }
 }
