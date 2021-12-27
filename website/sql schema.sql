@@ -17,7 +17,7 @@ CREATE TABLE `Mobile` (
   `confirmInfected` BOOLEAN DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
   PRIMARY KEY (`mobileNumber`),
-  FOREIGN KEY (`email`) REFERENCES `User`(`email`)
+  FOREIGN KEY (`email`) REFERENCES `User`(`email`) ON DELETE CASCADE
 );
 
 CREATE TABLE `Coordinates` (
@@ -28,7 +28,7 @@ CREATE TABLE `Coordinates` (
   `longitude` VARCHAR(255) NOT NULL,
   `accuracy` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`coordinatesId`),
-  FOREIGN KEY (`mobileNumber`) REFERENCES `Mobile`(`mobileNumber`)
+  FOREIGN KEY (`mobileNumber`) REFERENCES `Mobile`(`mobileNumber`) ON DELETE CASCADE
 );
 
 CREATE TABLE `AdminParamters` (
@@ -48,6 +48,29 @@ CREATE TABLE `TestingCentres` (
   PRIMARY KEY (`testingId`)
 );
 
+--
+--
+-- create stored procedure
+DELIMITER / / CREATE PROCEDURE GETUSERINFO(IN email VARCHAR(255)) BEGIN
+SELECT
+  u.email,
+  u.firstName,
+  u.lastName,
+  u.dateOfBirth,
+  u.address,
+  GROUP_CONCAT(DISTINCT m.mobileNumber SEPARATOR '\n') AS mobiles
+FROM
+  `User` u
+  INNER JOIN `Mobile` m ON u.email = m.email
+WHERE
+  u.email = email;
+
+END;
+
+/ / DELIMITER;
+
+--
+--
 -- INSERTING TEST DATA INTO TABLES
 INSERT INTO
   `AdminParamters` (
@@ -452,22 +475,3 @@ VALUES
     '57.497987',
     '1'
   );
-
--- create stored procedure
-DELIMITER / / CREATE PROCEDURE GETUSERINFO(IN email VARCHAR(255)) BEGIN
-SELECT
-  u.email,
-  u.firstName,
-  u.lastName,
-  u.dateOfBirth,
-  u.address,
-  GROUP_CONCAT(DISTINCT m.mobileNumber SEPARATOR '\n') AS mobiles
-FROM
-  `User` u
-  INNER JOIN `Mobile` m ON u.email = m.email
-WHERE
-  u.email = email;
-
-END;
-
-/ / DELIMITER;

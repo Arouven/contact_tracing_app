@@ -70,13 +70,13 @@ void onStart() {
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: geolocatorAccuracy,
         );
-
+//create file and write to it. if already exist append the file.
         _wf.writeToFile(
           '${position.latitude.toString()}',
           '${position.longitude.toString()}',
           '${position.accuracy.toString()}',
         );
-        if (counter > timeToUploadPerMinute) {
+        if (counter > (timeToUploadPerMinute) * 60) {
           await UploadFile.uploadToServer();
           print("file uploaded and counter set to 0");
           counter = 0;

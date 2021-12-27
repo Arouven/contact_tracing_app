@@ -36,16 +36,9 @@ class csvtosql
                     $accuracy = mysqli_real_escape_string($conn, $column[4]);
                 }
 
-                $sqlInsert = "INSERT into Coordinates (mobileNumber,dateTimeCoordinates,latitude,longitude,accuracy)
-                        values (?,?,?,?,?)";
-                $paramType = "iisss";
-                $paramArray = array(
-                    $mobileNumber,
-                    $dateTime,
-                    $latitude,
-                    $longitude,
-                    $accuracy
-                );
+                $sqlInsert = "INSERT into Coordinates (mobileNumber,dateTimeCoordinates,latitude,longitude,accuracy) values (?,?,?,?,?)";
+                $paramType = "sisss";
+                $paramArray = array($mobileNumber, $dateTime, $latitude, $longitude, $accuracy);
                 $insertId = $db->insert($sqlInsert, $paramType, $paramArray);
 
                 if (!empty($insertId)) {

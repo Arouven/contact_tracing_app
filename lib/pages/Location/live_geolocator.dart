@@ -150,16 +150,17 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _populateMarkers(
-      mobiles, myMobileId, colour, myMarkerColour) async {
+      mobiles, myMobileNumber, colour, myMarkerColour) async {
     if (mobiles != null) {
       //print(mobiles);
       for (var mobile in mobiles) {
         try {
-          // print(mobile['mobileId'].toString());
-          int firstInt = int.parse(mobile['mobileId'].toString());
-          int secondInt =
-              (myMobileId != null) ? int.parse(myMobileId.toString()) : 0;
-          print(myMobileId.toString());
+          // print(mobile['mobileNumber'].toString());
+          int firstInt = int.parse(mobile['mobileNumber'].toString());
+          int secondInt = (myMobileNumber != null)
+              ? int.parse(myMobileNumber.toString())
+              : 0;
+          print(myMobileNumber.toString());
           if (firstInt != secondInt) {
             Marker marker = new Marker(
               width: 25,
