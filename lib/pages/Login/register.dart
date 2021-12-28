@@ -276,18 +276,7 @@ class _RegisterState extends State<RegisterPage> {
       final addresses =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
       final instance = addresses.first;
-      // var countryName = instance.countryName;
-      // String withUnderscore = countryName.replaceAll(' ', '_');
-      // DefaultCountry country;
-      // for (DefaultCountry c in DefaultCountry.values) {
-      //   String countryValue = c.toString().split('.').last;
-      //   if (countryValue == withUnderscore) {
-      //     country = c;
-      //     break;
-      //   }
-      // }
       setState(() {
-        // _defaultCountry = country;
         _addressController.text = (instance.locality +
             ', ' +
             instance.adminArea +
@@ -296,9 +285,6 @@ class _RegisterState extends State<RegisterPage> {
       });
     } on Exception {
       print('problem in try');
-      // setState(() {
-      //   _defaultCountry = null;
-      // });
     }
   }
 
@@ -479,13 +465,7 @@ class _RegisterState extends State<RegisterPage> {
                         _emailInDB = null;
                         _checkEmail(s);
                       });
-                      // _checkemail();
                       print(s);
-                      // setState(() {
-                      //   s.isEmpty
-                      //       ? _invalidemail = true
-                      //       : _invalidemail = false;
-                      // });
                     },
                   ),
                   trailing: _buildemailTile(),

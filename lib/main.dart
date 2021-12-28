@@ -22,6 +22,13 @@ import 'package:provider/provider.dart';
 
 Writefile _wf = new Writefile();
 
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+late FlutterLocalNotificationsPlugin flutterLNP;
+late AndroidNotificationChannel channel;
+late NotificationSettings settings;
+late FirebaseMessaging _messaging;
+late var _pageSelected;
+
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
@@ -128,13 +135,6 @@ void onStart() {
 //   // continue accessing the position of the device.
 //   return await Geolocator.getCurrentPosition();
 // }
-
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-late FlutterLocalNotificationsPlugin flutterLNP;
-late AndroidNotificationChannel channel;
-late NotificationSettings settings;
-late FirebaseMessaging _messaging;
-late var _pageSelected;
 
 Future<void> _setFirebase() async {
   channel = NotificationServices().androidNotificationChannel();
@@ -372,21 +372,21 @@ var lightMode = ThemeData.light().copyWith(
 //   ),
 // );
 
-const MaterialColor lightBlueTheme = MaterialColor(
-  0xFF395afa,
-  <int, Color>{
-    50: Color(0xFFE7EBFE),
-    100: Color(0xFFC4CEFE),
-    200: Color(0xFF9CADFD),
-    300: Color(0xFF748CFC),
-    400: Color(0xFF5773FB),
-    500: Color(0xFF395afa),
-    600: Color(0xFF3352F9),
-    700: Color(0xFF2C48F9),
-    800: Color(0xFF243FF8),
-    900: Color(0xFF172EF6),
-  },
-);
+// const MaterialColor lightBlueTheme = MaterialColor(
+//   0xFF395afa,
+//   <int, Color>{
+//     50: Color(0xFFE7EBFE),
+//     100: Color(0xFFC4CEFE),
+//     200: Color(0xFF9CADFD),
+//     300: Color(0xFF748CFC),
+//     400: Color(0xFF5773FB),
+//     500: Color(0xFF395afa),
+//     600: Color(0xFF3352F9),
+//     700: Color(0xFF2C48F9),
+//     800: Color(0xFF243FF8),
+//     900: Color(0xFF172EF6),
+//   },
+// );
 ////////////////////////////////////////////////////
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';

@@ -71,34 +71,15 @@ class FirebaseAuthenticate {
   }) async {
     try {
       print('in try');
-
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: "$email",
         password: "$password",
       );
-
       return true;
-      // print(FirebaseAuth.instance.currentUser!.uid);
-      // String? userid = userCredential.user!.uid;
-      // print(userid);
-
     } on FirebaseAuthException catch (e) {
       exception = e;
       print(e.message);
       return false;
-      // if (e.code == 'weak-password') {
-      //   print(e.message);
-      // } else if (e.code == 'email-already-in-use') {
-      //   print('The account already exists for that email.');
-      // }
-      // } catch (e) {
-      //   print('error in firebase');
-      //   print(e);
     }
-    // finally {
-    //   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-    //   String? token = await _firebaseMessaging.getToken();
-    //   print(token);
-    // }
   }
 }

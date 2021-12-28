@@ -34,6 +34,8 @@ class _LoginState extends State<LoginPage> {
   bool _invalidPassword = false;
   bool _invalidemail = false;
 
+  bool _obscureText = true;
+
   void _loginPressed() async {
     setState(() {
       _isLoading = true;
@@ -184,7 +186,6 @@ class _LoginState extends State<LoginPage> {
     }
   }
 
-  bool _obscureText = true;
   Widget _displayLogin() {
     return Container(
       child: ListView(
