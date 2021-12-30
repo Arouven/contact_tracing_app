@@ -51,8 +51,7 @@ class DatabaseMySQLServices {
         seconds: _secondstimeout,
       ),
       onTimeout: () {
-        // Time has run out, do what you wanted to do.
-        return http.Response('Error', 500); // Replace 500 with your http code.
+        return http.Response('Error', 500);
       },
     );
     final body = json.decode(res.body);
@@ -190,9 +189,7 @@ class DatabaseMySQLServices {
           seconds: _secondstimeout,
         ),
         onTimeout: () {
-          // Time has run out, do what you wanted to do.
-          return http.Response(
-              'Error', 500); // Replace 500 with your http code.
+          return http.Response('Error', 500);
         },
       );
       return jsonDecode(res.body);

@@ -306,14 +306,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
         },
         codeAutoRetrievalTimeout: (String verificationid) {
           print('codeautoretrievaltimeout');
-          //  if (_signedin == true) {
-          //} else {
-          // setState(() {
           _verificationId = verificationid;
           print('verificationid: ' + _verificationId);
           _isLoading = false;
-          // });
-          //}
         },
         timeout: Duration(seconds: 120),
       );
@@ -334,14 +329,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
       FirebaseAuthenticate().getfirebaseuid();
       await FirebaseAuthenticate().getfirebasefcmtoken();
       await _updateMysql();
-      await GlobalVariables.setMobileNumber(mobileNumber: _mobileNumber);
-      // setState(() {
-      // _signedin = true;
-      // });
+      await GlobalVariables.setMobileNumber(
+          mobileNumber: _mobileNumber); //save in prefs
     } on FirebaseAuthException catch (e) {
-      // setState(() {
-      //   _signedin = false;
-      // });
       print('verifyPin exception');
       print(e);
       DialogBox.showErrorDialog(

@@ -304,8 +304,9 @@ class _MobilePageState extends State<MobilePage> {
     return Scrollbar(
       child: RefreshIndicator(
         onRefresh: () async {
-          await Future.delayed(Duration(seconds: 2));
           List<Mobile> mobiles = await ApiMobile.getMobiles();
+          await Future.delayed(
+              Duration(seconds: 2)); //to allow circular loading
           setState(() {
             print('pull to refresh');
             _mobiles = mobiles;
