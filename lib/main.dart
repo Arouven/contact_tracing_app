@@ -28,6 +28,12 @@ late AndroidNotificationChannel channel;
 late NotificationSettings settings;
 late FirebaseMessaging _messaging;
 late var _pageSelected;
+late String path = "notification/";
+
+Future<void> generatePath() async {
+  final phoneNumber = await GlobalVariables.getMobileNumber();
+  path = "notification/$phoneNumber/";
+}
 
 void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,6 +80,7 @@ void onStart() {
       final mobileNumber = await GlobalVariables.getMobileNumber();
       if ((email != null) && (mobileNumber != null)) {
         print("email and mobileid not null at start of service");
+        await generatePath();
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: geolocatorAccuracy,
         );

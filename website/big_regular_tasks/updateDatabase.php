@@ -1,5 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/firebase/includes/insert.php';
 
 
 class updateDatabase
@@ -33,13 +34,8 @@ class updateDatabase
                 if ($distanceMetres <= $distanceContact) { //mark contact with infected
                     print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected.";
                     //send message to mobile
-                    $message = new message(
-                        $mobileNumberPossibleContact,
-                        "You may be infected practice self-isolation and perform a test"
-                    );
-                    if ($message->sendMessage()) {
-                        echo 'message sent';
-                    }
+                    new NotifyFirebase($mobileNumberPossibleContact);
+                    echo 'message sent to ' . $mobileNumberPossibleContact;
                     $this->markAsContact($mobileNumberPossibleContact);
                 }
             }

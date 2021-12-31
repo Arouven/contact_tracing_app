@@ -1,7 +1,7 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
-//require $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
-//require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+//require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -21,12 +21,12 @@ class NotifyFirebase
     private $arrayToSend;
     private $mobileNumber;
     private $db;
-    function __construct($mobileNumber = "+23057775794", $title = "Title3", $body = "Body", $url = "https://fcm.googleapis.com/fcm/send", $token = 'f1RjgXu_SV-7L3ODUOxtTb:APA91bFyJJFcrUpiUE-CcghtpEWo2Sagd4sSYcD9A0AAfdUfziRvh-73CQx_aFyMo0vVfoc750kcJV1OKJrKyQLG9F7To8rEn_3OrVD1m145jTqmx-pmnZSu_qdLe0Dcya3m0cefxV-N', $sound = 'default', $badge = '1', $priority = 'high')
+    function __construct($mobileNumber = "+23057775794", $title = "In Contact", $body = "You may be infected practice self-isolation and perform a test", $url = "https://fcm.googleapis.com/fcm/send", $sound = 'default', $badge = '1', $priority = 'high')
     {
         $this->db = new database();
         $this->url = $url;
         $this->token =  $this->getRespectiveFCMtoken($mobileNumber);
-        //$this->token =  $token;
+        //$this->token = 'f1RjgXu_SV-7L3ODUOxtTb:APA91bFyJJFcrUpiUE-CcghtpEWo2Sagd4sSYcD9A0AAfdUfziRvh-73CQx_aFyMo0vVfoc750kcJV1OKJrKyQLG9F7To8rEn_3OrVD1m145jTqmx-pmnZSu_qdLe0Dcya3m0cefxV-N', 
         $this->title =  $title;
         $this->body = $body;
         $this->mobileNumber = $mobileNumber;
@@ -71,7 +71,7 @@ class NotifyFirebase
         if (isset($data) && $data != null) { //if there is something in the result 
             return $data[0]['fcmtoken'];
         } else { //nothing in result
-            return 'd61hZ9MvRyupiaG4r9BfbO:APA91bEUY1QgnIJjCknSOx82aks9tiye9XIIeOQTkzZzVp4Koau3Y-DiC5HWDaQZRrXQQ9C_3CBW_Ng1c5v7aBoYJ1tmLID3UlGZtS49z-GcFm9QDnA0Jz9kr2BS6vR5Sd4ZZD7cIi-0';
+            return '0';
         }
     }
     function sendFCM()
@@ -125,4 +125,3 @@ class NotifyFirebase
         return $result;
     }
 }
-new NotifyFirebase('+23057775794');

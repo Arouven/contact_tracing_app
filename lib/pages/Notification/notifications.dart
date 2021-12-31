@@ -1,3 +1,4 @@
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
@@ -5,8 +6,6 @@ import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-String path = "notification/+23057775794/";
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -20,13 +19,6 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
   List<Message> messageList = [];
-  @override
-  void initState() {
-    //FlutterBackgroundService().sendData({"action": "updateBadge"});
-    _getListofMessages().then((value) => setState(() {}));
-    _updateListofMessages();
-    super.initState();
-  }
 
   Future _getListofMessages() async {
     setState(() {
@@ -83,6 +75,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
             );
           });
         }
+      });
+      setState(() async {
+        await BadgeServices.updateBadge();
+        print(BadgeServices.number);
         _isLoading = false;
       });
     });
@@ -114,6 +110,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       color: Colors.red,
                     ),
               onTap: () async {
+                setState(() {
+                  _isLoading = true;
+                });
                 if (messageList[index].read) {
                 } else {
                   await DatabaseFirebaseServices.markRead(
@@ -123,6 +122,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   BadgeServices.number = BadgeServices.number - 1;
                   BadgeServices.updateAppBadge();
                 }
+                setState(() {
+                  _isLoading = false;
+                });
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (BuildContext context) => SingleNotificationPage(
@@ -136,6 +138,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    _getListofMessages().then((value) => setState(() {}));
+    _updateListofMessages();
+    super.initState();
   }
 
   @override
