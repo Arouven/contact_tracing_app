@@ -1,15 +1,20 @@
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class SingleNotificationPage extends StatefulWidget {
   static const String route = '/singlenotif';
   final Message message;
+
   const SingleNotificationPage({
     Key? key,
     required this.message,
   }) : super(key: key);
+
   @override
   _SingleNotificationPageState createState() {
     return _SingleNotificationPageState();
@@ -17,15 +22,6 @@ class SingleNotificationPage extends StatefulWidget {
 }
 
 class _SingleNotificationPageState extends State<SingleNotificationPage> {
-  // bool _isLoading = true;
-  @override
-  void initState() {
-    //FlutterBackgroundService().sendData({"action": "updateBadge"});
-    // getListofMessages().then((value) => setState(() {}));
-    // updateListofMessages();
-    super.initState();
-  }
-
   Widget _body() {
     final messageid = widget.message.id;
     final messagetitle = widget.message.title;
@@ -76,6 +72,23 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
     );
   }
 
+  _markRead() async {
+    if (widget.message.read == false) {
+      await DatabaseFirebaseServices.markRead(
+        message: widget.message,
+        path: path,
+      );
+      BadgeServices.number = BadgeServices.number - 1;
+      BadgeServices.updateAppBadge();
+    }
+  }
+
+  @override
+  void initState() {
+    _markRead();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,11 +100,12 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
           appBar: AppBar(
             leading: BackButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => NotificationsPage(),
-                  ),
-                );
+                Navigator.of(context).pop();
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) => NotificationsPage(),
+                //   ),
+                // );
               },
             ),
             title: Text('Notification'),

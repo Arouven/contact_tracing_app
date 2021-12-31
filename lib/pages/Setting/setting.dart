@@ -22,6 +22,7 @@ class _SettingPageState extends State<SettingPage> {
   bool _notifier = false;
   late String _usermail = '';
   bool _isLoading = true;
+  bool _isDarkMode = false;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getBackgroundServices();
@@ -51,15 +52,29 @@ class _SettingPageState extends State<SettingPage> {
     return await GlobalVariables.getEmail();
   }
 
+  Future _getDarkMode() async {
+    try {
+      if (await GlobalVariables.getDarkTheme() == true) {
+        _isDarkMode = true;
+      } else {
+        _isDarkMode = false;
+      }
+    } catch (e) {
+      _isDarkMode = false;
+    }
+  }
+
   @override
   void initState() {
     _checkServices().whenComplete(() {
-      _getNotifier().then((notifier) {
-        _getusermail().then((usermail) {
-          setState(() {
-            _notifier = notifier;
-            _usermail = usermail;
-            _isLoading = false;
+      _getDarkMode().whenComplete(() {
+        _getNotifier().then((notifier) {
+          _getusermail().then((usermail) {
+            setState(() {
+              _notifier = notifier;
+              _usermail = usermail;
+              _isLoading = false;
+            });
           });
         });
       });
@@ -99,8 +114,11 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
                 Switch.adaptive(
-                  value: themeProvider.isDarkMode,
-                  onChanged: (value) async {
+                  value: themeProvider.isDark(),
+                  onChanged: (value) {
+                    setState(() {
+                      _isDarkMode = !_isDarkMode;
+                    });
                     provider.toggleTheme(value);
                   },
                   // activeTrackColor: Theme.of(context).backgroundColor,
@@ -130,8 +148,11 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
                 Switch.adaptive(
-                  value: themeProvider.isDarkMode,
-                  onChanged: (value) async {
+                  value: themeProvider.isDark(),
+                  onChanged: (value) {
+                    setState(() {
+                      _isDarkMode = !_isDarkMode;
+                    });
                     provider.toggleTheme(value);
                   },
                   //  activeTrackColor: Theme.of(context).backgroundColor,

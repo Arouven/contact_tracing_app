@@ -110,28 +110,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       color: Colors.red,
                     ),
               onTap: () async {
-                setState(() {
-                  _isLoading = true;
-                });
-                if (messageList[index].read) {
-                } else {
-                  await DatabaseFirebaseServices.markRead(
-                    message: messageList[index],
-                    path: path,
-                  );
-                  BadgeServices.number = BadgeServices.number - 1;
-                  BadgeServices.updateAppBadge();
-                }
-                setState(() {
-                  _isLoading = false;
-                });
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => SingleNotificationPage(
                       message: messageList[index],
                     ),
                   ),
                 );
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) => SingleNotificationPage(
+                //       message: messageList[index],
+                //     ),
+                //   ),
+                // );
               },
             );
           },

@@ -192,4 +192,14 @@ class GlobalVariables {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('service');
   }
+
+  static Future setDarkTheme({required bool isDarkTheme}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('darkTheme', isDarkTheme);
+  }
+
+  static Future getDarkTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('darkTheme');
+  }
 }

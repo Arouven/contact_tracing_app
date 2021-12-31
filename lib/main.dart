@@ -258,6 +258,7 @@ Future pageSelector() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
     final bool notif = await GlobalVariables.getNotifier();
     if (notif == null) {
@@ -315,7 +316,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-final darkMode = ThemeData(
+var darkMode = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.grey,
   // primaryColor: Colors.black,
