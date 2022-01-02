@@ -298,9 +298,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // if (_isDarkMode != null) {
-    //   themeProvider.toggleTheme(_isDarkMode);
-    // }
     return ChangeNotifierProvider<ThemeProvider>(
       create: (context) => new ThemeProvider(),
       builder: (context, _) {

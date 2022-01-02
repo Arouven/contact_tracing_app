@@ -2,7 +2,6 @@ import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
-import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -134,7 +133,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
-    _getListofMessages().then((value) => setState(() {}));
+    _getListofMessages().whenComplete(() => setState(() {}));
     _updateListofMessages();
     super.initState();
   }

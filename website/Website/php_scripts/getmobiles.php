@@ -1,20 +1,20 @@
 <?php
 
 
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $db = new database();
 $conn = $db->getConnection();
 
-$userid = "";
-if (isset($_GET['userid'])) {
-    $userid = mysqli_real_escape_string($conn, $_GET['userid']);
+$email = "";
+if (isset($_GET['email'])) {
+    $userid = mysqli_real_escape_string($conn, $_GET['email']);
 }
 
-$selectquery = "SELECT * FROM Mobile WHERE userId=?;";
+$selectquery = "SELECT * FROM Mobile WHERE email=?;";
 $selectparamType = "i";
-$selectparamArray = array($userid);
+$selectparamArray = array($email);
 $data = $db->select($selectquery, $selectparamType, $selectparamArray);
 
 

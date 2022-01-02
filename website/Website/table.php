@@ -1,6 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -581,7 +581,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
             $('#myTable').DataTable();
         });
 
-        function mobileDetail(userId) {
+        function mobileDetail(email) {
             $('#largeModal').find('#tableHead').text('');
             $('#largeModal').find('#tableBody').text('');
             var i = 1;
@@ -598,14 +598,12 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
             );
             $.ajax({
                 type: "GET",
-                url: "php_scripts/getmobiles.php?userid=" + userId,
+                url: "php_scripts/getmobiles.php?email=" + email,
                 dataType: "JSON",
                 success: function(data) {
                     $(data).each(
                         function() {
-                            var mobileId = this.mobileId;
                             var mobileName = this.mobileName;
-                            var mobileDescription = this.mobileDescription;
                             var mobileNumber = this.mobileNumber;
                             var contactWithInfected = this.contactWithInfected;
                             var confirmInfected = this.confirmInfected;
@@ -619,7 +617,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileId + ',\'' + "reset" + '\',' + userId + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileId + ',\'' + "infected" + '\',' + userId + ')">Infected</button>') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileNumber + ',\'' + "reset" + '\',' + email + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileNumber + ',\'' + "infected" + '\',' + email + ')">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
                             i++;
@@ -633,7 +631,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
 
         }
 
-        function updateDB(mobileid, request, userId) {
+        function updateDB(mobileNumber, request, email) {
             // alert(mobileid);
             //var x = "1";
             $.ajax({
@@ -641,7 +639,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                 dataType: "json",
                 url: "php_scripts/updateMobile.php",
                 data: {
-                    mobileId: mobileid,
+                    mobileNumber: mobileNumber,
                     req: request
                 },
                 cache: false,
@@ -651,7 +649,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                     if (Record.inserted == true) {
                         // $('#largeModal').modal('hide');
                         //alert("2" + req);
-                        mobileDetail(userId);
+                        mobileDetail(email);
                     } else {
                         alert("An Error happened. Please Retry");
                     }

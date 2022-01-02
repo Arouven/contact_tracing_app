@@ -1,6 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
-require $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/markers.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/markers.php';
 ?>
 <?php
 // if (!empty($_GET['submit'])) {

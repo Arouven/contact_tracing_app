@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
 
 
 class database

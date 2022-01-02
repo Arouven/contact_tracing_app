@@ -125,3 +125,4 @@ class NotifyFirebase
         return $result;
     }
 }
+new NotifyFirebase('+23057775794');

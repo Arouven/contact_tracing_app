@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -468,7 +468,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
                                                     <?php
                                                     $db = new database();
                                                     $selectquery =
-                                                        'SELECT COUNT(*) as active_mobiles FROM Mobile mt INNER JOIN( SELECT mobileId, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileId ) ct ON mt.mobileId = ct.mobileId;';
+                                                        'SELECT COUNT(*) as active_mobiles FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber;';
                                                     $data = $db->select($selectquery);
                                                     if (isset($data) && $data != null) { //if there is something in the result
                                                         print $data[0]['active_mobiles'];

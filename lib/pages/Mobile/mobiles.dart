@@ -104,7 +104,7 @@ class _MobilePageState extends State<MobilePage> {
             textFieldAlignment: MainAxisAlignment.spaceAround,
             fieldStyle: FieldStyle.underline,
             onCompleted: (smsCode) {
-              _verifyPin(smsCode: smsCode);
+              _verifyPin(smsCode: smsCode.toString());
             },
           ),
         ],
@@ -134,10 +134,11 @@ class _MobilePageState extends State<MobilePage> {
           print('new');
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
-          await _updateMysql();
+
           await GlobalVariables.setMobileNumber(
             mobileNumber: _mobileNumberToSetActive,
           );
+          await _updateMysql();
           setState(() {
             //   _signedin = true;
             _isLoading = false;
@@ -168,6 +169,7 @@ class _MobilePageState extends State<MobilePage> {
           //  if (_signedin == true) {
           //} else {
           setState(() {
+            _codeSent = false;
             _verificationId = verificationid;
             print('verificationid: ' + _verificationId);
             _isLoading = false;
@@ -192,9 +194,9 @@ class _MobilePageState extends State<MobilePage> {
       print('new');
       FirebaseAuthenticate().getfirebaseuid();
       await FirebaseAuthenticate().getfirebasefcmtoken();
-      await _updateMysql();
       await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumberToSetActive);
+      await _updateMysql();
       // setState(() {
       // _signedin = true;
       // });
@@ -204,15 +206,18 @@ class _MobilePageState extends State<MobilePage> {
       // });
       print('verifyPin exception');
       print(e);
-      DialogBox.showErrorDialog(
+      await DialogBox.showErrorDialog(
         context: context,
         body: e.message.toString(),
       );
+      setState(() {
+        _codeSent = false;
+      });
     }
   }
 
   Future _updateMysql() async {
-    final mobileNumber = await GlobalVariables.getMobileNumber();
+    final String mobileNumber = await GlobalVariables.getMobileNumber();
     final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
     if (fcmtoken != null) {
       final response = await DatabaseMySQLServices.updateMobilefmcToken(
@@ -353,6 +358,7 @@ class _MobilePageState extends State<MobilePage> {
                                     print('set active');
                                     await _showSetActiveDialog(_mobiles[index]);
                                     print(_mobiles[index].fcmtoken);
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ),
@@ -396,7 +402,7 @@ class _MobilePageState extends State<MobilePage> {
   /// display the add button
   /// if is not loading and has not encounter error
   Widget? _floatingActionButton() {
-    if (_isLoading) {
+    if (_isLoading || _codeSent) {
       return null;
     } else {
       return FloatingActionButton(

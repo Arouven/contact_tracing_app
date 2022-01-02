@@ -275,10 +275,11 @@ class _AddMobilePageState extends State<AddMobilePage> {
           print('new');
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
-          await _updateMysql();
+
           await GlobalVariables.setMobileNumber(
             mobileNumber: _mobileNumber,
           );
+          await _updateMysql();
           setState(() {
             //   _signedin = true;
             _isLoading = false;
@@ -305,6 +306,7 @@ class _AddMobilePageState extends State<AddMobilePage> {
           });
         },
         codeAutoRetrievalTimeout: (String verificationid) {
+          _codeSent = false;
           print('codeautoretrievaltimeout');
           _verificationId = verificationid;
           print('verificationid: ' + _verificationId);
@@ -328,9 +330,10 @@ class _AddMobilePageState extends State<AddMobilePage> {
       print('new');
       FirebaseAuthenticate().getfirebaseuid();
       await FirebaseAuthenticate().getfirebasefcmtoken();
-      await _updateMysql();
+
       await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumber); //save in prefs
+      await _updateMysql();
     } on FirebaseAuthException catch (e) {
       print('verifyPin exception');
       print(e);
