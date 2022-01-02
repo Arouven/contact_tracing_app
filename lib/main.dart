@@ -28,6 +28,7 @@ late AndroidNotificationChannel channel;
 late NotificationSettings settings;
 late FirebaseMessaging _messaging;
 late var _pageSelected;
+late var _isDarkMode = null;
 late String path = "notification/";
 
 Future<void> generatePath() async {
@@ -258,7 +259,12 @@ Future pageSelector() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  try {
+    _isDarkMode = await GlobalVariables.getDarkTheme();
+  } catch (e) {
+    print(e);
+    _isDarkMode = null;
+  }
   try {
     final bool notif = await GlobalVariables.getNotifier();
     if (notif == null) {
@@ -292,10 +298,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // if (_isDarkMode != null) {
+    //   themeProvider.toggleTheme(_isDarkMode);
+    // }
     return ChangeNotifierProvider<ThemeProvider>(
       create: (context) => new ThemeProvider(),
       builder: (context, _) {
         final themeProvider = Provider.of<ThemeProvider>(context);
+        if (_isDarkMode != null) {
+          themeProvider.toggleTheme(_isDarkMode);
+        }
         return MaterialApp(
           title: 'Contact tracing',
           theme: lightMode,

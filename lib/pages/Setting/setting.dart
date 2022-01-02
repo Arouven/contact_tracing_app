@@ -114,12 +114,16 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
                 Switch.adaptive(
-                  value: themeProvider.isDark(),
-                  onChanged: (value) {
-                    setState(() {
-                      _isDarkMode = !_isDarkMode;
-                    });
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) async {
                     provider.toggleTheme(value);
+                    setState(() {
+                      themeProvider.isDarkMode;
+                      print("should change");
+                    });
+                    // setState(() {
+                    //   _isDarkMode = value;
+                    // });
                   },
                   // activeTrackColor: Theme.of(context).backgroundColor,
                   // activeColor: Theme.of(context).accentColor,
@@ -148,12 +152,12 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
                 Switch.adaptive(
-                  value: themeProvider.isDark(),
-                  onChanged: (value) {
-                    setState(() {
-                      _isDarkMode = !_isDarkMode;
-                    });
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) async {
                     provider.toggleTheme(value);
+                    // setState(() {
+                    //   _isDarkMode = value;
+                    // });
                   },
                   //  activeTrackColor: Theme.of(context).backgroundColor,
                   //activeColor: Theme.of(context).accentColor,
