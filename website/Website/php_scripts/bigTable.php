@@ -34,7 +34,7 @@ class bigTable
                 echo ($tdCss == "" || $tdCss == null) ? "<td>$firstName</td>" : "<td class='$tdCss'>$firstName</td>";
                 echo ($tdCss == "" || $tdCss == null) ? "<td>$lastName</td>" : "<td class='$tdCss'>$lastName</td>";
                 echo ($tdCss == "" || $tdCss == null) ? "<td>$email</td>" : "<td class='$tdCss'>$firstName</td>";
-                echo ($tdCss == "" || $tdCss == null) ? "<td>$Mobiles $button</td>" : "<td class='$tdCss'>$Mobiles $button</td>";
+                echo ($tdCss == "" || $tdCss == null) ? "<td><div style='width: 100%;overflow: hidden;'><div style='width: 80%;float:left;'>$Mobiles </div><div style='width: 10%; text-align:right; float:right; overflow: hidden;'>$button </div></div></td>" : "<td class='$tdCss'> <div style='width: 100%;overflow: hidden;'><div style='width: 80%;float:left;'>$Mobiles </div><div style='width: 10%; text-align:right; float:right; overflow: hidden;'>$button </div></div></td>";
                 echo "</tr>";
             }
         }

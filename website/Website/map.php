@@ -535,8 +535,8 @@ $markers->getTestingCenters();
                                             </div>
 
                                             <div class="form-group">
-                                                <input class="au-input au-input--full" type="text" readonly name="longitude" id="longitude" placeholder="Longitude">
-                                                <input class="au-input au-input--full" type="text" readonly name="latitude" id="latitude" placeholder="Latitude">
+                                                <input class="au-input" style="width:40%" type="text" readonly name="longitude" id="longitude" placeholder="Longitude">
+                                                <input class="au-input" style="width:40%" type="text" readonly name="latitude" id="latitude" placeholder="Latitude">
                                                 <button type="button" class="btn btn-secondary mb-1" data-toggle="modal" data-target="#largeModal">
                                                     <i class="fas fa-map-marker-alt"></i>
                                                 </button>
