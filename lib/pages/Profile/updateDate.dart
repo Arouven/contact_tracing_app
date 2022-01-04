@@ -120,7 +120,7 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
                       backgroundColor: Colors.transparent,
                       itemTextStyle: TextStyle(
                         fontSize: 19,
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       // dividerColor: Colors.blue,
                     ),

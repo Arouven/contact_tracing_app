@@ -78,7 +78,9 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
         message: widget.message,
         path: path,
       );
-      BadgeServices.number = BadgeServices.number - 1;
+      setState(() {
+        BadgeServices.number = BadgeServices.number - 1;
+      });
       BadgeServices.updateAppBadge();
     }
   }

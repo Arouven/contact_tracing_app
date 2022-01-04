@@ -219,21 +219,21 @@ class _ProfilePageState extends State<ProfilePage> {
       //loading
       return Aesthetic.displayCircle();
     } else {
-      if (_address == '') {
-        return Container();
-      } else {
-        return RefreshIndicator(
-          onRefresh: () async {
-            await Future.delayed(Duration(seconds: 2));
-            await _getData();
-            setState(() {
-              print('pull to refresh');
-              _isLoading = false;
-            });
-          },
-          child: listview,
-        );
-      }
+      // if (_address == '') {
+      //   return Container();
+      // } else {
+      return RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 2));
+          await _getData();
+          setState(() {
+            print('pull to refresh');
+            _isLoading = false;
+          });
+        },
+        child: listview,
+      );
+      // }
     }
   }
 
@@ -256,8 +256,52 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.red,
                 ),
                 onPressed: () async {
-                  print('logout');
-                  await logout(context);
+                  return showDialog<void>(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Logout?',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: <Widget>[
+                              new Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                        'Are you sure you want to log out from the application?'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            style: Theme.of(context).textButtonTheme.style,
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            style: Theme.of(context).textButtonTheme.style,
+                            child: Text('Log out'),
+                            onPressed: () async {
+                              print('logout');
+                              Navigator.of(context).pop();
+                              await logout(context);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ],

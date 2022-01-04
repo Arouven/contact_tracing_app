@@ -23,40 +23,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
     setState(() {
       _isLoading = true;
     });
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-    // Get the data once
-    DatabaseEvent event = await ref.once();
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+      // Get the data once
+      DatabaseEvent event = await ref.once();
 
 // Print the data of the snapshot
-    print(event.snapshot.value); // { "name": "John" }
-    DataSnapshot snapshot = event.snapshot; // DataSnapshot
-    Map message = snapshot.value as Map;
-    messageList.clear();
-    setState(() {
-      if (message != null) {
-        message.forEach((key, value) {
-          messageList.add(
-            new Message(
-              id: key,
-              title: value['title'],
-              body: value['body'],
-              read: value['read'],
-              timestamp: value['timestamp'],
-            ),
-          );
-        });
-      }
-      _isLoading = false;
-    });
-  }
-
-  void _updateListofMessages() {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// Get the Stream
-    Stream<DatabaseEvent> stream = ref.onValue;
-
-// Subscribe to the stream!
-    stream.listen((DatabaseEvent event) {
+      print(event.snapshot.value); // { "name": "John" }
       DataSnapshot snapshot = event.snapshot; // DataSnapshot
       Map message = snapshot.value as Map;
       messageList.clear();
@@ -74,12 +47,52 @@ class _NotificationsPageState extends State<NotificationsPage> {
             );
           });
         }
-      });
-      setState(() async {
-        await BadgeServices.updateBadge();
-        print(BadgeServices.number);
         _isLoading = false;
       });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _updateListofMessages() {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+    Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent event) {
+      try {
+        DataSnapshot snapshot = event.snapshot; // DataSnapshot
+        Map message = snapshot.value as Map;
+        messageList.clear();
+        int unreadmsg = 0;
+        setState(() {
+          if (message != null) {
+            message.forEach((key, value) {
+              if (value['read'] == false) {
+                unreadmsg += 1;
+              }
+              messageList.add(
+                new Message(
+                  id: key,
+                  title: value['title'],
+                  body: value['body'],
+                  read: value['read'],
+                  timestamp: value['timestamp'],
+                ),
+              );
+            });
+          }
+        });
+        setState(() async {
+          BadgeServices.number = unreadmsg;
+          await BadgeServices.updateBadge();
+          print(BadgeServices.number);
+          _isLoading = false;
+        });
+      } catch (e) {
+        print(e);
+      }
     });
   }
 

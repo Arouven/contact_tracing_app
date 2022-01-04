@@ -139,6 +139,7 @@ class _MobilePageState extends State<MobilePage> {
             mobileNumber: _mobileNumberToSetActive,
           );
           await _updateMysql();
+          await generatePath();
           setState(() {
             //   _signedin = true;
             _isLoading = false;
@@ -197,6 +198,7 @@ class _MobilePageState extends State<MobilePage> {
       await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumberToSetActive);
       await _updateMysql();
+      await generatePath();
       // setState(() {
       // _signedin = true;
       // });

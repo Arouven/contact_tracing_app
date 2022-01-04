@@ -168,6 +168,7 @@ void _openAppMessage() {
     print('User granted permission');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Parse the message received
+
       _sendMsg(message);
     });
   } else {

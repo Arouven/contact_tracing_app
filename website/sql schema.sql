@@ -1,3 +1,9 @@
+--
+--
+--required
+--
+--
+--
 -- CREATING TABLES
 CREATE TABLE `User` (
   `email` VARCHAR(255) NOT NULL,
@@ -51,7 +57,9 @@ CREATE TABLE `TestingCentres` (
 --
 --
 -- create stored procedure
-DELIMITER / / CREATE PROCEDURE GETUSERINFO(IN email VARCHAR(255)) BEGIN
+DELIMITER 
+// 
+CREATE PROCEDURE GETUSERINFO(IN email VARCHAR(255)) BEGIN
 SELECT
   u.email,
   u.firstName,
@@ -66,8 +74,8 @@ WHERE
   u.email = email;
 
 END;
-
-/ / DELIMITER;
+// 
+DELIMITER ;
 
 --
 --
@@ -81,6 +89,16 @@ INSERT INTO
 VALUES
   (2, 7, 14);
 
+-- end required
+--
+--
+--
+--
+-- dummy values
+--
+--
+-- INSERTING TEST DATA INTO TABLES
+--start dummy testing centres
 INSERT INTO
   `TestingCentres` (
     name,
@@ -102,14 +120,16 @@ VALUES
     '57.413318'
   );
 
+--end dummy testing centres
+--
+--start dummy users
 INSERT INTO
   `User` (
     firstName,
     lastName,
     address,
     dateOfBirth,
-    email,
-    firebaseuid
+    email
   )
 VALUES
   (
@@ -117,118 +137,120 @@ VALUES
     'Smith',
     'Bambous',
     '2000-01-13',
-    'JohnSmith@gmail.com',
-    '1234'
+    'JohnSmith@gmail.com'
   ),
   (
     'James',
     'Smith',
     'Port-Louis',
     '2000-01-13',
-    'JamesSmith@gmail.com',
-    '1234'
+    'JamesSmith@gmail.com'
   );
 
+-- end dummy users
+--
+-- start insert dummy mobiles
 INSERT INTO
   `Mobile` (
-    mobileId,
-    userId,
+    email,
     mobileName,
-    mobileDescription,
-    mobileNumber
+    mobileNumber,
+    fcmtoken
   )
 VALUES
-  (1, 1, 'Samsung me', 'Samsung me', '+23012345678'),
   (
-    2,
-    1,
-    'iphone mother',
-    'iphone mother',
-    '+23012345678'
+    'JohnSmith@gmail.com',
+    'Samsung me home',
+    '+23012345670',
+    'Dummy token1'
   ),
   (
-    3,
-    1,
-    'huawei father',
-    'huawei father',
-    '+23012345678'
+    'JohnSmith@gmail.com',
+    'iphone545125-mother',
+    '+23012345671',
+    'Dummy token2'
+  ),
+  (
+    'JohnSmith@gmail.com',
+    'huawei-6548-father',
+    '+23012345672',
+    'Dummy token3'
   );
 
+--dummy non infected and non contact with infected
 INSERT INTO
   `Mobile` (
-    mobileId,
-    userId,
+    email,
     mobileName,
-    mobileDescription,
     mobileNumber,
+    fcmtoken,
     contactWithInfected,
     confirmInfected
   )
 VALUES
   (
-    4,
-    2,
-    'nokia de james',
-    'nokia de james',
-    '+23012345678',
+    'JamesSmith@gmail.com',
+    'nokia-56546-james-home',
+    '+23012345673',
+    'Dummy token4',
     0,
     0
   ),
   (
-    5,
-    2,
+    'JamesSmith@gmail.com',
     'nokia de la mere de james',
-    'nokia de la mere de james',
-    '+23012345678',
+    '+23012345674',
+    'Dummy token5',
     0,
     0
   ),
   (
-    6,
-    2,
+    'JamesSmith@gmail.com',
     'nokia de la soeur de james',
-    'nokia de la soeur de james',
-    '+23012345678',
+    '+23012345675',
+    'Dummy token6',
     0,
     0
   ),
   (
-    7,
-    2,
+    'JamesSmith@gmail.com',
     'nokia du frere de james',
     'nokia du frere de james',
-    '+23012345678',
+    '+23012345676',
+    'Dummy token7',
     0,
     0
   );
 
+-- dummy infected person
 INSERT INTO
   `Mobile` (
-    mobileId,
-    userId,
+    email,
     mobileName,
-    mobileDescription,
     mobileNumber,
+    fcmtoken,
     contactWithInfected,
     confirmInfected,
     dateTimeLastTest
   )
 VALUES
   (
-    8,
-    2,
+    'JamesSmith@gmail.com',
     'nokia du pere de james',
-    'nokia du pere de james',
-    '+23012345678',
+    '+23012345677',
+    'Dummy token8',
     0,
     1,
     1629629292
   );
 
+--end insert mobiles
+--
+--dummy coordinates
 INSERT INTO
   `Coordinates` (
     coordinatesId,
-    mobileId,
+    mobileNumber,
     dateTimeCoordinates,
     latitude,
     longitude,
@@ -237,7 +259,7 @@ INSERT INTO
 VALUES
   (
     1,
-    1,
+    '+23012345670',
     1629629291,
     '-20.267031',
     '57.417493',
@@ -245,7 +267,7 @@ VALUES
   ),
   (
     2,
-    1,
+    '+23012345670',
     1629629292,
     '-20.267031',
     '57.417493',
@@ -253,7 +275,7 @@ VALUES
   ),
   (
     3,
-    1,
+    '+23012345670',
     1629629293,
     '-20.267031',
     '57.417493',
@@ -261,7 +283,7 @@ VALUES
   ),
   (
     4,
-    2,
+    '+23012345671',
     1629629291,
     '-20.267031',
     '57.417493',
@@ -269,7 +291,7 @@ VALUES
   ),
   (
     5,
-    2,
+    '+23012345671',
     1629629292,
     '-20.267031',
     '57.417493',
@@ -277,7 +299,7 @@ VALUES
   ),
   (
     6,
-    2,
+    '+23012345671',
     1629629293,
     '-20.267031',
     '57.417493',
@@ -285,7 +307,7 @@ VALUES
   ),
   (
     7,
-    3,
+    '+23012345672',
     1629629291,
     '-20.183035',
     '57.469663',
@@ -293,7 +315,7 @@ VALUES
   ),
   (
     8,
-    3,
+    '+23012345672',
     1629629292,
     '-20.183035',
     '57.469663',
@@ -301,7 +323,7 @@ VALUES
   ),
   (
     9,
-    3,
+    '+23012345672',
     1629629293,
     '-20.183035',
     '57.469663',
@@ -309,7 +331,7 @@ VALUES
   ),
   (
     10,
-    4,
+    '+23012345673',
     1629629291,
     '-20.160839',
     '57.497987',
@@ -317,7 +339,7 @@ VALUES
   ),
   (
     11,
-    4,
+    '+23012345673',
     1629629292,
     '-20.160839',
     '57.497987',
@@ -325,7 +347,7 @@ VALUES
   ),
   (
     12,
-    4,
+    '+23012345673',
     1629629293,
     '-20.160839',
     '57.497987',
@@ -333,7 +355,7 @@ VALUES
   ),
   (
     13,
-    5,
+    '+23012345674',
     1629629291,
     '-20.405418',
     '57.709455',
@@ -341,7 +363,7 @@ VALUES
   ),
   (
     14,
-    5,
+    '+23012345674',
     1629629292,
     '-20.405418',
     '57.709455',
@@ -349,7 +371,7 @@ VALUES
   ),
   (
     15,
-    5,
+    '+23012345674',
     1629629293,
     '-20.405418',
     '57.709455',
@@ -357,7 +379,7 @@ VALUES
   ),
   (
     16,
-    6,
+    '+23012345675',
     1629629291,
     '-20.160839',
     '57.497987',
@@ -365,7 +387,7 @@ VALUES
   ),
   (
     17,
-    6,
+    '+23012345675',
     1629629292,
     '-20.160839',
     '57.497987',
@@ -373,7 +395,7 @@ VALUES
   ),
   (
     18,
-    6,
+    '+23012345675',
     1629629293,
     '-20.160839',
     '57.497987',
@@ -381,7 +403,7 @@ VALUES
   ),
   (
     19,
-    7,
+    '+23012345676',
     1629629291,
     '-20.160839',
     '57.497987',
@@ -389,7 +411,7 @@ VALUES
   ),
   (
     20,
-    7,
+    '+23012345676',
     1629629292,
     '-20.160839',
     '57.497987',
@@ -397,7 +419,7 @@ VALUES
   ),
   (
     21,
-    7,
+    '+23012345676',
     1629629293,
     '-20.160839',
     '57.497987',
@@ -405,7 +427,7 @@ VALUES
   ),
   (
     22,
-    8,
+    '+23012345677',
     1629629288,
     '-20.160839',
     '57.497987',
@@ -413,7 +435,7 @@ VALUES
   ),
   (
     23,
-    8,
+    '+23012345677',
     1629629289,
     '-20.160839',
     '57.497987',
@@ -421,7 +443,7 @@ VALUES
   ),
   (
     24,
-    8,
+    '+23012345677',
     1629629290,
     '-20.160839',
     '57.497987',
@@ -429,7 +451,7 @@ VALUES
   ),
   (
     25,
-    8,
+    '+23012345677',
     1629629291,
     '-20.183035',
     '57.469663',
@@ -437,7 +459,7 @@ VALUES
   ),
   (
     26,
-    8,
+    '+23012345677',
     1629629292,
     '-20.183035',
     '57.469663',
@@ -445,7 +467,7 @@ VALUES
   ),
   (
     27,
-    8,
+    '+23012345677',
     1629629293,
     '-20.183035',
     '57.469663',
@@ -453,7 +475,7 @@ VALUES
   ),
   (
     28,
-    8,
+    '+23012345677',
     1629629294,
     '-20.160839',
     '57.497987',
@@ -461,7 +483,7 @@ VALUES
   ),
   (
     29,
-    8,
+    '+23012345677',
     1629629295,
     '-20.160839',
     '57.497987',
@@ -469,9 +491,12 @@ VALUES
   ),
   (
     30,
-    8,
+    '+23012345677',
     1629629296,
     '-20.160839',
     '57.497987',
     '1'
   );
+
+--end of insert coordinates
+--end of insertion of dummy values

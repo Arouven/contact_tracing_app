@@ -47,6 +47,7 @@ class BadgeServices {
         // print(badge);
       });
     }
+
     number = badge;
   }
 

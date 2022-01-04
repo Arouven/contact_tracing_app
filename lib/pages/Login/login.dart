@@ -42,14 +42,16 @@ class _LoginState extends State<LoginPage> {
     });
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
-    if (_passwordController.text.isEmpty) {
+    if (_passwordController.text.isEmpty == true) {
       setState(() {
         _invalidPassword = true;
+        _isLoading = false;
       });
     }
-    if (_emailController.text.isEmpty) {
+    if (_emailController.text.isEmpty == true) {
       setState(() {
         _invalidemail = true;
+        _isLoading = false;
       });
     }
     if ((_emailController.text.isEmpty == false) &&
@@ -99,9 +101,7 @@ class _LoginState extends State<LoginPage> {
         });
       }
     }
-    setState(() {
-      _isLoading = false;
-    });
+
     //redirect to home
   }
 

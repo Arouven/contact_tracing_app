@@ -22,7 +22,7 @@ class _SettingPageState extends State<SettingPage> {
   bool _notifier = false;
   late String _usermail = '';
   bool _isLoading = true;
-  bool _isDarkMode = false;
+  //bool _isDarkMode = false;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getBackgroundServices();
@@ -52,32 +52,32 @@ class _SettingPageState extends State<SettingPage> {
     return await GlobalVariables.getEmail();
   }
 
-  Future _getDarkMode() async {
-    try {
-      if (await GlobalVariables.getDarkTheme() == true) {
-        _isDarkMode = true;
-      } else {
-        _isDarkMode = false;
-      }
-    } catch (e) {
-      _isDarkMode = false;
-    }
-  }
+  // Future _getDarkMode() async {
+  //   try {
+  //     if (await GlobalVariables.getDarkTheme() == true) {
+  //       _isDarkMode = true;
+  //     } else {
+  //       _isDarkMode = false;
+  //     }
+  //   } catch (e) {
+  //     _isDarkMode = false;
+  //   }
+  // }
 
   @override
   void initState() {
     _checkServices().whenComplete(() {
-      _getDarkMode().whenComplete(() {
-        _getNotifier().then((notifier) {
-          _getusermail().then((usermail) {
-            setState(() {
-              _notifier = notifier;
-              _usermail = usermail;
-              _isLoading = false;
-            });
+      //  _getDarkMode().whenComplete(() {
+      _getNotifier().then((notifier) {
+        _getusermail().then((usermail) {
+          setState(() {
+            _notifier = notifier;
+            _usermail = usermail;
+            _isLoading = false;
           });
         });
       });
+      //  });
     });
 
     super.initState();
@@ -155,12 +155,7 @@ class _SettingPageState extends State<SettingPage> {
                   value: themeProvider.isDarkMode,
                   onChanged: (value) async {
                     provider.toggleTheme(value);
-                    // setState(() {
-                    //   _isDarkMode = value;
-                    // });
                   },
-                  //  activeTrackColor: Theme.of(context).backgroundColor,
-                  //activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
@@ -187,8 +182,6 @@ class _SettingPageState extends State<SettingPage> {
                       _isForground = value;
                     });
                   },
-                  //  activeTrackColor: Theme.of(context).backgroundColor,
-                  //activeColor: Theme.of(context).accentColor,
                 ),
               ],
             ),
