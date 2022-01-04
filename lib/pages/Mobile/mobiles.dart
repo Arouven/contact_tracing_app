@@ -221,6 +221,8 @@ class _MobilePageState extends State<MobilePage> {
   Future _updateMysql() async {
     final String mobileNumber = await GlobalVariables.getMobileNumber();
     final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    print(mobileNumber.toString());
+    print(fcmtoken.toString());
     if (fcmtoken != null) {
       final response = await DatabaseMySQLServices.updateMobilefmcToken(
         mobileNumber: mobileNumber,

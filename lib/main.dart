@@ -214,7 +214,8 @@ Future<void> startServices() async {
     var isRunning = await FlutterBackgroundService().isServiceRunning();
     print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
-    if ((await GlobalVariables.getService()) == false) {
+    if ((await GlobalVariables.getService()) != true) {
+      //either null or false
       print('start the service');
       FlutterBackgroundService.initialize(onStart);
       await NotificationServices().showNotification(
