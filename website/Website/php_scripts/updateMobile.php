@@ -1,15 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 
-
-// $data = array();
-// if (isset($_POST['mobileId'])) {
-//     $data['mobileId'] = $_POST['mobileId'];
-//     $data['request'] = $_POST['req'];
-//     echo json_encode($data);
-// } else {
-//     echo '<script>alert("else")</script>';
-// }
 $db = new database();
 $conn = $db->getConnection();
 
@@ -29,9 +20,6 @@ $executeparamArray = array(
     $mobileNumber
 );
 $db->execute($executequery, $executeparamType, $executeparamArray);
-
-
-
 
 $outputArray = array();
 $outputArray['mobileNumber'] = $mobileNumber;
