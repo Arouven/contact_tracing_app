@@ -525,7 +525,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
     <!-- modal large -->
     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content" style="width: 550px;">
+            <div class="modal-content">
+                <!--  style="width: 550px;"> -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="largeModalLabel">Mobiles Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -582,6 +583,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
         });
 
         function mobileDetail(email) {
+            console.log(email);
             $('#largeModal').find('#tableHead').text('');
             $('#largeModal').find('#tableBody').text('');
             var i = 1;
@@ -614,8 +616,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                                 '<td>' + i + '</td>' +
                                 '<td>' + mobileName + '</td>' +
                                 '<td>' + mobileNumber + '</td>' +
-                                '<td>' + (Boolean(Number(contactWithInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<input readonly type="checkbox" checked />' : '<input readonly type="checkbox" />') + '</td>' +
+                                '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileNumber + ',\'' + "reset" + '\',' + email + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileNumber + ',\'' + "infected" + '\',' + email + ')">Infected</button>') + '</td>' +
                                 '</tr>'
@@ -650,6 +652,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                         // $('#largeModal').modal('hide');
                         //alert("2" + req);
                         mobileDetail(email);
+                        sendNotification(mobileNumber, request);
                     } else {
                         alert("An Error happened. Please Retry");
                     }
@@ -657,6 +660,31 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                 Error: function(textMsg) {
                     // alert('2');
                     console.log(Error);
+                }
+            });
+
+        }
+
+        function sendNotification(mobileNumber, request) {
+            // alert(mobileid);
+            //var x = "1";
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "php_scripts/notifyMobile.php",
+                data: {
+                    mobileNumber: mobileNumber,
+                    req: request,
+                },
+                cache: false,
+                success: function(Record) {
+                    return true;
+                },
+                Error: function(textMsg) {
+                    // alert('2');
+                    console.log(Error);
+                    console.log(textMsg);
+                    return false;
                 }
             });
 
