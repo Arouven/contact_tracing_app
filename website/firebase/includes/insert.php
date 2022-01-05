@@ -2,11 +2,11 @@
 //require $_SERVER['DOCUMENT_ROOT'] . '/contact_tracing/website/credentials.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/credentials.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/firebase/includes/vendor/autoload.php';
 
-require __DIR__ . '/vendor/autoload.php';
+//require __DIR__ . '/vendor/autoload.php';
 
 use Kreait\Firebase\Factory;
-
 
 class NotifyFirebase
 {
@@ -40,9 +40,9 @@ class NotifyFirebase
     }
     function SaveNotificationToFirebase($mobileNumber = '+23057775794', $title = 'Title', $body = 'Body')
     {
-
+        // use Kreait\Firebase\Factory;
         $factory = (new Factory)
-            ->withServiceAccount('contacttracing-2a765-firebase-adminsdk-l6gry-86550a1458.json')
+            ->withServiceAccount($_SERVER['DOCUMENT_ROOT'] . '/firebase/includes/contacttracing-2a765-firebase-adminsdk-l6gry-86550a1458.json')
             ->withDatabaseUri('https://contacttracing-2a765-default-rtdb.firebaseio.com/');
 
         $database = $factory->createDatabase();

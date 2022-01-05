@@ -108,13 +108,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
               leading: Icon(Icons.email),
               title: Text(
                 messageList[index].title,
-                style: (messageList[index].read)
+                style: (messageList[index].read != false)
                     ? null
                     : TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
               ),
-              trailing: (messageList[index].read)
+              trailing: (messageList[index].read != false)
                   ? null
                   : Icon(
                       Icons.brightness_1,
@@ -122,13 +122,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       color: Colors.red,
                     ),
               onTap: () async {
-                Navigator.of(context).push(
+                var msg = messageList[index];
+                await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) => SingleNotificationPage(
-                      message: messageList[index],
+                      message: msg,
                     ),
                   ),
                 );
+                setState(() {
+                  msg.read = true;
+                });
                 // Navigator.of(context).pushReplacement(
                 //   MaterialPageRoute(
                 //     builder: (BuildContext context) => SingleNotificationPage(

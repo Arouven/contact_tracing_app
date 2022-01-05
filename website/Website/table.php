@@ -619,7 +619,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(' + mobileNumber + ',\'' + "reset" + '\',' + email + ')">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(' + mobileNumber + ',\'' + "infected" + '\',' + email + ')">Infected</button>') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\' ' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
                             i++;
@@ -634,6 +634,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
         }
 
         function updateDB(mobileNumber, request, email) {
+            console.log("updating db");
+            console.log(mobileNumber);
+            console.log(request);
+            console.log(email);
             // alert(mobileid);
             //var x = "1";
             $.ajax({
@@ -666,6 +670,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
         }
 
         function sendNotification(mobileNumber, request) {
+
+            console.log("sending notification");
+            console.log(mobileNumber);
+            console.log(request);
             // alert(mobileid);
             //var x = "1";
             $.ajax({
