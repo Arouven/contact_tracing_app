@@ -23,7 +23,7 @@ if (isset($_POST['req'])) {
 }
 
 $executequery = ($req == "reset") ? ("UPDATE Mobile SET Mobile.contactWithInfected = 0, Mobile.confirmInfected = 0, Mobile.dateTimeLastTest = ? WHERE Mobile.mobileNumber = ?;") : ("UPDATE Mobile SET Mobile.contactWithInfected = 1, Mobile.confirmInfected = 1, Mobile.dateTimeLastTest = ? WHERE Mobile.mobileNumber = ?;");
-$executeparamType = "ii";
+$executeparamType = "is";
 $executeparamArray = array(
     time(),
     $mobileNumber

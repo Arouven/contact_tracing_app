@@ -9,11 +9,11 @@ $conn = $db->getConnection();
 
 $email = "";
 if (isset($_GET['email'])) {
-    $userid = mysqli_real_escape_string($conn, $_GET['email']);
+    $email = mysqli_real_escape_string($conn, $_GET['email']);
 }
 
 $selectquery = "SELECT * FROM Mobile WHERE email=?;";
-$selectparamType = "i";
+$selectparamType = "s";
 $selectparamArray = array($email);
 $data = $db->select($selectquery, $selectparamType, $selectparamArray);
 
