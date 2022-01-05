@@ -525,8 +525,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
     <!-- modal large -->
     <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <!--  style="width: 550px;"> -->
+            <div class="modal-content" style="width: 110%;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="largeModalLabel">Mobiles Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -583,7 +582,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
         });
 
         function mobileDetail(email) {
-            console.log(email);
+
+            console.log("showing mobile details");
             $('#largeModal').find('#tableHead').text('');
             $('#largeModal').find('#tableBody').text('');
             var i = 1;
@@ -619,7 +619,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\' ' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\'' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
                             i++;
@@ -635,9 +635,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
 
         function updateDB(mobileNumber, request, email) {
             console.log("updating db");
-            console.log(mobileNumber);
-            console.log(request);
-            console.log(email);
+
             // alert(mobileid);
             //var x = "1";
             $.ajax({
@@ -654,15 +652,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                     //  console.log(Record);
                     if (Record.inserted == true) {
                         // $('#largeModal').modal('hide');
-                        //alert("2" + req);
-                        mobileDetail(email);
+                        //alert("2" + req);     
                         sendNotification(mobileNumber, request);
+                        // console.log(output);
+                        mobileDetail(email);
+
                     } else {
                         alert("An Error happened. Please Retry");
                     }
                 },
                 Error: function(textMsg) {
                     // alert('2');
+                    console.log(textMsg);
                     console.log(Error);
                 }
             });
@@ -672,8 +673,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
         function sendNotification(mobileNumber, request) {
 
             console.log("sending notification");
-            console.log(mobileNumber);
-            console.log(request);
+
             // alert(mobileid);
             //var x = "1";
             $.ajax({
@@ -682,17 +682,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/bigTable.php';
                 url: "php_scripts/notifyMobile.php",
                 data: {
                     mobileNumber: mobileNumber,
-                    req: request,
+                    req: request
                 },
                 cache: false,
                 success: function(Record) {
-                    return true;
+                    console.log("notifictionSent");
+                    // return true;
                 },
                 Error: function(textMsg) {
                     // alert('2');
                     console.log(Error);
                     console.log(textMsg);
-                    return false;
+                    //  return false;
                 }
             });
 

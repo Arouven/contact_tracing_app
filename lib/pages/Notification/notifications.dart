@@ -20,9 +20,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
   List<Message> messageList = [];
 
   Future _getListofMessages() async {
-    setState(() {
-      _isLoading = true;
-    });
     try {
       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
       // Get the data once
@@ -97,7 +94,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Widget _body() {
-    if (_isLoading == true) {
+    if (_isLoading != false) {
       return Center(child: CircularProgressIndicator());
     } else {
       return Scrollbar(
