@@ -113,7 +113,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li>
+                        <li class="active">
                             <a class="js-arrow" href="index.php">
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                         </li>
@@ -452,33 +452,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
                             <div class="col-lg-6">
                                 <div class="au-card recent-report">
                                     <div class="au-card-inner">
-                                        <h3 class="title-2">recent reports</h3>
-                                        <div class="chart-info">
-                                            <div class="chart-info__left">
-                                                <div class="chart-note">
-                                                    <span class="dot dot--blue"></span>
-                                                    <span>products</span>
-                                                </div>
-                                                <div class="chart-note mr-0">
-                                                    <span class="dot dot--green"></span>
-                                                    <span>services</span>
-                                                </div>
-                                            </div>
-                                            <div class="chart-info__right">
-                                                <div class="chart-statis">
-                                                    <span class="index incre">
-                                                        <i class="zmdi zmdi-long-arrow-up"></i>25%</span>
-                                                    <span class="label">products</span>
-                                                </div>
-                                                <div class="chart-statis mr-0">
-                                                    <span class="index decre">
-                                                        <i class="zmdi zmdi-long-arrow-down"></i>10%</span>
-                                                    <span class="label">services</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <h3 class="title-2">Death in Mauritius</h3>
                                         <div class="recent-report__chart">
-                                            <canvas id="recent-rep-chart"></canvas>
+                                            <canvas id="death-chart"></canvas>
                                         </div>
                                     </div>
                                 </div>
@@ -595,45 +571,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
                                 </div>
                             </div>
                             <div class="col-lg-3">
-                                <h2 class="title-1 m-b-25">Top countries</h2>
+                                <h2 class="title-1 m-b-25">Highest Deaths</h2>
                                 <div class="au-card au-card--bg-blue au-card-top-countries m-b-40">
                                     <div class="au-card-inner">
                                         <div class="table-responsive">
-                                            <table class="table table-top-countries">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>United States</td>
-                                                        <td class="text-right">$119,366.96</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Australia</td>
-                                                        <td class="text-right">$70,261.65</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>United Kingdom</td>
-                                                        <td class="text-right">$46,399.22</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Turkey</td>
-                                                        <td class="text-right">$35,364.90</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Germany</td>
-                                                        <td class="text-right">$20,366.96</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>France</td>
-                                                        <td class="text-right">$10,366.96</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Australia</td>
-                                                        <td class="text-right">$5,366.96</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Italy</td>
-                                                        <td class="text-right">$1639.32</td>
-                                                    </tr>
-                                                </tbody>
+                                            <table class="table table-top-countries" id="top_country">
                                             </table>
                                         </div>
                                     </div>
@@ -945,16 +887,176 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 </html>
 <!-- end document-->
 <script>
+    function buildChart(array_death_mauritius) {
+        var myLabels = [];
+        var myData = [];
+        for (var i = 0; i < array_death_mauritius.length; i++) {
+            var row = array_death_mauritius[i];
+            var datestr = row[1];
+            var result = datestr.substring(0, datestr.length - 3);
+            myLabels.push(result);
+            myData.push(Math.ceil(row[0]));
+        }
+        try {
+            var ctx = document.getElementById("death-chart");
+            if (ctx) {
+                ctx.height = 150;
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: myLabels, //["2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+                        type: 'line',
+                        defaultFontFamily: 'Poppins',
+                        datasets: [{
+                            label: "Deaths due to covid",
+                            data: myData, //[0, 30, 10, 120, 50, 63, 10],
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(220,53,69,0.75)',
+                            borderWidth: 3,
+                            pointStyle: 'circle',
+                            pointRadius: 5,
+                            pointBorderColor: 'transparent',
+                            pointBackgroundColor: 'rgba(220,53,69,0.75)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        tooltips: {
+                            mode: 'index',
+                            titleFontSize: 12,
+                            titleFontColor: '#000',
+                            bodyFontColor: '#000',
+                            backgroundColor: '#fff',
+                            titleFontFamily: 'Poppins',
+                            bodyFontFamily: 'Poppins',
+                            cornerRadius: 3,
+                            intersect: false,
+                        },
+                        legend: {
+                            display: false,
+                            labels: {
+                                usePointStyle: true,
+                                fontFamily: 'Poppins',
+                            },
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                gridLines: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                scaleLabel: {
+                                    display: false,
+                                    labelString: 'Month'
+                                },
+                                ticks: {
+                                    fontFamily: "Poppins"
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                gridLines: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Death',
+                                    fontFamily: "Poppins"
+
+                                },
+                                ticks: {
+                                    fontFamily: "Poppins"
+                                }
+                            }]
+                        },
+                        title: {
+                            display: false,
+                            text: 'Normal Legend'
+                        }
+                    }
+                });
+            }
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
     $(document).ready(function() {
+
         $.ajax({
             type: "GET",
-            url: "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/country_data/Mauritius.csv",
+            url: "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/latest/owid-covid-latest.csv",
+            // url: "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/country_data/Mauritius.csv",
             dataType: "text",
             success: function(response) {
                 var data = $.csv.toArrays(response);
-                $('#fullyVaccinated').text(data[data.length - 1][data[0].indexOf("people_fully_vaccinated")]);
-                //generateHtmlTable(data);
+                var findPeople = data[0].indexOf("people_fully_vaccinated");
+                var findLocation = data[0].indexOf("location");
+                var findTotalDeath = data[0].indexOf("total_deaths");
+                var arr_total_deaths = [];
+                for (var i = 1; i < data.length; i++) {
+                    var row = data[i];
+                    var areEqual = row[findLocation].toUpperCase() === ("mauritius").toUpperCase();
+                    if (areEqual) {
+                        $('#fullyVaccinated').text(row[findPeople]);
+                    }
+                    arr_total_deaths.push([row[findLocation], row[findTotalDeath]]);
+                }
+                arr_total_deaths.sort(function(a, b) {
+                    return b - a;
+                });
+                tableCreate(arr_total_deaths.slice(0, 8));
+
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/jhu/total_deaths.csv",
+            dataType: "text",
+            success: function(response) {
+                var data = $.csv.toArrays(response);
+                var findMauritius = data[0].indexOf("Mauritius");
+                var findDate = data[0].indexOf("date");
+                var array_death_mauritius = [];
+                for (var i = 1; i < data.length; i++) {
+                    var row = data[i];
+                    try {
+                        var text = row[findDate];
+                        var result = text.substring(text.length - 2, text.length);
+                        if (result == "01") {
+                            var mynum = (row[findMauritius] == '') ? '0.0' : row[findMauritius];
+                            array_death_mauritius.push([mynum, row[findDate]]);
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+                buildChart(array_death_mauritius);
             }
         });
     });
+
+
+    function tableCreate(arraytable) {
+        // console.log(arraytable);
+        var tbl = document.getElementById('top_country');
+        var tbdy = document.createElement('tbody');
+        arraytable.forEach(element => {
+            //   console.log(element.length);
+            var tr = document.createElement('tr');
+            for (var i = 0; i < element.length; i++) {
+                var td = document.createElement('td');
+                td.appendChild(document.createTextNode(element[i]));
+                (i == (element.length - 1)) ? td.setAttribute('class', "text-right"): null;
+                tr.appendChild(td);
+            }
+            tbdy.appendChild(tr);
+            tbl.appendChild(tbdy);
+        });
+
+        //  body.appendChild(tbl);
+    }
 </script>
