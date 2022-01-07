@@ -464,7 +464,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
                             <div class="col-lg-12">
                                 <div class="au-card chart-percent-card">
                                     <div class="au-card-inner">
-                                        <h3 class="title-2 tm-b-5">char by %</h3>
+                                        <h3 class="title-2 tm-b-5">Mauritius Covid Statistics</h3>
                                         <div class="row no-gutters">
                                             <div class="col-xl-4">
                                                 <div class="chart-note-wrap">
@@ -682,7 +682,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
         var ctx = document.getElementById(elementId);
         if (ctx) {
             //ctx.height = 280;
-            if (ctxheight === undefined) {} else {
+            if (ctxheight === undefined) {
+                ctx.height = 300;
+            } else {
                 ctx.height = ctxheight;
             }
             var myChart = new Chart(ctx, {
