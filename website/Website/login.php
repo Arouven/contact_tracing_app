@@ -1,6 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/adminregisterlogin.php';
-if (!empty($_POST["login-btn"])) {
+if (isset($_POST["login-btn"])) {
     $admin = new RegisterLogin();
     $loginResult = $admin->loginAdmin();
 }
@@ -40,6 +40,9 @@ if (!empty($_POST["login-btn"])) {
 
     <!-- Main CSS-->
     <link href="css/theme.css" rel="stylesheet" media="all">
+
+    <link href="css/phppot.css" type="text/css" rel="stylesheet" />
+    <link href="css/user-register.css" type="text/css" rel="stylesheet" />
 
 </head>
 

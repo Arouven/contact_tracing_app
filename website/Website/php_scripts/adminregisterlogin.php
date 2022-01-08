@@ -6,10 +6,14 @@ class RegisterLogin
 {
 
     private $db;
+    private $urlLogin;
+    private $urlHome;
 
     function __construct()
     {
         $this->db = new database();
+        $this->urlLogin = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/Website/login.php";
+        $this->urlHome = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . "/Website/index.php";
     }
 
 
@@ -21,7 +25,7 @@ class RegisterLogin
      */
     public function isEmailExists($email)
     {
-        $query = 'SELECT * FROM tbl_member WHERE email = ?';
+        $query = 'SELECT * FROM Admin WHERE email = ?';
         $paramType = 's';
         $paramValue = array(
             $email
@@ -48,7 +52,7 @@ class RegisterLogin
     {
         $isEmailExists = $this->isEmailExists($_POST["email"]);
         if ($isEmailExists) {
-            $response = array(
+            return  array(
                 "status" => "error",
                 "message" => "Email already exists."
             );
@@ -59,27 +63,27 @@ class RegisterLogin
                 // do not attempt to do your own encryption, it is not safe
                 $hashedPassword = password_hash($_POST["signup-password"], PASSWORD_DEFAULT);
             }
-            $query = 'INSERT INTO tbl_member (username, password, email) VALUES (?, ?, ?)';
+            $query = 'INSERT INTO Admin (username, password, email) VALUES (?, ?, ?)';
             $paramType = 'sss';
             $paramValue = array(
                 $_POST["username"],
                 $hashedPassword,
                 $_POST["email"]
             );
-            $memberId = $this->db->insert($query, $paramType, $paramValue);
-            if (!empty($memberId)) {
-                $response = array(
-                    "status" => "success",
-                    "message" => "You have registered successfully."
-                );
-            }
+            $this->db->insert($query, $paramType, $paramValue);
+            $this->saveAndRedirect($_POST["email"], $_POST["username"], $_POST["signup-password"]);
+            return array(
+                "status" => "success",
+                "message" => "You have registered successfully."
+            );
         }
-        return $response;
+        //print_r($response);
+
     }
 
     public function getAdmin($email)
     {
-        $query = 'SELECT * FROM tbl_member WHERE email = ?';
+        $query = 'SELECT * FROM Admin WHERE email = ?';
         $paramType = 's';
         $paramValue = array(
             $email
@@ -97,6 +101,7 @@ class RegisterLogin
     {
         $memberRecord = $this->getAdmin($_POST["email"]);
         $loginPassword = 0;
+        $username = "";
         if (!empty($memberRecord)) {
             if (!empty($_POST["login-password"])) {
                 $password = $_POST["login-password"];
@@ -104,6 +109,7 @@ class RegisterLogin
             $hashedPassword = $memberRecord[0]["password"];
             $loginPassword = 0;
             if (password_verify($password, $hashedPassword)) {
+                $username = $memberRecord[0]["username"];
                 $loginPassword = 1;
             }
         } else {
@@ -112,18 +118,34 @@ class RegisterLogin
         if ($loginPassword == 1) {
             // login sucess so store the member's username in
             // the session
-            session_start();
-            $_SESSION["email"] = $memberRecord[0]["email"];
-            session_write_close();
-            if ((!empty($_POST["remember"])) && (isset($_POST['check']))) {
-                $keepTime = time() + (60 * 60 * 24 * 365);
-                setcookie("email", $_POST["email"], $keepTime);
-                setcookie("password", $_POST["login-password"], $keepTime);
-            }
-            header("Location: ./index.php");
+            $this->saveAndRedirect($_POST["email"], $username, $_POST["login-password"]);
         } else if ($loginPassword == 0) {
             $loginStatus = "Invalid email or password.";
             return $loginStatus;
+        }
+    }
+    private function saveAndRedirect($email, $username, $password)
+    {
+        $this->saveSession($email, $username, $password);
+        $this->saveCookies($email, $username, $password);
+        //echo "<script>alert('$url');</script>";
+        header("Location: $this->urlHome");
+    }
+    private function saveSession($email, $username, $password)
+    {
+        session_start();
+        $_SESSION["email"] = $email;
+        $_SESSION["username"] = $username;
+        $_SESSION["password"] = $password;
+        session_write_close();
+    }
+    private function saveCookies($email, $username, $password)
+    {
+        if ((!empty($_POST["remember"])) && (isset($_POST['remember']))) {
+            $keepTime = time() + (60 * 60 * 24 * 365);
+            setcookie("email", $email, $keepTime);
+            setcookie("username", $username, $keepTime);
+            setcookie("password", $password, $keepTime);
         }
     }
     public function logoutAdmin()
@@ -149,6 +171,6 @@ class RegisterLogin
         //     unset($_COOKIE['password']);
         //     setcookie('password', null, -1);
         // }
-        header("Location: ./index.php");
+        header("Location: $this->urlLogin");
     }
 }

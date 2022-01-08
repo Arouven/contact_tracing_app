@@ -44,7 +44,12 @@ CREATE TABLE `AdminParamters` (
   `daysFromContact` BIGINT NOT NULL,
   PRIMARY KEY (`adminParamtersId`)
 );
-
+CREATE TABLE `Admin` (
+  `email` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL,
+  `password` TEXT NOT NULL,
+  PRIMARY KEY (`email`)
+);
 CREATE TABLE `TestingCentres` (
   `testingId` BIGINT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
