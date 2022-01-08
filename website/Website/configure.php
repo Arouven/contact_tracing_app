@@ -25,10 +25,7 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
     $executeparamType = "iii";
     $executeparamArray = array($contactDistance, $daysOfTestValidity, $daysFromContact);
     $db->execute($executequery, $executeparamType, $executeparamArray);
-    print 'executed';
-    //}
-} else {
-    echo 'else';
+    //print 'executed';
 }
 
 ?>

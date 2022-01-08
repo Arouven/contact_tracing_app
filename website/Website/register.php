@@ -149,8 +149,12 @@ if (isset($_POST["signup-btn"])) {
             if (UserName.trim() == "") {
                 $("#username-info").html(" - required.").css("color", "#ee0000").show();
                 $("#username").addClass("error-field");
-
                 console.log('username invalid');
+                valid = false;
+            } else if (!((UserName.trim()).match(/^[A-Z]/i))) {
+                $("#username-info").html(" - must start with alphabet.").css("color", "#ee0000").show();
+                $("#username").addClass("error-field");
+                console.log('username does not starts with alphabet');
                 valid = false;
             }
             if (email == "") {
@@ -159,12 +163,12 @@ if (isset($_POST["signup-btn"])) {
                 console.log('email is empty');
                 valid = false;
             } else if (email.trim() == "") {
-                $("#email-info").html("Invalid email address.").css("color", "#ee0000").show();
+                $("#email-info").html(" - Invalid email address.").css("color", "#ee0000").show();
                 $("#email").addClass("error-field");
                 console.log('email contain white space only');
                 valid = false;
             } else if (!emailRegex.test(email)) {
-                $("#email-info").html("Invalid email address.").css("color", "#ee0000")
+                $("#email-info").html(" - Invalid email address.").css("color", "#ee0000")
                     .show();
                 $("#email").addClass("error-field");
                 console.log('email regular expression invalid');
