@@ -1,6 +1,28 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php';
+//require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php';
+?>
+<?php
+session_start();
+if (isset($_COOKIE["email"]) && isset($_COOKIE["username"]) && isset($_COOKIE["password"])) {
+    $email =    $_SESSION["email"]       =   $_COOKIE["email"];
+    $username =  $_SESSION["username"] = $_COOKIE["username"];
+    $password =  $_SESSION["password"] = $_COOKIE["password"];
+}
+if (isset($_SESSION["email"]) && isset($_SESSION["username"]) && isset($_SESSION["password"])) {
+    $email =    $_SESSION["email"];
+    $username =  $_SESSION["username"];
+    $password =  $_SESSION["password"];
+    $loggedin = true;
+    $db = new database();
+    session_write_close();
+} else {
+    // since the username is not set in session, the user is not-logged-in
+    // he is trying to access this page unauthorized
+    // so let's clear all session variables and redirect him to index
+    session_unset();
+    session_write_close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -127,31 +149,40 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                             <div class="header-button">
                                 <div class="account-wrap">
                                     <div class="account-item clearfix js-item-menu">
-                                        <div class="image">
-                                            <img src="images/icon/icons8-circled-<?php echo substr(strtolower($username), 0, 1); ?>-50.png" alt="<?php echo $username; ?>" />
-                                        </div>
-                                        <div class="content">
-                                            <a class="js-acc-btn" href="#"><?php echo $username; ?></a>
-                                        </div>
-                                        <div class="account-dropdown js-dropdown">
-                                            <div class="info clearfix">
-                                                <div class="image">
-                                                    <a href="#">
-                                                        <img src="images/icon/icons8-circled-<?php echo substr(strtolower($username), 0, 1); ?>-50.png" alt="<?php echo $username; ?>" />
-                                                    </a>
+                                        <?php
+                                        if ($loggedin) {
+                                            print '
+                                            <div class="image">
+                                                <img src="images/icon/icons8-circled-' . substr(strtolower($username), 0, 1) . '-50.png" alt="' . $username . '" />
+                                            </div>
+                                            <div class="content">
+                                                <a class="js-acc-btn" href="#">' . $username . '</a>
+                                            </div>
+                                            <div class="account-dropdown js-dropdown">
+                                                <div class="info clearfix">
+                                                    <div class="image">
+                                                        <a href="#">
+                                                            <img src="images/icon/icons8-circled-' . substr(strtolower($username), 0, 1) . '-50.png" alt="' . $username . '" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="content">
+                                                        <h5 class="name">
+                                                            <a href="#">' . $username . '</a>
+                                                        </h5>
+                                                        <span class="email">' . $email . '</span>
+                                                    </div>
                                                 </div>
-                                                <div class="content">
-                                                    <h5 class="name">
-                                                        <a href="#"><?php echo $username; ?></a>
-                                                    </h5>
-                                                    <span class="email"><?php echo $email; ?></span>
+                                                <div class="account-dropdown__footer">
+                                                    <a href="logout.php">
+                                                        <i class="zmdi zmdi-power"></i>Logout</a>
                                                 </div>
                                             </div>
-                                            <div class="account-dropdown__footer">
-                                                <a href="logout.php">
-                                                    <i class="zmdi zmdi-power"></i>Logout</a>
-                                            </div>
-                                        </div>
+                                            ';
+                                        } else {
+                                            print '<button class="btn btn-dark" onclick="window.location.href = \'login.php\';">Login</button>';
+                                        }
+                                        ?>
+
                                     </div>
                                 </div>
                             </div>
@@ -174,111 +205,101 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                                 </div>
                             </div>
                         </div>
-                        <div class="row m-t-25">
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c1">
-                                    <div class="overview__inner" style="height: 200px;">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="fas fa-mobile"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2>
-                                                    <?php
-                                                    $db = new database();
-                                                    $selectquery =
-                                                        'SELECT COUNT(*) as active_mobiles FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber;';
-                                                    $data = $db->select($selectquery);
-                                                    if (isset($data) && $data != null) { //if there is something in the result
-                                                        print $data[0]['active_mobiles'];
-                                                    }
-                                                    ?>
-                                                </h2>
-                                                <span>active mobiles</span>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="overview-chart">
-                                            <canvas id="widgetChart1"></canvas>
-                                        </div> -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c2">
-                                    <div class="overview__inner" style="height: 200px;">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="fas fa-users"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2>
-                                                    <?php
-                                                    $selectquery =
-                                                        'SELECT COUNT(*) as concact_trace FROM Mobile WHERE contactWithInfected = TRUE AND dateTimeLastTest IS NULL;';
-                                                    $data = $db->select($selectquery);
-                                                    if (isset($data) && $data != null) { //if there is something in the result
-                                                        print $data[0]['concact_trace'];
-                                                    }
-                                                    ?>
-                                                </h2>
-                                                <span>contact trace</span>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="overview-chart">
-                                            <canvas id="widgetChart2"></canvas>
-                                        </div> -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c3">
-                                    <div class="overview__inner" style="height: 200px;">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="fas fa-viruses"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2>
-                                                    <?php
-                                                    $selectquery =
-                                                        'SELECT COUNT(*) as infected_person FROM Mobile WHERE confirmInfected = TRUE;';
-                                                    $data = $db->select($selectquery);
-                                                    if (isset($data) && $data != null) { //if there is something in the result
-                                                        print $data[0]['infected_person'];
-                                                    }
+                        <br>
+                        <?php
+                        if ($loggedin) {
+                            $selectquery =
+                                'SELECT COUNT(*) as active_mobiles FROM Mobile mt INNER JOIN( SELECT mobileNumber, longitude, latitude, MAX(dateTimeCoordinates) AS MaxDateTime FROM Coordinates GROUP BY mobileNumber ) ct ON mt.mobileNumber = ct.mobileNumber;';
+                            $data = $db->select($selectquery);
+                            if (isset($data) && $data != null) { //if there is something in the result
+                                $active_mobile = $data[0]['active_mobiles'];
+                            }
 
 
-                                                    ?>
-                                                </h2>
-                                                <span>infected person</span>
+                            $selectquery =
+                                'SELECT COUNT(*) as concact_trace FROM Mobile WHERE contactWithInfected = TRUE AND dateTimeLastTest IS NULL;';
+                            $data = $db->select($selectquery);
+                            if (isset($data) && $data != null) { //if there is something in the result
+                                $concact_trace = $data[0]['concact_trace'];
+                            }
+
+
+                            $selectquery =
+                                'SELECT COUNT(*) as infected_person FROM Mobile WHERE confirmInfected = TRUE;';
+                            $data = $db->select($selectquery);
+                            if (isset($data) && $data != null) { //if there is something in the result
+                                $infected_person = $data[0]['infected_person'];
+                            }
+
+
+
+
+                            print '
+                            <div class="row m-t-25">
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="overview-item overview-item--c1">
+                                        <div class="overview__inner" style="height: 200px;">
+                                            <div class="overview-box clearfix">
+                                                <div class="icon">
+                                                    <i class="fas fa-mobile"></i>
+                                                </div>
+                                                <div class="text">
+                                                    <h2>' . $active_mobile . '</h2>
+                                                    <span>active mobiles</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- <div class="overview-chart">
-                                            <canvas id="widgetChart3"></canvas>
-                                        </div> -->
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c4">
-                                    <div class="overview__inner" style="height: 200px;">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="fas fa-shield-virus"></i>
-                                            </div>
-                                            <div class="text">
-                                                <h2 id='fullyVaccinated'>
-                                                </h2>
-                                                <span>fully vaccinated mauritian</span>
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="overview-item overview-item--c2">
+                                        <div class="overview__inner" style="height: 200px;">
+                                            <div class="overview-box clearfix">
+                                                <div class="icon">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                                <div class="text">
+                                                    <h2>' . $concact_trace . '</h2>
+                                                    <span>contact trace</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- <div class="overview-chart">
-                                            <canvas id="widgetChart4"></canvas>
-                                        </div> -->
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="overview-item overview-item--c3">
+                                        <div class="overview__inner" style="height: 200px;">
+                                            <div class="overview-box clearfix">
+                                                <div class="icon">
+                                                    <i class="fas fa-viruses"></i>
+                                                </div>
+                                                <div class="text">
+                                                    <h2>' . $infected_person . '</h2>
+                                                    <span>infected person</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="overview-item overview-item--c4">
+                                        <div class="overview__inner" style="height: 200px;">
+                                            <div class="overview-box clearfix">
+                                                <div class="icon">
+                                                    <i class="fas fa-shield-virus"></i>
+                                                </div>
+                                                <div class="text">
+                                                    <h2 id="fullyVaccinated">
+                                                    </h2>
+                                                    <span>fully vaccinated mauritian</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+                        }
+                        ?>
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="au-card recent-report">

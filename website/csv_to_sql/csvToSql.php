@@ -1,5 +1,5 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database.php';
 
 
 class csvtosql
@@ -8,9 +8,10 @@ class csvtosql
     {
         $db = new database();
         $conn = $db->getConnection();
-
-        $files = glob('csvFiles/*.{csv}', GLOB_BRACE);
+        $path = $_SERVER['DOCUMENT_ROOT'] . '/csv_to_sql/csvFiles/';
+        $files = glob($path . '*.{csv}', GLOB_BRACE);
         foreach ($files as $file) {
+            // print_r($file);
             //do your work here
             $inserted = array();
             $f = fopen($file, "r");
