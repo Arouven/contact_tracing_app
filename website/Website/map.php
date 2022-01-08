@@ -138,10 +138,6 @@ $markers->getTestingCenters();
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                         </li>
                         <li>
-                            <a href="chart.html">
-                                <i class="fas fa-chart-bar"></i>Charts-met moi dan index</a>
-                        </li>
-                        <li>
                             <a href="map.php">
                                 <i class="fas fa-map-marker-alt"></i>Testing Centers</a>
                         </li>
@@ -153,23 +149,6 @@ $markers->getTestingCenters();
                             <a href="configure.php">
                                 <i class="far fa-check-square"></i>Settings</a>
                         </li>
-
-                        <li class="has-sub">
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-copy"></i>Pages</a>
-                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
-                                <li>
-                                    <a href="login.html">Login</a>
-                                </li>
-                                <li>
-                                    <a href="register.html">Register</a>
-                                </li>
-                                <li>
-                                    <a href="forget-pass.html">Forget Password</a>
-                                </li>
-                            </ul>
-                        </li>
-
                     </ul>
                 </div>
             </nav>
@@ -190,10 +169,6 @@ $markers->getTestingCenters();
                             <a class="js-arrow" href="index.php">
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                         </li>
-                        <li>
-                            <a href="chart.html">
-                                <i class="fas fa-chart-bar"></i>Charts-met moi dan index</a>
-                        </li>
                         <li class="active">
                             <a href="map.php">
                                 <i class="fas fa-map-marker-alt"></i>Testing Centers</a>
@@ -205,21 +180,6 @@ $markers->getTestingCenters();
                         <li>
                             <a href="configure.php">
                                 <i class="far fa-check-square"></i>Settings</a>
-                        </li>
-                        <li class="has-sub">
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-copy"></i>Pages</a>
-                            <ul class="list-unstyled navbar__sub-list js-sub-list">
-                                <li>
-                                    <a href="login.html">Login</a>
-                                </li>
-                                <li>
-                                    <a href="register.html">Register</a>
-                                </li>
-                                <li>
-                                    <a href="forget-pass.html">Forget Password</a>
-                                </li>
-                            </ul>
                         </li>
                     </ul>
                 </nav>
