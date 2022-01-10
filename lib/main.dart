@@ -29,11 +29,15 @@ late NotificationSettings settings;
 late FirebaseMessaging _messaging;
 late var _pageSelected;
 late var _isDarkMode = null;
-late String path = "notification/";
+late String path = "notification/+23057775794/";
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
-  path = "notification/$phoneNumber/";
+  if (phoneNumber != null) {
+    path = "notification/$phoneNumber/";
+  }
+  //
+  //path = "notification/+23057775794/";
 }
 
 void onStart() {
@@ -81,7 +85,7 @@ void onStart() {
       final mobileNumber = await GlobalVariables.getMobileNumber();
       if ((email != null) && (mobileNumber != null)) {
         print("email and mobileid not null at start of service");
-        await generatePath();
+        // await generatePath();
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: geolocatorAccuracy,
         );
