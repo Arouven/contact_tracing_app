@@ -39,15 +39,21 @@ class updateDatabase
                 $latitudePossibleContact = floatval($nonInfectedAtThatTime[$j]['latitude']);
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$j]['longitude']);
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact); //(e.g get the distance between the infected mobile and the non infected mobile at t1)
-                if ($distanceMetres <= $distanceContact) { //(e.g if the distance between them is less or equal to 2 meters)
+                // print "$distanceMetres --- $distanceContact <br>";
+                // $epsilon = 0.00001;
+                $floatStr =  substr($distanceMetres, 0, 5);
+                //var_dump(round($floatStr, 3));
+                //var_dump(round($distanceContact, 3));
+                if (round($floatStr, 3) <= round($distanceContact, 3)) {
+                    //  if ($distanceMetres <= $distanceContact) { //(e.g if the distance between them is less or equal to 2 meters)
                     //mark contact with infected
-                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $distanceMetres meters at $datetimePossibleContact.<br>";
+                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $datetimePossibleContact.<br>";
                     //send message to mobile
                     new NotifyFirebase($mobileNumberPossibleContact);
                     print "message sent to $mobileNumberPossibleContact <br>";
                     $this->markAsContact($mobileNumberPossibleContact);
                 } else {
-                    print "$mobileNumberPossibleContact and $mobileNumberInfected are not contactsbecause distance between them is $distanceMetres meters.<br>";
+                    print "$mobileNumberPossibleContact and $mobileNumberInfected are not contactsbecause distance between them is $floatStr meters.<br>";
                 }
             }
         }

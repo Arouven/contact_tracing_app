@@ -162,15 +162,14 @@ class GlobalVariables {
     return prefs.getString('fileDirectory');
   }
 
-  static Future setBackgroundServices(
-      {required String backgroundServices}) async {
+  static Future setForegroundServices({required bool showServices}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('backgroundServices', backgroundServices);
+    await prefs.setBool('backgroundServices', showServices);
   }
 
-  static Future getBackgroundServices() async {
+  static Future getForegroundServices() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('backgroundServices');
+    return prefs.getBool('backgroundServices');
   }
 
   static Future setNotifier({required bool notifier}) async {

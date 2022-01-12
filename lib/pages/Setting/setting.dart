@@ -25,10 +25,8 @@ class _SettingPageState extends State<SettingPage> {
   //bool _isDarkMode = false;
 
   Future _checkServices() async {
-    var action = await GlobalVariables.getBackgroundServices();
-    if (action == 'setAsBackground') {
-      _isForground = false;
-    } else if (action == "setAsForeground") {
+    var action = await GlobalVariables.getForegroundServices();
+    if (action != false) {
       _isForground = true;
     }
   }
@@ -41,7 +39,7 @@ class _SettingPageState extends State<SettingPage> {
       service = "setAsForeground";
     }
     FlutterBackgroundService().sendData({"action": service});
-    await GlobalVariables.setBackgroundServices(backgroundServices: service);
+    //await GlobalVariables.setForegroundServices(showServices: !hide);
   }
 
   Future _getNotifier() async {

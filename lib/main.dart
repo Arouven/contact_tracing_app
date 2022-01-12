@@ -50,25 +50,22 @@ void onStart() {
       print("event = setAsForeground");
       // bring to foreground
       service.setForegroundMode(true);
-      await GlobalVariables.setBackgroundServices(
-        backgroundServices: 'setAsForeground',
+      await GlobalVariables.setForegroundServices(
+        showServices: true,
       );
       return;
     }
     if (event["action"] == "setAsBackground") {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
-      await GlobalVariables.setBackgroundServices(
-        backgroundServices: 'setAsBackground',
+      await GlobalVariables.setForegroundServices(
+        showServices: false,
       );
     }
 
     if (event["action"] == "stopService") {
       print("event action == stopService");
       service.stopBackgroundService();
-      await GlobalVariables.setBackgroundServices(
-        backgroundServices: 'stopService',
-      );
     }
   });
   // bring to foreground
@@ -85,7 +82,7 @@ void onStart() {
       final mobileNumber = await GlobalVariables.getMobileNumber();
       if ((email != null) && (mobileNumber != null)) {
         print("email and mobileid not null at start of service");
-        // await generatePath();
+        await generatePath();
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: geolocatorAccuracy,
         );
