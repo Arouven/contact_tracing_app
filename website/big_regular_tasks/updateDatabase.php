@@ -47,7 +47,8 @@ class updateDatabase
                 if (round($floatStr, 3) <= round($distanceContact, 3)) {
                     //  if ($distanceMetres <= $distanceContact) { //(e.g if the distance between them is less or equal to 2 meters)
                     //mark contact with infected
-                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $datetimePossibleContact.<br>";
+                    $humandDtetimePossibleContact = date('Y-m-d H:i:s', $datetimePossibleContact);
+                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $humandDtetimePossibleContact.<br>";
                     //send message to mobile
                     new NotifyFirebase($mobileNumberPossibleContact);
                     print "message sent to $mobileNumberPossibleContact <br>";
