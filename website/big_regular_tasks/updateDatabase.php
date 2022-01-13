@@ -40,7 +40,7 @@ class updateDatabase
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$j]['longitude']);
                 $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact); //(e.g get the distance between the infected mobile and the non infected mobile at t1)
                 // print "$distanceMetres --- $distanceContact <br>";
-                // $epsilon = 0.00001;
+                // $epsilon = 0.00001;      
                 $floatStr =  substr($distanceMetres, 0, 5);
                 //var_dump(round($floatStr, 3));
                 //var_dump(round($distanceContact, 3));
@@ -48,13 +48,13 @@ class updateDatabase
                     //  if ($distanceMetres <= $distanceContact) { //(e.g if the distance between them is less or equal to 2 meters)
                     //mark contact with infected
                     $humandDtetimePossibleContact = date('Y-m-d H:i:s', $datetimePossibleContact);
-                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $humandDtetimePossibleContact.<br>";
+                    print "($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact) - $mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $humandDtetimePossibleContact ($datetimePossibleContact).<br>";
                     //send message to mobile
-                    new NotifyFirebase($mobileNumberPossibleContact);
+                    //new NotifyFirebase($mobileNumberPossibleContact);
                     print "message sent to $mobileNumberPossibleContact <br>";
                     $this->markAsContact($mobileNumberPossibleContact);
                 } else {
-                    print "$mobileNumberPossibleContact and $mobileNumberInfected are not contactsbecause distance between them is $floatStr meters.<br>";
+                    #print "$mobileNumberPossibleContact and $mobileNumberInfected are not contactsbecause distance between them is $floatStr meters.<br>";
                 }
             }
         }
@@ -67,7 +67,7 @@ class updateDatabase
     function getAllNonInfectedAtThatTime($startdatetimeInfected, $enddatetimeInfected)
     {
         //  $selectquery = "SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileNumber, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileNumber = Mobile.mobileNumber WHERE Mobile.confirmInfected = FALSE AND Coordinates.dateTimeCoordinates = $datetimeInfected AND Mobile.dateTimeLastTest IS NULL;";
-        $selectquery = "SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileNumber, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileNumber = Mobile.mobileNumber WHERE Mobile.confirmInfected = FALSE AND Mobile.contactWithInfected = FALSE AND Coordinates.dateTimeCoordinates >= $startdatetimeInfected AND Coordinates.dateTimeCoordinates < $enddatetimeInfected;";
+        $selectquery = "SELECT Coordinates.dateTimeCoordinates, Coordinates.latitude, Coordinates.longitude, Mobile.mobileNumber FROM Coordinates INNER JOIN Mobile ON Coordinates.mobileNumber = Mobile.mobileNumber WHERE Mobile.confirmInfected = FALSE AND Mobile.contactWithInfected = FALSE AND Coordinates.dateTimeCoordinates >= $startdatetimeInfected AND Coordinates.dateTimeCoordinates < $enddatetimeInfected;";
         $data = $this->db->select($selectquery);
         $array = array();
 
