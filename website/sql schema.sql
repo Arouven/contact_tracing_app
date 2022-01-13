@@ -266,11 +266,9 @@ INSERT INTO
   )
 VALUES
   (
-    1,
-    '+23012345670',
+    '+23057775794',
     1629629291,
-    '-20.267031',
-    '57.417493',
+    '-20.2668034','57.4170724,',
     '1'
   ),
   (
@@ -508,3 +506,121 @@ VALUES
 
 --end of insert coordinates
 --end of insertion of dummy values
+
+
+
+
+-- start testing dummy mobiles
+INSERT INTO
+  `Mobile` (
+    mobileNumber,
+    email,
+    mobileName,
+    fcmtoken,
+    contactWithInfected,
+    confirmInfected
+  )
+VALUES
+  (
+'+23057775790',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775791',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775792',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775793',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),  (
+'+23057775794',
+'apoolian@umail.utm.ac.mu',	
+'SM-G532F-PERSO',
+'flnmOmj4RYqfllEekHcBHe:APA91bFGgeGF6DCn0LKKVXSk2VRwkJohwkk6xx1hKFuWAHwctW7TWW--qNkFPos2eo3m9nRxzDZNMs1MxvAdtmpgWjwGwrAk4LDmb6GSHwN15R9fPUt6Ud05dpkSpSLkJcHxrNlyUbfV',
+0,0
+),
+  (
+'+23057775795',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775796',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775797',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775798',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+),
+  (
+'+23057775799',
+'apoolian@umail.utm.ac.mu',
+'my mobile',
+'dummy token',
+0,
+0
+);
+
+
+INSERT INTO
+  `Coordinates` (
+    mobileNumber,
+    dateTimeCoordinates,
+    latitude,
+    longitude,
+    accuracy
+  )
+VALUES
+  ('+23057775790', 1641527100,'-20.266162', '57.415321','1'),--familyA-father-07/01/2022-07.45
+  ('+23057775791', 1641527100,'-20.2668034','57.4170724','1'),--familyA-mother-07/01/2022-07.45
+  ('+23057775792', 1641527100,'-20.2668034','57.4170724','1'),--familyA-dauther-07/01/2022-07.45
+  ('+23057775793', 1641527100,'-20.2668034','57.4170724','1'),--familyA-son-07/01/2022-07.45
+
+  ('+23057775794', 1641527100,'-20.266454', '57.417569','1'),--familyB-son-07/01/2022-07.45
+  ('+23057775795', 1641527100,'-20.2668034','57.4170724','1'),--familyB-mother-07/01/2022-07.45
+  ('+23057775796', 1641527100,'-20.2668034','57.4170724','1'),--familyB-father-07/01/2022-07.45
+
+  ('+23057775797', 1641527100,'-20.2668034','57.4170724','1'),--familyC-wife-07/01/2022-07.45
+  ('+23057775798', 1641527100,'-20.2668034','57.4170724','1'),--familyC-husband-07/01/2022-07.45
+  ('+23057775799', 1641527100,'-20.2668034','57.4170724','1'),--familyC-nephew-07/01/2022-07.45
+  
+ ;
