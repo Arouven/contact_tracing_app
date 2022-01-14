@@ -306,6 +306,17 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
             $('#largeModal').find('#tableHead').text('');
             $('#largeModal').find('#tableBody').text('');
             var i = 1;
+            // $('#tableHead').append(
+            //     '<tr>' +
+            //     '<th>#</th>' +
+            //     '<th>Name</th>' +
+            //     '<th>Number</td>' +
+            //     '<th>Contact</th>' +
+            //     '<th>Infected</th>' +
+            //     '<th>Last Test</th>' +
+            //     '<th>Mark Infected</th>' +
+            //     '</tr>'
+            // );
             $('#tableHead').append(
                 '<tr>' +
                 '<th>#</th>' +
@@ -313,7 +324,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                 '<th>Number</td>' +
                 '<th>Contact</th>' +
                 '<th>Infected</th>' +
-                '<th>Last Test</th>' +
                 '<th>Mark Infected</th>' +
                 '</tr>'
             );
@@ -330,6 +340,18 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                             var confirmInfected = this.confirmInfected;
                             var dateTimeLastTest = this.dateTimeLastTest;
 
+                            // $('#tableBody').append(
+                            //     '<tr class="tr-shadow">' +
+                            //     '<td>' + i + '</td>' +
+                            //     '<td>' + mobileName + '</td>' +
+                            //     '<td>' + mobileNumber + '</td>' +
+                            //     '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
+                            //     '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
+                            //     '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
+                            //     '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\'' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
+                            //     '</tr>'
+                            // );
+
                             $('#tableBody').append(
                                 '<tr class="tr-shadow">' +
                                 '<td>' + i + '</td>' +
@@ -337,7 +359,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                                 '<td>' + mobileNumber + '</td>' +
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
-                                '<td>' + ((dateTimeLastTest == null) ? '-' : (new Date(dateTimeLastTest * 1000)).toLocaleString()) + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\'' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
