@@ -38,17 +38,23 @@ class updateDatabase
                 $mobileNumberPossibleContact = $nonInfectedAtThatTime[$j]['mobileNumber'];
                 $latitudePossibleContact = floatval($nonInfectedAtThatTime[$j]['latitude']);
                 $longitudePossibleContact = floatval($nonInfectedAtThatTime[$j]['longitude']);
-                $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact); //(e.g get the distance between the infected mobile and the non infected mobile at t1)
+                // $distanceMetres = $this->distanceMetres($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact); //(e.g get the distance between the infected mobile and the non infected mobile at t1)
                 // print "$distanceMetres --- $distanceContact <br>";
-                // $epsilon = 0.00001;      
-                $floatStr =  substr($distanceMetres, 0, 5);
+                $distanceMetres = $this->getDistanceBetweenPointsNew($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact); //(e.g get the distance between the infected mobile and the non infected mobile at t1)
+
+                // -20.266454, 57.417569 , -20.266162, 57.415321
+                ///-20.266454, 57.417569, -20.266162, 57.415321
+                //$floatStr =  substr($distanceMetres, 0, 5);
                 //var_dump(round($floatStr, 3));
-                //var_dump(round($distanceContact, 3));
-                if (round($floatStr, 3) <= round($distanceContact, 3)) {
+                //var_dump(round($distanceContact, 3));UPDATE `Mobile` SET `contactWithInfected`=False
+                // print($distanceMetres . '<br>' . round($floatStr, 3) . '<br>' . round($distanceContact, 3) . '<br>');
+                if (round($distanceMetres, 3) <= round($distanceContact, 3)) {
                     //  if ($distanceMetres <= $distanceContact) { //(e.g if the distance between them is less or equal to 2 meters)
                     //mark contact with infected
+
+                    date_default_timezone_set('Indian/Mauritius');
                     $humandDtetimePossibleContact = date('Y-m-d H:i:s', $datetimePossibleContact);
-                    print "($latitudeInfected, $longitudeInfected, $latitudePossibleContact, $longitudePossibleContact) - $mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $floatStr meters at $humandDtetimePossibleContact ($datetimePossibleContact).<br>";
+                    print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $distanceMetres meters at $humandDtetimePossibleContact ($datetimePossibleContact).<br>";
                     //send message to mobile
                     //new NotifyFirebase($mobileNumberPossibleContact);
                     print "message sent to $mobileNumberPossibleContact <br>";
@@ -58,6 +64,21 @@ class updateDatabase
                 }
             }
         }
+    }
+    function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'meters')
+    {
+        $theta = $longitude1 - $longitude2;
+        $distance = (sin(deg2rad($latitude1)) * sin(deg2rad($latitude2))) + (cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * cos(deg2rad($theta)));
+        $distance = acos($distance);
+        $distance = rad2deg($distance);
+        $distance = $distance * 60 * 1.1515;
+        switch ($unit) {
+            case 'miles':
+                break;
+            case 'meters':
+                $distance = $distance * 1.609344 * 1000;
+        }
+        return (round($distance, 5));
     }
     function markAsContact($mobileNumberContact)
     {
@@ -104,7 +125,11 @@ class updateDatabase
         $deleteFrom = time() - ($this->noDaysFromContact * 24 * 60 * 60); // xx days; 24 hours; 60 mins; 60 secs
         $deleteStatement = "DELETE FROM Coordinates WHERE dateTimeCoordinates < $deleteFrom;";
         $this->db->execute($deleteStatement);
-        print "outdated coordinates deleted time:$deleteFrom <br>";
+        date_default_timezone_set('Indian/Mauritius');
+        $hdate = date('Y-m-d H:i:s', time());
+        print "process starts at time:$hdate <br>";
+        $hdate = date('Y-m-d H:i:s', $deleteFrom);
+        print "outdated coordinates deleted time:$hdate <br>";
     }
     function getNumber($no)
     {
