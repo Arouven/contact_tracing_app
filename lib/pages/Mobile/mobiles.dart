@@ -34,6 +34,8 @@ class _MobilePageState extends State<MobilePage> {
   late String _mobileNumberToSetActive = '';
   //bool _findSelected = false;
   var _mobiles = [];
+  bool _codeSent = false;
+  var _verificationId = '';
 
   /// display dialog
   /// if the user is sure he/she want to edit [mobile]
@@ -112,8 +114,6 @@ class _MobilePageState extends State<MobilePage> {
     );
   }
 
-  bool _codeSent = false;
-  var _verificationId = '';
   _verifyPhone() async {
     final email = await GlobalVariables.getEmail();
 
@@ -199,6 +199,13 @@ class _MobilePageState extends State<MobilePage> {
   }
 
   _verifyPin({required String smsCode}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+    } catch (e) {
+      print(e);
+    }
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: _verificationId,
       smsCode: smsCode,
@@ -215,13 +222,18 @@ class _MobilePageState extends State<MobilePage> {
           mobileNumber: _mobileNumberToSetActive);
       await _updateMysql();
       await generatePath();
-      // setState(() {
-      // _signedin = true;
-      // });
+
+      setState(() {
+        _isLoading = false;
+      });
     } on FirebaseAuthException catch (e) {
-      // setState(() {
-      //   _signedin = false;
-      // });
+      try {
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (e) {
+        print(e);
+      }
       print('verifyPin exception');
       print(e);
       await DialogBox.showErrorDialog(
@@ -313,6 +325,7 @@ class _MobilePageState extends State<MobilePage> {
               child: const Text('Yes'),
               onPressed: () async {
                 setState(() {
+                  _isLoading = true;
                   _mobileNumberToSetActive = mobile.mobileNumber;
                 });
                 Navigator.of(context).pop();
@@ -382,7 +395,7 @@ class _MobilePageState extends State<MobilePage> {
                                     print('set active');
                                     await _showSetActiveDialog(_mobiles[index]);
                                     print(_mobiles[index].fcmtoken);
-                                    Navigator.of(context).pop();
+                                    //Navigator.of(context).pop();
                                   },
                                 ),
                               ),
@@ -412,14 +425,19 @@ class _MobilePageState extends State<MobilePage> {
   /// return the body of the page
   Widget _body() {
     if (_isLoading == true) {
-      return Center(child: CircularProgressIndicator());
+      return Aesthetic
+          .displayCircle(); //Center(child: CircularProgressIndicator());
     } else {
-      return Container(
-        padding: EdgeInsets.all(10.0),
-        child: Center(
-          child: _codeSent ? _otpPage() : _buildMobiles(),
-        ),
-      );
+      if (_codeSent) {
+        return Container(
+          padding: EdgeInsets.all(10.0),
+          child: Center(child: _otpPage()),
+        );
+      } else {
+        return Container(
+          child: _buildMobiles(),
+        );
+      }
     }
   }
 

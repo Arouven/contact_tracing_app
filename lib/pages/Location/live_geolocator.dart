@@ -32,6 +32,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
   String _lastUpdateFromServer = '0';
+  bool _flagAlreadyMarked = false;
 
   Future<void> _downloadData() async {
     String jsonBody = await DatabaseMySQLServices.downloadUpdateLocation();
@@ -53,23 +54,26 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     final data = jsonDecode(bodyResponse);
     if (data['status'] == "200") {
       print(data);
-      if (await GlobalVariables.getShowConfirmInfected() == true) {
-        await _populateMarkers(data["confirmInfected"], myMobileNumber,
-            Colors.red[400], Colors.red.shade900);
+      if (await GlobalVariables.getShowCleanUsers() == true) {
+        await _populateMarkers(data["cleanUsers"], myMobileNumber,
+            Colors.green[400], Colors.green.shade900);
       }
       if (await GlobalVariables.getShowContactWithInfected() == true) {
         await _populateMarkers(data["contactWithInfected"], myMobileNumber,
             Colors.yellow[400], Colors.yellow.shade900);
       }
-      if (await GlobalVariables.getShowCleanUsers() == true) {
-        await _populateMarkers(data["cleanUsers"], myMobileNumber,
-            Colors.green[400], Colors.green.shade900);
+      if (await GlobalVariables.getShowConfirmInfected() == true) {
+        await _populateMarkers(data["confirmInfected"], myMobileNumber,
+            Colors.red[400], Colors.red.shade900);
       }
+
       if (await GlobalVariables.getShowTestingCenters() == true) {
         await _populateCentresMarkers(data["testingcentres"], Colors.blue);
       }
       if (await GlobalVariables.getShowMyLocation() == true) {
-        await _addCurrentLocationToMarkers();
+        if (_flagAlreadyMarked != true) {
+          await _addCurrentLocationToMarkers();
+        }
       }
 
       try {
@@ -162,6 +166,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
               : 0;
           print(myMobileNumber.toString());
           if (firstInt != secondInt) {
+            setState(() {
+              _flagAlreadyMarked = false;
+            });
             Marker marker = new Marker(
               width: 25,
               height: 25,
@@ -182,7 +189,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             );
             _markers.add(marker);
           } else {
-            _myMarkerColour = myMarkerColour;
+            setState(() {
+              _myMarkerColour = myMarkerColour;
+              _flagAlreadyMarked = true;
+            });
           }
         } catch (e) {
           print(e.toString());

@@ -359,7 +359,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
                                 '<td>' + mobileNumber + '</td>' +
                                 '<td>' + (Boolean(Number(contactWithInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
                                 '<td>' + (Boolean(Number(confirmInfected)) ? '<input disabled readonly type="checkbox" checked />' : '<input disabled readonly type="checkbox" />') + '</td>' +
-                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-success" onclick="updateDB(\'' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
+                                '<td>' + (Boolean(Number(confirmInfected)) ? '<button class="btn btn-danger" onclick="updateDB(\'' + mobileNumber + '\', \'reset\',\'' + email + '\');">Reset</button>' : '<button class="btn btn-success" onclick="updateDB(\'' + mobileNumber + '\', \'infected\', \'' + email + '\');">Infected</button>') + '</td>' +
                                 '</tr>'
                             );
                             i++;
