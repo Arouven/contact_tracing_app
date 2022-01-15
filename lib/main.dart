@@ -13,6 +13,7 @@ import 'package:contact_tracing/services/notification.dart';
 import 'package:contact_tracing/services/uploadClass.dart';
 import 'package:contact_tracing/services/write.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -26,10 +27,10 @@ Writefile _wf = new Writefile();
 late FlutterLocalNotificationsPlugin flutterLNP;
 late AndroidNotificationChannel channel;
 late NotificationSettings settings;
-late FirebaseMessaging _messaging;
-late var _pageSelected;
+//late FirebaseMessaging _messaging;
+Widget? _pageSelected;
 late var _isDarkMode = null;
-late String path = "notification/+23057775794/";
+late String path = "";
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
@@ -50,17 +51,13 @@ void onStart() {
       print("event = setAsForeground");
       // bring to foreground
       service.setForegroundMode(true);
-      await GlobalVariables.setForegroundServices(
-        showServices: true,
-      );
+      await GlobalVariables.setForegroundServices(showServices: true);
       return;
     }
     if (event["action"] == "setAsBackground") {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
-      await GlobalVariables.setForegroundServices(
-        showServices: false,
-      );
+      await GlobalVariables.setForegroundServices(showServices: false);
     }
 
     if (event["action"] == "stopService") {
@@ -108,43 +105,6 @@ void onStart() {
   );
 }
 
-// Future<Position> _determinePosition() async {
-//   bool serviceEnabled;
-//   LocationPermission permission;
-
-//   // Test if location services are enabled.
-//   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//   if (!serviceEnabled) {
-//     // Location services are not enabled don't continue
-//     // accessing the position and request users of the
-//     // App to enable the location services.
-//     return Future.error('Location services are disabled.');
-//   }
-
-//   permission = await Geolocator.checkPermission();
-//   if (permission == LocationPermission.denied) {
-//     permission = await Geolocator.requestPermission();
-//     if (permission == LocationPermission.denied) {
-//       // Permissions are denied, next time you could try
-//       // requesting permissions again (this is also where
-//       // Android's shouldShowRequestPermissionRationale
-//       // returned true. According to Android guidelines
-//       // your App should show an explanatory UI now.
-//       return Future.error('Location permissions are denied');
-//     }
-//   }
-
-//   if (permission == LocationPermission.deniedForever) {
-//     // Permissions are denied forever, handle appropriately.
-//     return Future.error(
-//         'Location permissions are permanently denied, we cannot request permissions.');
-//   }
-
-//   // When we reach here, permissions are granted and we can
-//   // continue accessing the position of the device.
-//   return await Geolocator.getCurrentPosition();
-// }
-
 Future<void> _setFirebase() async {
   channel = NotificationServices().androidNotificationChannel();
   flutterLNP = FlutterLocalNotificationsPlugin();
@@ -153,10 +113,10 @@ Future<void> _setFirebase() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
   await Firebase.initializeApp();
-  _messaging = FirebaseMessaging.instance;
+  // _messaging =FirebaseMessaging.instance ;
 
   // 3. On iOS, this helps to take the user permissions
-  settings = await _messaging.requestPermission(
+  settings = await FirebaseMessaging.instance.requestPermission(
     alert: true,
     badge: true,
     provisional: false,
@@ -164,18 +124,18 @@ Future<void> _setFirebase() async {
   );
 }
 
-void _openAppMessage() {
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Parse the message received
+// void _openAppMessage() {
+//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+//     print('User granted permission');
+//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+//       // Parse the message received
 
-      _sendMsg(message);
-    });
-  } else {
-    print('User declined or has not accepted permission');
-  }
-}
+//       _sendMsg(message);
+//     });
+//   } else {
+//     print('User declined or has not accepted permission');
+//   }
+// }
 
 Future<void> _messageHandler(RemoteMessage message) async {
   print('background message ${message.notification!.body}');
@@ -212,20 +172,48 @@ Future<void> startServices() async {
   final mobileNumber = await GlobalVariables.getMobileNumber();
   if ((email != null) && (mobileNumber != null)) {
     print('email and mobile number not null');
-    var isRunning = await FlutterBackgroundService().isServiceRunning();
-    print('is running ' + isRunning.toString());
+    await generatePath();
+    _listenToDbUpdateBadge();
+    _listenToDbNotif();
+    // var isRunning = await FlutterBackgroundService().isServiceRunning();
+    // print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
     if ((await GlobalVariables.getService()) != true) {
       //either null or false
       print('start the service');
       FlutterBackgroundService.initialize(onStart);
-      await NotificationServices().showNotification(
-        notificationTitle: 'Services Started',
-        notificationBody: 'You are now connected to our app',
+      final title = 'Services Started';
+      final body = 'You are now connected to our app';
+      await updateFirebaseNotification(
+        notificationTitle: title,
+        notificationBody: body,
       );
+      // await NotificationServices().showNotification(
+      //   notificationTitle: title,
+      //   notificationBody: body,
+      // );
       await GlobalVariables.setService(service: true);
     }
     //  }
+  }
+}
+
+Future<void> updateFirebaseNotification({
+  required String notificationTitle,
+  required String notificationBody,
+}) async {
+  String time = (new DateTime.now().millisecondsSinceEpoch).toString();
+  time = time.substring(0, time.length - 3);
+  if (path != "") {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+    final data = <String, dynamic>{
+      "body": notificationBody,
+      "read": false,
+      "timestamp": time,
+      "title": notificationTitle,
+    };
+    await ref.push().set(data);
+    print("check your database");
   }
 }
 
@@ -240,7 +228,6 @@ Future logout(context) async {
 }
 
 Future pageSelector() async {
-  // return UpdateAddressPage(address: 'suposer marC');
   try {
     final email = await GlobalVariables.getEmail();
     final mobileNumber = await GlobalVariables.getMobileNumber();
@@ -260,8 +247,60 @@ Future pageSelector() async {
   }
 }
 
+late StreamSubscription _streamNotif;
+void _listenToDbNotif() {
+  if (path != "") {
+    print('listening for new child from firebase');
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+    Stream<DatabaseEvent> stream = ref.onChildAdded;
+
+// Subscribe to the stream!
+    _streamNotif = stream.listen((DatabaseEvent event) async {
+      try {
+        DataSnapshot snapshot = event.snapshot; // DataSnapshot
+        print('abcde');
+        //{timestamp: 1642240673, body: You may be infected practice self-isolation and perform a test, title: In Contact, read: true}
+        if (snapshot.value != null) {
+          final json = snapshot.value as Map;
+          print(json['read']);
+          await NotificationServices().showNotification(
+            notificationTitle: json['title'],
+            notificationBody: json['body'],
+          );
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+}
+
+void _listenToDbUpdateBadge() {
+  if (path != "") {
+    print('listening for changes from firebase');
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+    Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent event) async {
+      try {
+        //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+        print('change detected updating badges');
+        await BadgeServices.updateBadge();
+        print(BadgeServices.number);
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+  //await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
   } catch (e) {
@@ -278,22 +317,21 @@ void main() async {
     print(e);
     await GlobalVariables.setNotifier(notifier: true);
   }
-  // await Geolocator.requestPermission();
-  //Position position = await _determinePosition();
-  // final SharedPreferences prefs = await SharedPreferences.getInstance();
-  // await prefs.setDouble("lastlat", position.latitude);
-  // await prefs.setDouble("lastlng", position.longitude);
+  try {
+    _pageSelected = await pageSelector();
+    await _setFirebase();
+    // _openAppMessage();
 
-  await _setFirebase();
-  _openAppMessage();
-
-  FirebaseMessaging.onBackgroundMessage(_messageHandler);
-  FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    print('Message clicked!');
-  });
-  await BadgeServices.updateBadge();
-  _pageSelected = await pageSelector();
-
+    FirebaseMessaging.onBackgroundMessage(_messageHandler);
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
+    await BadgeServices.updateBadge();
+    _listenToDbUpdateBadge();
+    _listenToDbNotif();
+  } catch (e) {
+    print(e);
+  }
   runApp(MyApp());
 }
 
@@ -313,7 +351,7 @@ class MyApp extends StatelessWidget {
           theme: lightMode,
           darkTheme: darkMode,
           themeMode: themeProvider.themeMode,
-          home: _pageSelected,
+          home: (_pageSelected != null) ? _pageSelected : LoginPage(),
           routes: <String, WidgetBuilder>{
             LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
             LoginPage.route: (context) => LoginPage(),

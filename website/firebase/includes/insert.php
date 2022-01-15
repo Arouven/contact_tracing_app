@@ -51,7 +51,7 @@ class NotifyFirebase
             'body' => $body,
             'timestamp' => time(),
             'read' => false,
-        ];;
+        ];
         $ref = "notification/$mobileNumber/";
         $postdata = $database->getReference($ref)->push($data);
 

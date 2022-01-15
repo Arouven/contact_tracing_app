@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
@@ -51,46 +53,51 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
+  late StreamSubscription _stream;
+
   void _updateListofMessages() {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+    if (path != "") {
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
-    Stream<DatabaseEvent> stream = ref.onValue;
+      Stream<DatabaseEvent> stream = ref.onValue;
 
 // Subscribe to the stream!
-    stream.listen((DatabaseEvent event) {
-      try {
-        DataSnapshot snapshot = event.snapshot; // DataSnapshot
-        Map message = snapshot.value as Map;
-        messageList.clear();
-        int unreadmsg = 0;
-        setState(() {
-          if (message != null) {
-            message.forEach((key, value) {
-              if (value['read'] == false) {
-                unreadmsg += 1;
-              }
-              messageList.add(
-                new Message(
-                  id: key,
-                  title: value['title'],
-                  body: value['body'],
-                  read: value['read'],
-                  timestamp: value['timestamp'],
-                ),
-              );
-            });
-          }
-        });
-        setState(() async {
-          BadgeServices.number = unreadmsg;
-          await BadgeServices.updateBadge();
-          print(BadgeServices.number);
-          _isLoading = false;
-        });
-      } catch (e) {
-        print(e);
-      }
-    });
+      _stream = stream.listen((DatabaseEvent event) {
+        try {
+          print("listening in notification page");
+          DataSnapshot snapshot = event.snapshot; // DataSnapshot
+          Map message = snapshot.value as Map;
+          messageList.clear();
+          int unreadmsg = 0;
+          setState(() {
+            if (message != null) {
+              message.forEach((key, value) {
+                if (value['read'] == false) {
+                  unreadmsg += 1;
+                }
+                messageList.add(
+                  new Message(
+                    id: key,
+                    title: value['title'],
+                    body: value['body'],
+                    read: value['read'],
+                    timestamp: value['timestamp'],
+                  ),
+                );
+              });
+            }
+          });
+          setState(() async {
+            BadgeServices.number = unreadmsg;
+            await BadgeServices.updateBadge();
+            print(BadgeServices.number);
+            _isLoading = false;
+          });
+        } catch (e) {
+          print(e);
+        }
+      });
+    }
   }
 
   Widget _body() {
@@ -171,5 +178,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void deactivate() {
+    _stream.cancel();
+    super.deactivate();
   }
 }

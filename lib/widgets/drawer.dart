@@ -94,7 +94,7 @@ Widget withoutLogin(BuildContext context, String currentRoute) {
       _buildMenuItem(
         context,
         const Text('Notifications'),
-        BadgeServices.notificationBadge(),
+        BadgeServices().notificationBadge(),
         NotificationsPage.route,
         currentRoute,
       ),

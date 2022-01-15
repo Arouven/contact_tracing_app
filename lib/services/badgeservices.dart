@@ -7,7 +7,7 @@ import 'package:flutter_app_badger/flutter_app_badger.dart';
 class BadgeServices {
   static int number = 0;
 
-  static Widget notificationBadge() {
+  Widget notificationBadge() {
     if (number > 0) {
       print(number);
       return (Badge(
@@ -23,32 +23,37 @@ class BadgeServices {
   }
 
   static updateBadge() async {
-    await updateNotificationBadge();
-    updateAppBadge();
+    try {
+      await updateNotificationBadge();
+    } finally {
+      updateAppBadge();
+    }
   }
 
   static updateNotificationBadge() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-    // Get the data once
-    DatabaseEvent event = await ref.once();
+    if (path != "") {
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+      // Get the data once
+      DatabaseEvent event = await ref.once();
 
 // Print the data of the snapshot
-    print('values: ' + event.snapshot.value.toString()); // { "name": "John" }
-    DataSnapshot snapshot = event.snapshot; // DataSnapshot
-    Map message = snapshot.value as Map;
+      print('values: ' + event.snapshot.value.toString()); // { "name": "John" }
+      DataSnapshot snapshot = event.snapshot; // DataSnapshot
+      Map message = snapshot.value as Map;
 
-    int badge = 0;
-    if (message != null) {
-      message.forEach((key, value) {
-        bool read = value['read'] as bool;
-        if (read == false) {
-          badge = badge + 1;
-        }
-        // print(badge);
-      });
+      int badge = 0;
+      if (message != null) {
+        message.forEach((key, value) {
+          bool read = value['read'] as bool;
+          if (read == false) {
+            badge = badge + 1;
+          }
+          // print(badge);
+        });
+      }
+
+      number = badge;
     }
-
-    number = badge;
   }
 
   static updateAppBadge() {

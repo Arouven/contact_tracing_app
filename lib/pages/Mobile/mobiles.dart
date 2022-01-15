@@ -140,17 +140,25 @@ class _MobilePageState extends State<MobilePage> {
           );
           await _updateMysql();
           await generatePath();
-          setState(() {
-            //   _signedin = true;
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              //   _signedin = true;
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           print('verificationFailed');
           print(e);
-          setState(() {
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
           DialogBox.showErrorDialog(
             context: context,
             body: e.message.toString(),
@@ -158,23 +166,31 @@ class _MobilePageState extends State<MobilePage> {
         },
         codeSent: (String verificationid, int? resendToken) {
           print('codesent');
-          setState(() {
-            _codeSent = true;
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _codeSent = true;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         codeAutoRetrievalTimeout: (String verificationid) {
           print('codeautoretrievaltimeout');
           //  if (_signedin == true) {
           //} else {
-          setState(() {
-            _codeSent = false;
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _codeSent = false;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
           //}
         },
         timeout: Duration(seconds: 120),
@@ -212,9 +228,13 @@ class _MobilePageState extends State<MobilePage> {
         context: context,
         body: e.message.toString(),
       );
-      setState(() {
-        _codeSent = false;
-      });
+      try {
+        setState(() {
+          _codeSent = false;
+        });
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
