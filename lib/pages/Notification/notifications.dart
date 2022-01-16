@@ -1,15 +1,13 @@
 import 'dart:async';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
-import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:provider/provider.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -24,7 +22,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
   bool _problemWithFirebase = false;
   List<Message> messageList = [];
-
+  late var _subscription;
+  bool _internetConnection = true;
   late StreamSubscription _stream;
 
   Future _getListofMessages() async {
@@ -116,7 +115,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Widget _body() {
-    if (_problemWithFirebase == true) {
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
+    } else if (_problemWithFirebase == true) {
       return Aesthetic.displayProblemFirebase();
     } else {
       if (_isLoading != false) {
@@ -173,6 +174,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getListofMessages().whenComplete(() => setState(() {}));
     _updateListofMessages();
     super.initState();
@@ -200,8 +215,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   @override
-  void deactivate() {
+  void dispose() {
     _stream.cancel();
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
     super.deactivate();
   }
 }

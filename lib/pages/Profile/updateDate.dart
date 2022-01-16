@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -22,6 +23,9 @@ class UpdateDatePage extends StatefulWidget {
 class _UpdateDatePageState extends State<UpdateDatePage> {
   bool _showReload = false;
   bool _isLoading = true;
+  late var _subscription;
+  bool _internetConnection = true;
+
   String _dateOfBirth = '';
   Future _getDOB() async {
     _dateOfBirth = widget.dateOfBirth;
@@ -29,6 +33,20 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getDOB().whenComplete(() => setState(() {
           _isLoading = false;
         }));
@@ -67,70 +85,74 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
       DateTime.parse(_dateOfBirth).month,
       DateTime.parse(_dateOfBirth).day,
     );
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Center(
-        child: FloatingActionButton(
-            foregroundColor: Colors.red,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.replay),
-            onPressed: () {
-              setState(() {
-                _showReload = false;
-              });
-            }),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return SingleChildScrollView(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            new Container(
-              child: new Text(
-                'Date of birth',
-                style: TextStyle(
-                  fontSize: 40.0,
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Center(
+          child: FloatingActionButton(
+              foregroundColor: Colors.red,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.replay),
+              onPressed: () {
+                setState(() {
+                  _showReload = false;
+                });
+              }),
+        );
+      } else {
+        return SingleChildScrollView(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              new Container(
+                child: new Text(
+                  'Date of birth',
+                  style: TextStyle(
+                    fontSize: 40.0,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 2, // / 1.3,
-              child: Center(
-                child: new Container(
-                  alignment: Alignment.center,
-                  child: new DatePickerWidget(
-                    looping: true, // default is not looping
-                    lastDate: DateTime(
-                      dateParse.year,
-                      dateParse.month,
-                      dateParse.day,
-                    ),
-
-                    initialDate: initialdate,
-                    dateFormat: "dd-MMM-yyyy",
-                    locale: DatePicker.localeFromString('en'),
-                    onChange: (DateTime newDate, _) {
-                      _dateOfBirth = newDate.toString();
-                      print(_dateOfBirth);
-                    },
-                    pickerTheme: DateTimePickerTheme(
-                      backgroundColor: Colors.transparent,
-                      itemTextStyle: TextStyle(
-                        fontSize: 19,
-                        color: Theme.of(context).colorScheme.secondary,
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 2, // / 1.3,
+                child: Center(
+                  child: new Container(
+                    alignment: Alignment.center,
+                    child: new DatePickerWidget(
+                      looping: true, // default is not looping
+                      lastDate: DateTime(
+                        dateParse.year,
+                        dateParse.month,
+                        dateParse.day,
                       ),
-                      // dividerColor: Colors.blue,
+
+                      initialDate: initialdate,
+                      dateFormat: "dd-MMM-yyyy",
+                      locale: DatePicker.localeFromString('en'),
+                      onChange: (DateTime newDate, _) {
+                        _dateOfBirth = newDate.toString();
+                        print(_dateOfBirth);
+                      },
+                      pickerTheme: DateTimePickerTheme(
+                        backgroundColor: Colors.transparent,
+                        itemTextStyle: TextStyle(
+                          fontSize: 19,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        // dividerColor: Colors.blue,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -209,5 +231,17 @@ class _UpdateDatePageState extends State<UpdateDatePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

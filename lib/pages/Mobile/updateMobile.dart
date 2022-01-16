@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/models/mobile.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
+import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -9,6 +10,7 @@ import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:otp_text_field/otp_field_style.dart';
 import 'package:provider/provider.dart';
 import 'mobiles.dart';
 import 'dart:async';
@@ -46,6 +48,9 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   String _verificationId = '';
   String _phoneNumber = '';
   bool _codeSent = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   TextEditingController _mobileNumberController = TextEditingController();
   TextEditingController _mobileNameController = TextEditingController();
@@ -96,7 +101,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     if (data != 'Error') {
       print(data);
       final mobileNumber = await GlobalVariables.getMobileNumber();
-      if (mobileNumber == null) {
+      if (mobileNumber == widget.mobile.mobileNumber || mobileNumber == null) {
         await GlobalVariables.setMobileNumber(mobileNumber: mobileNumber);
       }
       Navigator.of(context).pushAndRemoveUntil(
@@ -190,54 +195,80 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
     ];
   }
 
-  Widget _displayMobile() {
+  Widget _otpPage() {
     return Container(
-      padding: EdgeInsets.all(10.0),
-      child: Center(
-        child: _codeSent
-            ? Container(
-                height: 80,
-                child: new Column(
-                  children: <Widget>[
-                    Text('OTP'),
-                    OTPTextField(
-                      length: 6,
-                      width: MediaQuery.of(context).size.width,
-                      fieldWidth: 30,
-                      style: TextStyle(fontSize: 20),
-                      textFieldAlignment: MainAxisAlignment.spaceAround,
-                      fieldStyle: FieldStyle.underline,
-                      onCompleted: (pin) {
-                        _verifyPin(pin);
-                      },
-                    ),
-                  ],
-                ),
-              )
-            : ListView(
-                children: <Widget>[
-                  new Container(
-                    child: new Column(
-                      children: _fields(),
-                    ),
-                  ),
-                ],
-              ),
+      height: 80,
+      child: new Column(
+        children: <Widget>[
+          Text('OTP'),
+          OTPTextField(
+            otpFieldStyle:
+                Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
+                    ? OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.grey,
+                        focusBorderColor: Colors.white,
+                        disabledBorderColor: Colors.white54,
+                        enabledBorderColor: Colors.white,
+                        errorBorderColor: Colors.red,
+                      )
+                    : OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.black26,
+                        focusBorderColor: Colors.blue,
+                        disabledBorderColor: Colors.grey,
+                        enabledBorderColor: Colors.black26,
+                        errorBorderColor: Colors.red,
+                      ),
+            length: 6,
+            width: MediaQuery.of(context).size.width,
+            fieldWidth: 30,
+            style: TextStyle(fontSize: 20),
+            textFieldAlignment: MainAxisAlignment.spaceAround,
+            fieldStyle: FieldStyle.underline,
+            onCompleted: (smsCode) {
+              _verifyPin(smsCode: smsCode.toString());
+            },
+          ),
+        ],
       ),
     );
   }
 
   Widget _body() {
-    if (_isLoading) {
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Aesthetic.refreshButton(
-          context: context,
-          route: UpdateMobilePage(
-            mobile: widget.mobile,
-          ));
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return _displayMobile();
+      if (_isLoading) {
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Aesthetic.refreshButton(
+            context: context,
+            route: UpdateMobilePage(
+              mobile: widget.mobile,
+            ));
+      } else {
+        if (_codeSent) {
+          return Container(
+            padding: EdgeInsets.all(10.0),
+            child: Center(
+              child: _otpPage(),
+            ),
+          );
+        } else {
+          return Container(
+            child: ListView(
+              children: <Widget>[
+                new Container(
+                  child: new Column(
+                    children: _fields(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -268,45 +299,80 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
         phoneNumber: _phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
           print('verificationCompleted');
-          await FirebaseAuth.instance
-              .signInWithCredential(credential); //auto retrive otp
+          await FirebaseAuth.instance.signInWithCredential(
+            credential,
+          ); //auto retrive otp
           print('auto signed in');
           print('new');
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
           await _updateMysql();
+          try {
+            setState(() {
+              //   _signedin = true;
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           print('verificationFailed');
           print(e);
+          try {
+            setState(() {
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
           DialogBox.showErrorDialog(
             context: context,
             body: e.message.toString(),
           );
         },
         codeSent: (String verificationid, int? resendToken) {
-          //when receive sms code
-          setState(() {
-            _codeSent = true;
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-          });
+          print('codesent');
+          try {
+            setState(() {
+              _codeSent = true;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         codeAutoRetrievalTimeout: (String verificationid) {
-          setState(() {
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-          });
+          print('codeautoretrievaltimeout');
+          //  if (_signedin == true) {
+          //} else {
+          try {
+            setState(() {
+              _codeSent = false;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
+          //}
         },
         timeout: Duration(seconds: 120),
       );
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
-  _verifyPin(String smsCode) async {
+  _verifyPin({required String smsCode}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+    } catch (e) {
+      print(e);
+    }
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
       verificationId: _verificationId,
       smsCode: smsCode,
@@ -318,19 +384,52 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
       print('lobin success');
       print('new');
       FirebaseAuthenticate().getfirebaseuid();
-      FirebaseAuthenticate().getfirebasefcmtoken();
+      await FirebaseAuthenticate().getfirebasefcmtoken();
       await _updateMysql();
+
+      setState(() {
+        _isLoading = false;
+      });
     } on FirebaseAuthException catch (e) {
+      try {
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (e) {
+        print(e);
+      }
+      print('verifyPin exception');
       print(e);
-      DialogBox.showErrorDialog(
+      await DialogBox.showErrorDialog(
         context: context,
         body: e.message.toString(),
       );
+      try {
+        setState(() {
+          _codeSent = false;
+        });
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     super.initState();
     initPlatformState().whenComplete(() => setState(() {
           _mobileNameController.text = widget.mobile.mobileName;
@@ -370,9 +469,16 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
   }
 
   @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _mobileNumberController.dispose();
     _mobileNameController.dispose();
+    _subscription.cancel();
     super.dispose();
   }
 }

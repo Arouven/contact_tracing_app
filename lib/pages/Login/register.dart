@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -13,7 +12,6 @@ import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
-import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   static const String route = '/register';

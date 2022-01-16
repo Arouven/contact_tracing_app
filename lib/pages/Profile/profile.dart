@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Profile/updateAddress.dart';
@@ -22,6 +23,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   String _email = '';
   String _address = '';
@@ -47,6 +51,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getData().whenComplete(() => setState(() {
           _isLoading = false;
         }));
@@ -215,25 +233,29 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ],
     );
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      // if (_address == '') {
-      //   return Container();
-      // } else {
-      return RefreshIndicator(
-        onRefresh: () async {
-          await Future.delayed(Duration(seconds: 2));
-          await _getData();
-          setState(() {
-            print('pull to refresh');
-            _isLoading = false;
-          });
-        },
-        child: listview,
-      );
-      // }
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else {
+        // if (_address == '') {
+        //   return Container();
+        // } else {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(Duration(seconds: 2));
+            await _getData();
+            setState(() {
+              print('pull to refresh');
+              _isLoading = false;
+            });
+          },
+          child: listview,
+        );
+        // }
+      }
     }
   }
 
@@ -313,6 +335,18 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
+import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -13,6 +14,7 @@ import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +40,9 @@ class _MobilePageState extends State<MobilePage> {
   var _mobiles = [];
   bool _codeSent = false;
   var _verificationId = '';
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   /// display dialog
   /// if the user is sure he/she want to edit [mobile]
@@ -101,6 +106,24 @@ class _MobilePageState extends State<MobilePage> {
         children: <Widget>[
           Text('OTP'),
           OTPTextField(
+            otpFieldStyle:
+                Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
+                    ? OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.grey,
+                        focusBorderColor: Colors.white,
+                        disabledBorderColor: Colors.white54,
+                        enabledBorderColor: Colors.white,
+                        errorBorderColor: Colors.red,
+                      )
+                    : OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.black26,
+                        focusBorderColor: Colors.blue,
+                        disabledBorderColor: Colors.grey,
+                        enabledBorderColor: Colors.black26,
+                        errorBorderColor: Colors.red,
+                      ),
             length: 6,
             width: MediaQuery.of(context).size.width,
             fieldWidth: 30,
@@ -426,19 +449,23 @@ class _MobilePageState extends State<MobilePage> {
 
   /// return the body of the page
   Widget _body() {
-    if (_isLoading == true) {
-      return Aesthetic
-          .displayCircle(); //Center(child: CircularProgressIndicator());
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      if (_codeSent) {
-        return Container(
-          padding: EdgeInsets.all(10.0),
-          child: Center(child: _otpPage()),
-        );
+      if (_isLoading == true) {
+        return Aesthetic
+            .displayCircle(); //Center(child: CircularProgressIndicator());
       } else {
-        return Container(
-          child: _buildMobiles(),
-        );
+        if (_codeSent) {
+          return Container(
+            padding: EdgeInsets.all(10.0),
+            child: Center(child: _otpPage()),
+          );
+        } else {
+          return Container(
+            child: _buildMobiles(),
+          );
+        }
       }
     }
   }
@@ -503,6 +530,20 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getMobileNumber().whenComplete(() {
       setState(() {});
       if ((_mymobileNumber != '') && (_service == false)) {
@@ -554,5 +595,17 @@ class _MobilePageState extends State<MobilePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -43,6 +43,9 @@ class _AddMobilePageState extends State<AddMobilePage> {
   String _verificationId = '';
   String _phoneNumber = '';
   bool _codeSent = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   TextEditingController _mobileNumberController = TextEditingController();
   TextEditingController _mobileName = TextEditingController();
@@ -175,69 +178,126 @@ class _AddMobilePageState extends State<AddMobilePage> {
     ];
   }
 
-  Widget _displayMobile() {
+  Widget _otpPage() {
     return Container(
-      padding: EdgeInsets.all(10.0),
-      child: Center(
-        child: _codeSent
-            ? Container(
-                height: 80,
-                child: new Column(
-                  children: <Widget>[
-                    Text('OTP'),
-                    OTPTextField(
-                      otpFieldStyle:
-                          Provider.of<ThemeProvider>(context).themeMode ==
-                                  ThemeMode.dark
-                              ? OtpFieldStyle(
-                                  backgroundColor: Colors.transparent,
-                                  borderColor: Colors.grey,
-                                  focusBorderColor: Colors.white,
-                                  disabledBorderColor: Colors.white54,
-                                  enabledBorderColor: Colors.white,
-                                  errorBorderColor: Colors.red,
-                                )
-                              : OtpFieldStyle(
-                                  backgroundColor: Colors.transparent,
-                                  borderColor: Colors.black26,
-                                  focusBorderColor: Colors.blue,
-                                  disabledBorderColor: Colors.grey,
-                                  enabledBorderColor: Colors.black26,
-                                  errorBorderColor: Colors.red,
-                                ),
-                      length: 6,
-                      width: MediaQuery.of(context).size.width,
-                      fieldWidth: 30,
-                      style: TextStyle(fontSize: 20),
-                      textFieldAlignment: MainAxisAlignment.spaceAround,
-                      fieldStyle: FieldStyle.underline,
-                      onCompleted: (pin) {
-                        _verifyPin(pin);
-                      },
-                    ),
-                  ],
-                ),
-              )
-            : ListView(
-                children: <Widget>[
-                  new Container(
-                    child: new Column(
-                      children: _fields(),
-                    ),
-                  ),
-                ],
-              ),
+      height: 80,
+      child: new Column(
+        children: <Widget>[
+          Text('OTP'),
+          OTPTextField(
+            otpFieldStyle:
+                Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark
+                    ? OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.grey,
+                        focusBorderColor: Colors.white,
+                        disabledBorderColor: Colors.white54,
+                        enabledBorderColor: Colors.white,
+                        errorBorderColor: Colors.red,
+                      )
+                    : OtpFieldStyle(
+                        backgroundColor: Colors.transparent,
+                        borderColor: Colors.black26,
+                        focusBorderColor: Colors.blue,
+                        disabledBorderColor: Colors.grey,
+                        enabledBorderColor: Colors.black26,
+                        errorBorderColor: Colors.red,
+                      ),
+            length: 6,
+            width: MediaQuery.of(context).size.width,
+            fieldWidth: 30,
+            style: TextStyle(fontSize: 20),
+            textFieldAlignment: MainAxisAlignment.spaceAround,
+            fieldStyle: FieldStyle.underline,
+            onCompleted: (smsCode) {
+              _verifyPin(smsCode: smsCode);
+            },
+          ),
+        ],
       ),
     );
   }
 
+  _verifyPin({required String smsCode}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+    } catch (e) {
+      print(e);
+    }
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId,
+      smsCode: smsCode,
+    );
+    print('verificationid: ' + _verificationId);
+    print('smsCode: ' + smsCode);
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      print('lobin success');
+      print('new');
+      FirebaseAuthenticate().getfirebaseuid();
+      await FirebaseAuthenticate().getfirebasefcmtoken();
+      await _updateMysql();
+
+      setState(() {
+        _isLoading = false;
+      });
+    } on FirebaseAuthException catch (e) {
+      try {
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (e) {
+        print(e);
+      }
+      print('verifyPin exception');
+      print(e);
+      await DialogBox.showErrorDialog(
+        context: context,
+        body: e.message.toString(),
+      );
+      try {
+        setState(() {
+          _codeSent = false;
+        });
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
   Widget _body() {
-    if (_isLoading) {
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Aesthetic.refreshButton(context: context, route: AddMobilePage());
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return _displayMobile();
+      if (_isLoading) {
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Aesthetic.refreshButton(
+            context: context, route: AddMobilePage());
+      } else {
+        if (_codeSent) {
+          return Container(
+            padding: EdgeInsets.all(10.0),
+            child: Center(
+              child: _otpPage(),
+            ),
+          );
+        } else {
+          return Container(
+            child: ListView(
+              children: <Widget>[
+                new Container(
+                  child: new Column(
+                    children: _fields(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -277,21 +337,26 @@ class _AddMobilePageState extends State<AddMobilePage> {
           FirebaseAuthenticate().getfirebaseuid();
           FirebaseAuthenticate().getfirebasefcmtoken();
 
-          await GlobalVariables.setMobileNumber(
-            mobileNumber: _mobileNumber,
-          );
           await _updateMysql();
-          setState(() {
-            //   _signedin = true;
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              //   _signedin = true;
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           print('verificationFailed');
           print(e);
-          setState(() {
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
           DialogBox.showErrorDialog(
             context: context,
             body: e.message.toString(),
@@ -299,54 +364,54 @@ class _AddMobilePageState extends State<AddMobilePage> {
         },
         codeSent: (String verificationid, int? resendToken) {
           print('codesent');
-          setState(() {
-            _codeSent = true;
-            _verificationId = verificationid;
-            print('verificationid: ' + _verificationId);
-            _isLoading = false;
-          });
+          try {
+            setState(() {
+              _codeSent = true;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
         },
         codeAutoRetrievalTimeout: (String verificationid) {
-          _codeSent = false;
           print('codeautoretrievaltimeout');
-          _verificationId = verificationid;
-          print('verificationid: ' + _verificationId);
-          _isLoading = false;
+          //  if (_signedin == true) {
+          //} else {
+          try {
+            setState(() {
+              _codeSent = false;
+              _verificationId = verificationid;
+              print('verificationid: ' + _verificationId);
+              _isLoading = false;
+            });
+          } catch (e) {
+            print(e);
+          }
+          //}
         },
         timeout: Duration(seconds: 120),
       );
     }
   }
 
-  _verifyPin(String smsCode) async {
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: _verificationId,
-      smsCode: smsCode,
-    );
-    print('verificationid: ' + _verificationId);
-    print('smsCode: ' + smsCode);
-    try {
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      print('lobin success');
-      print('new');
-      FirebaseAuthenticate().getfirebaseuid();
-      await FirebaseAuthenticate().getfirebasefcmtoken();
-
-      await GlobalVariables.setMobileNumber(
-          mobileNumber: _mobileNumber); //save in prefs
-      await _updateMysql();
-    } on FirebaseAuthException catch (e) {
-      print('verifyPin exception');
-      print(e);
-      DialogBox.showErrorDialog(
-        context: context,
-        body: e.message.toString(),
-      );
-    }
-  }
-
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     super.initState();
     initPlatformState().whenComplete(() => setState(() {
           _verificationId = '';
@@ -390,9 +455,16 @@ class _AddMobilePageState extends State<AddMobilePage> {
   }
 
   @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _mobileNumberController.dispose();
     _mobileName.dispose();
+    _subscription.cancel();
     super.dispose();
   }
 }

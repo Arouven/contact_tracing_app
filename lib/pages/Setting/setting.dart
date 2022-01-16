@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
@@ -23,6 +24,8 @@ class _SettingPageState extends State<SettingPage> {
   late String _usermail = '';
   bool _isLoading = true;
   //bool _isDarkMode = false;
+  late var _subscription;
+  bool _internetConnection = true;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getForegroundServices();
@@ -64,6 +67,20 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _checkServices().whenComplete(() {
       //  _getDarkMode().whenComplete(() {
       _getNotifier().then((notifier) {
@@ -82,11 +99,15 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   _body() {
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return _listOfSettings();
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else {
+        return _listOfSettings();
+      }
     }
   }
 
@@ -270,5 +291,17 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

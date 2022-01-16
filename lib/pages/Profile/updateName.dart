@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -27,6 +28,10 @@ class _UpdateNamePageState extends State<UpdateNamePage> {
   // String _lastName = '';
   bool _invalidFirstName = false;
   bool _invalidLastName = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
+
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   Future _getData() async {
@@ -36,6 +41,20 @@ class _UpdateNamePageState extends State<UpdateNamePage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getData().whenComplete(() => setState(() {
           _isLoading = false;
         }));
@@ -43,99 +62,103 @@ class _UpdateNamePageState extends State<UpdateNamePage> {
   }
 
   Widget _body() {
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Center(
-        child: FloatingActionButton(
-            foregroundColor: Colors.red,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.replay),
-            onPressed: () {
-              setState(() {
-                _showReload = false;
-              });
-            }),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return Container(
-        child: ListView(
-          shrinkWrap: true,
-          physics: AlwaysScrollableScrollPhysics(),
-          children: [
-            ListTile(
-              title: TextField(
-                controller: _firstNameController,
-                decoration: new InputDecoration(
-                  labelText: 'First Name',
-                  errorText:
-                      _invalidFirstName ? 'First Name Can\'t Be Empty' : null,
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Center(
+          child: FloatingActionButton(
+              foregroundColor: Colors.red,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.replay),
+              onPressed: () {
+                setState(() {
+                  _showReload = false;
+                });
+              }),
+        );
+      } else {
+        return Container(
+          child: ListView(
+            shrinkWrap: true,
+            physics: AlwaysScrollableScrollPhysics(),
+            children: [
+              ListTile(
+                title: TextField(
+                  controller: _firstNameController,
+                  decoration: new InputDecoration(
+                    labelText: 'First Name',
+                    errorText:
+                        _invalidFirstName ? 'First Name Can\'t Be Empty' : null,
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              title: TextField(
-                controller: _lastNameController,
-                decoration: new InputDecoration(
-                  labelText: 'Last Name',
-                  errorText:
-                      _invalidLastName ? 'Last Name Can\'t Be Empty' : null,
+              ListTile(
+                title: TextField(
+                  controller: _lastNameController,
+                  decoration: new InputDecoration(
+                    labelText: 'Last Name',
+                    errorText:
+                        _invalidLastName ? 'Last Name Can\'t Be Empty' : null,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
 
-      //   return SingleChildScrollView(
-      //     child: new Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       crossAxisAlignment: CrossAxisAlignment.center,
-      //       children: [
-      //         new Container(
-      //           child: new Text(
-      //             'Date of birth',
-      //             style: TextStyle(
-      //               fontSize: 40.0,
-      //             ),
-      //           ),
-      //         ),
-      //         SizedBox(
-      //           height: MediaQuery.of(context).size.height / 2, // / 1.3,
-      //           child: Center(
-      //             child: new Container(
-      //               alignment: Alignment.center,
-      //               child: new DatePickerWidget(
-      //                 looping: true, // default is not looping
-      //                 lastDate: DateTime(
-      //                   dateParse.year,
-      //                   dateParse.month,
-      //                   dateParse.day,
-      //                 ),
+        //   return SingleChildScrollView(
+        //     child: new Column(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: [
+        //         new Container(
+        //           child: new Text(
+        //             'Date of birth',
+        //             style: TextStyle(
+        //               fontSize: 40.0,
+        //             ),
+        //           ),
+        //         ),
+        //         SizedBox(
+        //           height: MediaQuery.of(context).size.height / 2, // / 1.3,
+        //           child: Center(
+        //             child: new Container(
+        //               alignment: Alignment.center,
+        //               child: new DatePickerWidget(
+        //                 looping: true, // default is not looping
+        //                 lastDate: DateTime(
+        //                   dateParse.year,
+        //                   dateParse.month,
+        //                   dateParse.day,
+        //                 ),
 
-      //                 initialDate: initialdate,
-      //                 dateFormat: "dd-MMM-yyyy",
-      //                 locale: DatePicker.localeFromString('en'),
-      //                 onChange: (DateTime newDate, _) {
-      //                   _dateOfBirth = newDate.toString();
-      //                   print(_dateOfBirth);
-      //                 },
-      //                 pickerTheme: DateTimePickerTheme(
-      //                   backgroundColor: Colors.transparent,
-      //                   itemTextStyle: TextStyle(
-      //                     fontSize: 19,
-      //                     color: Theme.of(context).accentColor,
-      //                   ),
-      //                   // dividerColor: Colors.blue,
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   );
+        //                 initialDate: initialdate,
+        //                 dateFormat: "dd-MMM-yyyy",
+        //                 locale: DatePicker.localeFromString('en'),
+        //                 onChange: (DateTime newDate, _) {
+        //                   _dateOfBirth = newDate.toString();
+        //                   print(_dateOfBirth);
+        //                 },
+        //                 pickerTheme: DateTimePickerTheme(
+        //                   backgroundColor: Colors.transparent,
+        //                   itemTextStyle: TextStyle(
+        //                     fontSize: 19,
+        //                     color: Theme.of(context).accentColor,
+        //                   ),
+        //                   // dividerColor: Colors.blue,
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+      }
     }
   }
 
@@ -258,5 +281,17 @@ class _UpdateNamePageState extends State<UpdateNamePage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

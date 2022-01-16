@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -26,6 +27,10 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
   // String _firstName = '';
   // String _lastName = '';
   bool _invalidAddress = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
+
   TextEditingController _addressController = TextEditingController();
   Future _getData() async {
     _addressController.text = widget.address;
@@ -33,6 +38,20 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     _getData().whenComplete(() => setState(() {
           _isLoading = false;
         }));
@@ -40,52 +59,57 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
   }
 
   Widget _body() {
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Center(
-        child: FloatingActionButton(
-            foregroundColor: Colors.red,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.replay),
-            onPressed: () {
-              setState(() {
-                _showReload = false;
-              });
-            }),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return Container(
-        child: ListView(
-          shrinkWrap: true,
-          physics: AlwaysScrollableScrollPhysics(),
-          children: [
-            ListTile(
-              title: Text(
-                'Address',
-              ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.location_on,
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Center(
+          child: FloatingActionButton(
+              foregroundColor: Colors.red,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.replay),
+              onPressed: () {
+                setState(() {
+                  _showReload = false;
+                });
+              }),
+        );
+      } else {
+        return Container(
+          child: ListView(
+            shrinkWrap: true,
+            physics: AlwaysScrollableScrollPhysics(),
+            children: [
+              ListTile(
+                title: Text(
+                  'Address',
                 ),
-                onPressed: () async {
-                  await _fillAddresses();
-                },
-              ),
-            ),
-            ListTile(
-              title: TextField(
-                controller: _addressController,
-                decoration: new InputDecoration(
-                  //labelText: 'Address',
-                  errorText: _invalidAddress ? 'Address Can\'t Be Empty' : null,
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.location_on,
+                  ),
+                  onPressed: () async {
+                    await _fillAddresses();
+                  },
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+              ListTile(
+                title: TextField(
+                  controller: _addressController,
+                  decoration: new InputDecoration(
+                    //labelText: 'Address',
+                    errorText:
+                        _invalidAddress ? 'Address Can\'t Be Empty' : null,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -223,5 +247,17 @@ class _UpdateAddressPageState extends State<UpdateAddressPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -34,6 +33,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
   String _lastUpdateFromServer = '0';
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   Future<void> _downloadData() async {
     String jsonBody = await DatabaseMySQLServices.downloadUpdateLocation();
@@ -351,79 +353,83 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   Widget _body(currentLatLng) {
     print(_showReload);
-    if (_isLoading) {
-      //loading
-      return Aesthetic.displayCircle();
-    } else if (_showReload) {
-      return Aesthetic.refreshButton(
-        context: context,
-        route: LiveGeolocatorPage(),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: new Container(
-                child: new Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                          'Updated: ${_lastUpdateFromServer.toString()}',
-                          textAlign: TextAlign.left),
+      if (_isLoading) {
+        //loading
+        return Aesthetic.displayCircle();
+      } else if (_showReload) {
+        return Aesthetic.refreshButton(
+          context: context,
+          route: LiveGeolocatorPage(),
+        );
+      } else {
+        return Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                child: new Container(
+                  child: new Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                            'Updated: ${_lastUpdateFromServer.toString()}',
+                            textAlign: TextAlign.left),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        //  color: Colors.black,
+                        iconSize: 30.0,
+                        alignment: Alignment.centerRight,
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => LiveGeolocatorPage(),
+                            ),
+                            (e) => false,
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.info),
+                        alignment: Alignment.centerRight,
+                        //   color: Colors.black,
+                        iconSize: 30.0,
+                        onPressed: () {
+                          _showLegendDialog();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Flexible(
+                child: FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    center:
+                        LatLng(currentLatLng.latitude, currentLatLng.longitude),
+                    zoom: 16.0,
+                    interactiveFlags: InteractiveFlag.all,
+                  ),
+                  layers: [
+                    TileLayerOptions(
+                      urlTemplate:
+                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      subdomains: ['a', 'b', 'c'],
+                      tileProvider: NonCachingNetworkTileProvider(),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.refresh),
-                      //  color: Colors.black,
-                      iconSize: 30.0,
-                      alignment: Alignment.centerRight,
-                      onPressed: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => LiveGeolocatorPage(),
-                          ),
-                          (e) => false,
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.info),
-                      alignment: Alignment.centerRight,
-                      //   color: Colors.black,
-                      iconSize: 30.0,
-                      onPressed: () {
-                        _showLegendDialog();
-                      },
-                    ),
+                    MarkerLayerOptions(markers: _markers),
                   ],
                 ),
               ),
-            ),
-            Flexible(
-              child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  center:
-                      LatLng(currentLatLng.latitude, currentLatLng.longitude),
-                  zoom: 16.0,
-                  interactiveFlags: InteractiveFlag.all,
-                ),
-                layers: [
-                  TileLayerOptions(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: ['a', 'b', 'c'],
-                    tileProvider: NonCachingNetworkTileProvider(),
-                  ),
-                  MarkerLayerOptions(markers: _markers),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -524,6 +530,20 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     super.initState();
     try {
       ssss().whenComplete(() {
@@ -579,6 +599,13 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   @override
   void dispose() {
     _markers.clear();
+    _subscription.cancel();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

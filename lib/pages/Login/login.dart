@@ -1,7 +1,6 @@
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
-import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
@@ -9,7 +8,6 @@ import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
