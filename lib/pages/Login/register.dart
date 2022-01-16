@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   static const String route = '/register';
@@ -26,6 +29,9 @@ class _RegisterState extends State<RegisterPage> {
   double _currentPosition = 0.0;
   bool _isLoading = true;
   bool _showReload = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   late bool? _emailInDB;
   String _dateOfBirth = '';
@@ -648,21 +654,25 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   Widget _body() {
-    if (_isLoading == true) {
-      return Aesthetic.displayCircle();
-    } else if (_showReload == true) {
-      return Center(
-        child: FloatingActionButton(
-          foregroundColor: Colors.red,
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          child: Icon(Icons.replay),
-          onPressed: () {
-            _submit();
-          },
-        ),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return _form();
+      if (_isLoading == true) {
+        return Aesthetic.displayCircle();
+      } else if (_showReload == true) {
+        return Center(
+          child: FloatingActionButton(
+            foregroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            child: Icon(Icons.replay),
+            onPressed: () {
+              _submit();
+            },
+          ),
+        );
+      } else {
+        return _form();
+      }
     }
   }
 
@@ -815,6 +825,20 @@ class _RegisterState extends State<RegisterPage> {
 
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     // _getCountry();
     _fillAddresses().then((value) {
       setState(() {
@@ -864,36 +888,23 @@ class _RegisterState extends State<RegisterPage> {
         ),
       ),
     );
-    // return MaterialApp(
-    //   home: Scaffold(
-    //     appBar: AppBar(
-    //       title: Text("Register"),
-    //       centerTitle: true,
-    //       actions: (_currentPosition == 2.0)
-    //           ? [
-    //               IconButton(
-    //                 onPressed: () async {
-    //                   _fillAddresses().then((value) {
-    //                     setState(() {});
-    //                   });
-    //                 },
-    //                 icon: Icon(Icons.location_on),
-    //               )
-    //             ]
-    //           : null,
-    //     ),
-    //     drawer: buildDrawer(context, RegisterPage.route),
-    //     body: Column(
-    //       children: [
-    //         Expanded(
-    //           child: _body(),
-    //         ),
-    //         Container(
-    //           child: _bottom(),
-    //         )
-    //       ],
-    //     ),
-    //   ),
-    // );
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

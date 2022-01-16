@@ -23,6 +23,32 @@ class Aesthetic {
           }),
     );
   }
+
+  static Widget displayProblemFirebase() {
+    return Center(
+      child: new Container(
+        child: new Text(
+          'Firebase problem!',
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget displayNoConnection() {
+    return Center(
+      child: new Container(
+        child: new Text(
+          'No Internet!',
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class DialogBox {

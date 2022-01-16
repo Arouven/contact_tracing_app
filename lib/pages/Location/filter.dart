@@ -1,8 +1,11 @@
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
+import 'package:contact_tracing/pages/Notification/notifications.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
+import 'package:provider/provider.dart';
 
 class FilterPage extends StatefulWidget {
   static const String route = '/filter';
@@ -92,8 +95,6 @@ class _FilterPageState extends State<FilterPage> {
     return _popCheckboxes();
   }
 
-  void backButton() {}
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,7 +119,7 @@ class _FilterPageState extends State<FilterPage> {
             centerTitle: true,
             // backgroundColor: Colors.blue,
           ),
-          drawer: buildDrawer(context, FilterPage.route),
+          drawer: buildDrawer(context, LiveGeolocatorPage.route),
           body: _body(),
         ),
       ),

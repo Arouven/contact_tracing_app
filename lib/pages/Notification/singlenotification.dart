@@ -1,10 +1,12 @@
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SingleNotificationPage extends StatefulWidget {
   static const String route = '/singlenotif';

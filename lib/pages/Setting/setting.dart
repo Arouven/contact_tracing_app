@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
 
-int timeToUploadPerMinute = 2;
+int timeToUploadPerMinute = 6; //[1, 2, 6, 12]
 
 class SettingPage extends StatefulWidget {
   static const String route = '/setting';
@@ -26,8 +26,8 @@ class _SettingPageState extends State<SettingPage> {
 
   Future _checkServices() async {
     var action = await GlobalVariables.getForegroundServices();
-    if (action != false) {
-      _isForground = true;
+    if (action != true) {
+      _isForground = false;
     }
   }
 
@@ -265,10 +265,7 @@ class _SettingPageState extends State<SettingPage> {
             centerTitle: true,
             //backgroundColor: Colors.blue,
           ),
-          drawer: buildDrawer(
-            context,
-            SettingPage.route,
-          ),
+          drawer: buildDrawer(context, SettingPage.route),
           body: _body(),
         ),
       ),

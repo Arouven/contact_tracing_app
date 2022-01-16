@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';

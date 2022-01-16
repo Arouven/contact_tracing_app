@@ -1,12 +1,15 @@
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/register.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   static const String route = '/login';
@@ -27,6 +30,9 @@ class LoginPage extends StatefulWidget {
 class _LoginState extends State<LoginPage> {
   bool _isLoading = false;
   bool _showReload = false;
+
+  late var _subscription;
+  bool _internetConnection = true;
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -160,29 +166,33 @@ class _LoginState extends State<LoginPage> {
   }
 
   Widget _body() {
-    if (_isLoading == true) {
-      return Aesthetic.displayCircle();
-    } else if (_showReload == true) {
-      return Center(
-        child: FloatingActionButton(
-          foregroundColor: Colors.red,
-          // backgroundColor: Colors.white,
-          child: Icon(Icons.replay),
-          onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => LoginPage(
-                  email: _emailController.text.trim(),
-                  password: _passwordController.text.trim(),
-                ),
-              ),
-              (e) => false,
-            );
-          },
-        ),
-      );
+    if (_internetConnection == false) {
+      return Aesthetic.displayNoConnection();
     } else {
-      return _displayLogin();
+      if (_isLoading == true) {
+        return Aesthetic.displayCircle();
+      } else if (_showReload == true) {
+        return Center(
+          child: FloatingActionButton(
+            foregroundColor: Colors.red,
+            // backgroundColor: Colors.white,
+            child: Icon(Icons.replay),
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(
+                    email: _emailController.text.trim(),
+                    password: _passwordController.text.trim(),
+                  ),
+                ),
+                (e) => false,
+              );
+            },
+          ),
+        );
+      } else {
+        return _displayLogin();
+      }
     }
   }
 
@@ -270,29 +280,22 @@ class _LoginState extends State<LoginPage> {
     );
   }
 
-  // Widget displayCircle() {
-  //   return Container(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         SizedBox(
-  //           height: MediaQuery.of(context).size.height / 1.3,
-  //           child: Center(
-  //             child: CircularProgressIndicator(),
-  //           ),
-  //         ),
-  //         // Padding(
-  //         //   //padding: EdgeInsets.only(top: 16),
-  //         //   child:
-  //         Text('Awaiting result...'),
-  //         // )
-  //       ],
-  //     ),
-  //   );
-  // }
   @override
   void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
     // _email.text = widget.email!.toString();
     //_password.text = widget.password!.toString();
     NotificationServices().initialize(context: context);
@@ -327,6 +330,13 @@ class _LoginState extends State<LoginPage> {
   void dispose() {
     _passwordController.dispose();
     _emailController.dispose();
+    _subscription.cancel();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    _subscription.cancel();
+    super.deactivate();
   }
 }

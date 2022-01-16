@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:contact_tracing/models/mobile.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -8,6 +9,7 @@ import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'mobiles.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';

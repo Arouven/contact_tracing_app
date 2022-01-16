@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:contact_tracing/main.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -13,6 +14,7 @@ import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:provider/provider.dart';
 
 class MobilePage extends StatefulWidget {
   static const String route = '/mobiles';
@@ -395,7 +397,7 @@ class _MobilePageState extends State<MobilePage> {
                                     print('set active');
                                     await _showSetActiveDialog(_mobiles[index]);
                                     print(_mobiles[index].fcmtoken);
-                                    //Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
                                   },
                                 ),
                               ),

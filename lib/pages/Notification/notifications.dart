@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -19,7 +22,10 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _isLoading = true;
+  bool _problemWithFirebase = false;
   List<Message> messageList = [];
+
+  late StreamSubscription _stream;
 
   Future _getListofMessages() async {
     try {
@@ -46,14 +52,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
             );
           });
         }
+        _problemWithFirebase = false;
         _isLoading = false;
       });
     } catch (e) {
+      setState(() {
+        _problemWithFirebase = false;
+        _isLoading = false;
+      });
       print(e);
     }
   }
-
-  late StreamSubscription _stream;
 
   void _updateListofMessages() {
     if (path != "") {
@@ -72,9 +81,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
           setState(() {
             if (message != null) {
               message.forEach((key, value) {
-                if (value['read'] == false) {
-                  unreadmsg += 1;
-                }
+                // if (value['read'] == false) {
+                //   unreadmsg += 1;
+                // }
                 messageList.add(
                   new Message(
                     id: key,
@@ -88,12 +97,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
             }
           });
           setState(() async {
-            BadgeServices.number = unreadmsg;
-            await BadgeServices.updateBadge();
-            print(BadgeServices.number);
+            // BadgeServices.number = unreadmsg;
+            // await BadgeServices.updateBadge();
+            // print(BadgeServices.number);
+
+            _problemWithFirebase = true;
             _isLoading = false;
           });
         } catch (e) {
+          setState(() {
+            _problemWithFirebase = false;
+            _isLoading = false;
+          });
           print(e);
         }
       });
@@ -101,54 +116,58 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Widget _body() {
-    if (_isLoading != false) {
-      return Center(child: CircularProgressIndicator());
+    if (_problemWithFirebase == true) {
+      return Aesthetic.displayProblemFirebase();
     } else {
-      return Scrollbar(
-        child: ListView.builder(
-          itemCount: messageList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              leading: Icon(Icons.email),
-              title: Text(
-                messageList[index].title,
-                style: (messageList[index].read != false)
+      if (_isLoading != false) {
+        return Aesthetic.displayCircle();
+      } else {
+        return Scrollbar(
+          child: ListView.builder(
+            itemCount: messageList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: Icon(Icons.email),
+                title: Text(
+                  messageList[index].title,
+                  style: (messageList[index].read != false)
+                      ? null
+                      : TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                ),
+                trailing: (messageList[index].read != false)
                     ? null
-                    : TextStyle(
-                        fontWeight: FontWeight.bold,
+                    : Icon(
+                        Icons.brightness_1,
+                        size: 9.0,
+                        color: Colors.red,
                       ),
-              ),
-              trailing: (messageList[index].read != false)
-                  ? null
-                  : Icon(
-                      Icons.brightness_1,
-                      size: 9.0,
-                      color: Colors.red,
+                onTap: () async {
+                  var msg = messageList[index];
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => SingleNotificationPage(
+                        message: msg,
+                      ),
                     ),
-              onTap: () async {
-                var msg = messageList[index];
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => SingleNotificationPage(
-                      message: msg,
-                    ),
-                  ),
-                );
-                setState(() {
-                  msg.read = true;
-                });
-                // Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(
-                //     builder: (BuildContext context) => SingleNotificationPage(
-                //       message: messageList[index],
-                //     ),
-                //   ),
-                // );
-              },
-            );
-          },
-        ),
-      );
+                  );
+                  setState(() {
+                    msg.read = true;
+                  });
+                  // Navigator.of(context).pushReplacement(
+                  //   MaterialPageRoute(
+                  //     builder: (BuildContext context) => SingleNotificationPage(
+                  //       message: messageList[index],
+                  //     ),
+                  //   ),
+                  // );
+                },
+              );
+            },
+          ),
+        );
+      }
     }
   }
 

@@ -30,7 +30,7 @@ late NotificationSettings settings;
 //late FirebaseMessaging _messaging;
 Widget? _pageSelected;
 late var _isDarkMode = null;
-late String path = "";
+late String path = ""; //"notification/+23057775794/"; // "";
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
@@ -150,7 +150,9 @@ Future<void> _messageHandler(RemoteMessage message) async {
 
 Future<void> _sendMsg(RemoteMessage message) async {
   //Notif.notifications.insert(0, message);
-  await BadgeServices.updateBadge();
+  // await BadgeServices.updateBadge();
+  BadgeServices.number = BadgeServices.number + 1;
+  BadgeServices.updateAppBadge();
   PushNotification notification = PushNotification(
     title: message.notification?.title,
     body: message.notification?.body,
@@ -174,7 +176,8 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     await generatePath();
     _listenToDbUpdateBadge();
-    _listenToDbNotif();
+
+    ///    _listenToDbNotif();
     // var isRunning = await FlutterBackgroundService().isServiceRunning();
     // print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
@@ -247,34 +250,33 @@ Future pageSelector() async {
   }
 }
 
-late StreamSubscription _streamNotif;
-void _listenToDbNotif() {
-  if (path != "") {
-    print('listening for new child from firebase');
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// Get the Stream
-    Stream<DatabaseEvent> stream = ref.onChildAdded;
+// void _listenToDbNotif() {
+//   if (path != "") {
+//     print('listening for new child from firebase');
+//     DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// // Get the Stream
+//     Stream<DatabaseEvent> stream = ref.onChildAdded;
 
-// Subscribe to the stream!
-    _streamNotif = stream.listen((DatabaseEvent event) async {
-      try {
-        DataSnapshot snapshot = event.snapshot; // DataSnapshot
-        print('abcde');
-        //{timestamp: 1642240673, body: You may be infected practice self-isolation and perform a test, title: In Contact, read: true}
-        if (snapshot.value != null) {
-          final json = snapshot.value as Map;
-          print(json['read']);
-          await NotificationServices().showNotification(
-            notificationTitle: json['title'],
-            notificationBody: json['body'],
-          );
-        }
-      } catch (e) {
-        print(e);
-      }
-    });
-  }
-}
+// // Subscribe to the stream!
+//     stream.listen((DatabaseEvent event) async {
+//       try {
+//         DataSnapshot snapshot = event.snapshot; // DataSnapshot
+//         print('abcde');
+//         //{timestamp: 1642240673, body: You may be infected practice self-isolation and perform a test, title: In Contact, read: true}
+//         if (snapshot.value != null) {
+//           final json = snapshot.value as Map;
+//           print(json['read']);
+//           await NotificationServices().showNotification(
+//             notificationTitle: json['title'],
+//             notificationBody: json['body'],
+//           );
+//         }
+//       } catch (e) {
+//         print(e);
+//       }
+//     });
+//   }
+// }
 
 void _listenToDbUpdateBadge() {
   if (path != "") {
@@ -328,7 +330,8 @@ void main() async {
     });
     await BadgeServices.updateBadge();
     _listenToDbUpdateBadge();
-    _listenToDbNotif();
+
+    /// _listenToDbNotif();
   } catch (e) {
     print(e);
   }

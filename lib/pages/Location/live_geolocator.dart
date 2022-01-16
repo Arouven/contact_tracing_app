@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -32,7 +34,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   List<Marker> _markers = [];
   Color _myMarkerColour = Colors.green;
   String _lastUpdateFromServer = '0';
-  bool _flagAlreadyMarked = false;
 
   Future<void> _downloadData() async {
     String jsonBody = await DatabaseMySQLServices.downloadUpdateLocation();
@@ -71,9 +72,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         await _populateCentresMarkers(data["testingcentres"], Colors.blue);
       }
       if (await GlobalVariables.getShowMyLocation() == true) {
-        if (_flagAlreadyMarked != true) {
-          await _addCurrentLocationToMarkers();
-        }
+        await _addCurrentLocationToMarkers();
       }
 
       try {
@@ -166,9 +165,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
               : 0;
           print(myMobileNumber.toString());
           if (firstInt != secondInt) {
-            setState(() {
-              _flagAlreadyMarked = false;
-            });
             Marker marker = new Marker(
               width: 25,
               height: 25,
@@ -190,8 +186,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
             _markers.add(marker);
           } else {
             setState(() {
+              //  if (_myMarkerColour == Colors.green) {
               _myMarkerColour = myMarkerColour;
-              _flagAlreadyMarked = true;
+              // }
             });
           }
         } catch (e) {
@@ -410,7 +407,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                 options: MapOptions(
                   center:
                       LatLng(currentLatLng.latitude, currentLatLng.longitude),
-                  zoom: 10.0,
+                  zoom: 16.0,
                   interactiveFlags: InteractiveFlag.all,
                 ),
                 layers: [
