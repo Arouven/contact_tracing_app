@@ -29,7 +29,7 @@ class _SettingPageState extends State<SettingPage> {
   bool _isLoading = true;
   //bool _isDarkMode = false;
   late var _subscription;
-  late var _firebaseListener;
+  late var _firebaseListener = null;
   // late var _firebaseListener;
   bool _internetConnection = true;
 
@@ -323,14 +323,18 @@ class _SettingPageState extends State<SettingPage> {
   @override
   void dispose() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.deactivate();
   }
 }
