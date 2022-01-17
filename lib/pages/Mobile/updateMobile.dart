@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/models/mobile.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -103,6 +104,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
       final mobileNumber = await GlobalVariables.getMobileNumber();
       if (mobileNumber == widget.mobile.mobileNumber || mobileNumber == null) {
         await GlobalVariables.setMobileNumber(mobileNumber: mobileNumber);
+        Provider.of<NotificationBadgeProvider>(context, listen: false);
       }
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(

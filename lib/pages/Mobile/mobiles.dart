@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/apiMobile.dart';
 import 'package:contact_tracing/services/auth.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/pages/Mobile/addMobile.dart';
 import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
-import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
@@ -164,7 +164,7 @@ class _MobilePageState extends State<MobilePage> {
             mobileNumber: _mobileNumberToSetActive,
           );
           await _updateMysql();
-          await generatePath();
+
           try {
             setState(() {
               //   _signedin = true;
@@ -246,7 +246,6 @@ class _MobilePageState extends State<MobilePage> {
       await GlobalVariables.setMobileNumber(
           mobileNumber: _mobileNumberToSetActive);
       await _updateMysql();
-      await generatePath();
 
       setState(() {
         _isLoading = false;
@@ -291,7 +290,11 @@ class _MobilePageState extends State<MobilePage> {
           mobileNumber: _mobileNumberToSetActive,
         );
         print('start services from updatemysql');
+        await generatePath();
         await startServices();
+
+        Provider.of<NotificationBadgeProvider>(context, listen: false);
+
         setState(() {
           _mymobileNumber = _mobileNumberToSetActive;
           _isLoading = false;
@@ -363,6 +366,19 @@ class _MobilePageState extends State<MobilePage> {
     );
   }
 
+  // void actionPopUpItemSelected(String value, String name) {
+  //   _scaffoldkey.currentState.hideCurrentSnackBar();
+  //   String message;
+  //   if (value == 'edit') {
+  //       message = 'You selected edit for $name';
+  //   } else if (value == 'delete') {
+  //       message = 'You selected delete for $name';
+  //   } else {
+  //       message = 'Not implemented';
+  //   }
+  //   final snackBar = SnackBar(content: Text(message));
+  //   _scaffoldkey.currentState.showSnackBar(snackBar);
+  // }
   /// take [mobiles] as List<Mobile>
   /// build the radio buttons with text
   /// return the list<Widget>
@@ -406,40 +422,100 @@ class _MobilePageState extends State<MobilePage> {
                             ),
                           )
                         : null,
-                    trailing: PopupMenuButton(
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                              PopupMenuItem(
-                                child: TextButton(
-                                  style:
-                                      Theme.of(context).textButtonTheme.style,
-                                  child: const Text(
-                                    'Set Active',
-                                    // style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () async {
-                                    print('set active');
-                                    await _showSetActiveDialog(_mobiles[index]);
-                                    print(_mobiles[index].fcmtoken);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                              PopupMenuItem(
-                                child: TextButton(
-                                  style:
-                                      Theme.of(context).textButtonTheme.style,
-                                  child: const Text(
-                                    'Edit Mobile',
-                                    // style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () async {
-                                    print('editmobile');
-                                    await _showEditDialog(_mobiles[index]);
-                                    print(_mobiles[index].fcmtoken);
-                                  },
-                                ),
-                              )
-                            ]),
+                    trailing:
+                        //              PopupMenuButton(
+                        //  itemBuilder: (context) {
+                        //         return [
+                        //           PopupMenuItem(
+                        //             value: 'edit',
+                        //             child: Text('Edit'),
+                        //           ),
+                        //           PopupMenuItem(
+                        //             value: 'delete',
+                        //             child: Text('Delete'),
+                        //           )
+                        //         ];
+                        //       },
+                        //       onSelected: (String value) => actionPopUpItemSelected(value, name),
+
+                        // PopupMenuButton(
+                        //     itemBuilder: (BuildContext context) =>
+                        //         <PopupMenuEntry>[
+                        //           PopupMenuItem(
+                        //             child: TextButton(
+                        //               style: Theme.of(context)
+                        //                   .textButtonTheme
+                        //                   .style,
+                        //               child: const Text(
+                        //                 'Set Active',
+                        //                 // style: TextStyle(color: Colors.black),
+                        //               ),
+                        //               onPressed: () async {
+                        //                 print('set active');
+                        //                 await _showSetActiveDialog(
+                        //                     _mobiles[index]);
+                        //                 print(_mobiles[index].fcmtoken);
+                        //                 Navigator.of(context).pop();
+                        //               },
+                        //             ),
+                        //           ),
+                        //           PopupMenuItem(
+                        //             child: TextButton(
+                        //               style: Theme.of(context)
+                        //                   .textButtonTheme
+                        //                   .style,
+                        //               child: const Text(
+                        //                 'Edit Mobile',
+                        //                 // style: TextStyle(color: Colors.black),
+                        //               ),
+                        //               onPressed: () async {
+                        //                 print('editmobile');
+                        //                 await _showEditDialog(_mobiles[index]);
+                        //                 print(_mobiles[index].fcmtoken);
+                        //               },
+                        //             ),
+                        //           )
+                        //         ]),
+
+                        PopupMenuButton(
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry>[
+                          PopupMenuItem(
+                            child: Text(
+                              'Set Active',
+                              // style: TextStyle(color: Colors.black),
+                            ),
+                            onTap: () async {
+                              print('set active');
+                              Future.delayed(Duration.zero).then((value) async {
+                                await _showSetActiveDialog(_mobiles[index]);
+                              });
+
+                              // await _showSetActiveDialog(_mobiles[index]);
+                              print(_mobiles[index].fcmtoken);
+                              // Navigator.of(context).pop();
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: const Text(
+                              'Edit Mobile',
+                              // style: TextStyle(color: Colors.black),
+                            ),
+                            onTap: () async {
+                              print('editmobile');
+                              Future.delayed(Duration.zero).then((value) async {
+                                await _showEditDialog(_mobiles[index]);
+                              });
+                              print(_mobiles[index].fcmtoken);
+                            },
+                          ),
+                        ];
+                      },
+                      // onSelected: (Mobile mobile) async {
+                      //  // print(value);
+                      //      await _showSetActiveDialog(mobile);
+                      // },
+                    ),
                   );
           },
         ),
@@ -530,6 +606,7 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
+    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

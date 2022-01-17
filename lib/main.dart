@@ -6,6 +6,7 @@ import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -142,29 +143,25 @@ Future<void> _messageHandler(RemoteMessage message) async {
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
     // Parse the message received
-    _sendMsg(message);
+    //Notif.notifications.insert(0, message);
+    // await BadgeServices.updateBadge();
+    BadgeServices.number = BadgeServices.number + 1;
+    BadgeServices.updateAppBadge();
+    PushNotification notification = PushNotification(
+      title: message.notification?.title,
+      body: message.notification?.body,
+    );
+    NotificationDetails notificationDetails =
+        await NotificationServices().getPlatform();
+    flutterLNP.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      notificationDetails,
+    );
   } else {
     print('User declined or has not accepted permission');
   }
-}
-
-Future<void> _sendMsg(RemoteMessage message) async {
-  //Notif.notifications.insert(0, message);
-  // await BadgeServices.updateBadge();
-  BadgeServices.number = BadgeServices.number + 1;
-  BadgeServices.updateAppBadge();
-  PushNotification notification = PushNotification(
-    title: message.notification?.title,
-    body: message.notification?.body,
-  );
-  NotificationDetails notificationDetails =
-      await NotificationServices().getPlatform();
-  flutterLNP.show(
-    notification.hashCode,
-    notification.title,
-    notification.body,
-    notificationDetails,
-  );
 }
 
 Future<void> startServices() async {
@@ -175,6 +172,7 @@ Future<void> startServices() async {
   if ((email != null) && (mobileNumber != null)) {
     print('email and mobile number not null');
     await generatePath();
+
     _listenToDbUpdateBadge();
 
     ///    _listenToDbNotif();
@@ -292,6 +290,9 @@ void _listenToDbUpdateBadge() {
         print('change detected updating badges');
         await BadgeServices.updateBadge();
         print(BadgeServices.number);
+        final notificationBadgeProvider = NotificationBadgeProvider();
+        notificationBadgeProvider.providerSetBadgeNumber(
+            badgeNumber: (BadgeServices.number));
       } catch (e) {
         print(e);
       }
@@ -301,8 +302,9 @@ void _listenToDbUpdateBadge() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-  //await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+  await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+  await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+  await generatePath();
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
   } catch (e) {
@@ -329,6 +331,7 @@ void main() async {
       print('Message clicked!');
     });
     await BadgeServices.updateBadge();
+
     _listenToDbUpdateBadge();
 
     /// _listenToDbNotif();
@@ -342,30 +345,63 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThemeProvider>(
-      create: (context) => new ThemeProvider(),
-      builder: (context, _) {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        if (_isDarkMode != null) {
-          themeProvider.toggleTheme(_isDarkMode);
-        }
-        return MaterialApp(
-          title: 'Contact tracing',
-          theme: lightMode,
-          darkTheme: darkMode,
-          themeMode: themeProvider.themeMode,
-          home: (_pageSelected != null) ? _pageSelected : LoginPage(),
-          routes: <String, WidgetBuilder>{
-            LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
-            LoginPage.route: (context) => LoginPage(),
-            MobilePage.route: (context) => MobilePage(),
-            NotificationsPage.route: (context) => NotificationsPage(),
-            ProfilePage.route: (context) => ProfilePage(),
-            SettingPage.route: (context) => SettingPage(),
-          },
-        );
-      },
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ThemeProvider>(
+            create: (context) => new ThemeProvider(),
+          ),
+          ChangeNotifierProvider<NotificationBadgeProvider>(
+            create: (context) => new NotificationBadgeProvider(),
+          ),
+        ],
+        builder: (context, _) {
+          final themeProvider = Provider.of<ThemeProvider>(context);
+          if (_isDarkMode != null) {
+            themeProvider.toggleTheme(_isDarkMode);
+          }
+          return MaterialApp(
+            title: 'Contact tracing',
+            theme: lightMode,
+            darkTheme: darkMode,
+            themeMode: themeProvider.themeMode,
+            home: (_pageSelected != null) ? _pageSelected : LoginPage(),
+            routes: <String, WidgetBuilder>{
+              LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
+              LoginPage.route: (context) => LoginPage(),
+              MobilePage.route: (context) => MobilePage(),
+              NotificationsPage.route: (context) => NotificationsPage(),
+              ProfilePage.route: (context) => ProfilePage(),
+              SettingPage.route: (context) => SettingPage(),
+            },
+          );
+        });
+    // return ChangeNotifierProvider<ThemeProvider>(
+    //     create: (context) => new ThemeProvider(),
+
+    // return ChangeNotifierProvider<ThemeProvider>(
+    //   create: (context) => new ThemeProvider(),
+    //   builder: (context, _) {
+    //     final themeProvider = Provider.of<ThemeProvider>(context);
+    //     if (_isDarkMode != null) {
+    //       themeProvider.toggleTheme(_isDarkMode);
+    //     }
+    //     return MaterialApp(
+    //       title: 'Contact tracing',
+    //       theme: lightMode,
+    //       darkTheme: darkMode,
+    //       themeMode: themeProvider.themeMode,
+    //       home: (_pageSelected != null) ? _pageSelected : LoginPage(),
+    //       routes: <String, WidgetBuilder>{
+    //         LiveGeolocatorPage.route: (context) => LiveGeolocatorPage(),
+    //         LoginPage.route: (context) => LoginPage(),
+    //         MobilePage.route: (context) => MobilePage(),
+    //         NotificationsPage.route: (context) => NotificationsPage(),
+    //         ProfilePage.route: (context) => ProfilePage(),
+    //         SettingPage.route: (context) => SettingPage(),
+    //       },
+    //     );
+    //   },
+    // );
   }
 }
 

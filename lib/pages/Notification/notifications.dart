@@ -4,10 +4,12 @@ import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsPage extends StatefulWidget {
   static const String route = '/notifications';
@@ -174,6 +176,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
+    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

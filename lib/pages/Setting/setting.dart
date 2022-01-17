@@ -1,4 +1,5 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
@@ -67,6 +68,7 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   void initState() {
+    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

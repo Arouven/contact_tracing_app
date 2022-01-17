@@ -6,15 +6,20 @@ import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Widget? buildDrawer(var context, var route) {
+//   return ChangeNotifierProvider<NotificationBadgeProvider>(
+//     create: (context) => NotificationBadgeProvider(),
+//     builder: (context, __) =>
+//     DrawerSide(currentRoutes: route),
+//   );
+// }
 Widget? buildDrawer(var context, var route) {
-  return ChangeNotifierProvider<NotificationBadgeProvider>(
-    create: (context) => NotificationBadgeProvider(),
-    builder: (context, __) => DrawerSide(currentRoutes: route),
-  );
+  return DrawerSide(currentRoutes: route);
 }
 
 class DrawerSide extends StatefulWidget {
@@ -48,115 +53,134 @@ class _DrawerSideState extends State<DrawerSide> {
       );
     }
 
-    Widget notifBadge() {
-      return Consumer<NotificationBadgeProvider>(
-        builder: (_, NotificationBadgeProvider np, __) {
-          print('>>>>>>>>>>>>>>>>>>>> REBUILD');
-          np.badgeNumber;
-          if (np.badgeNumber > 0) {
-            print(np.badgeNumber);
-            return (Badge(
-              badgeContent: Text(
-                np.badgeNumber.toString(),
-                style: TextStyle(fontSize: 8.0),
-              ),
-              child: Icon(Icons.notifications),
-            ));
-          } else {
-            return (Icon(Icons.notifications));
-          }
-        },
-      );
-    }
+    // Widget notifBadge() {
+    //   // final np = Provider.of<NotificationBadgeProvider>(context);
 
-    Widget withLogin(BuildContext context, String currentRoute) {
-      return ListView(
-        children: <Widget>[
-          const DrawerHeader(
-            child: Center(
-              child: Text('Contact Tracing'),
-            ),
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Login/Register'),
-            const Icon(Icons.group),
-            LoginPage.route,
-            currentRoute,
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Setting'),
-            const Icon(Icons.settings),
-            SettingPage.route,
-            currentRoute,
-          ),
-        ],
-      );
-    }
+    //   // print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+    //   // print(np.badgeNumber);
+    //   // print(BadgeServices.number);
 
-    Widget withoutLogin(BuildContext context, String currentRoute) {
-      // final notificationBadgeProvider =
-      //     Provider.of<NotificationBadgeProvider>(context);
+    //   // if (np.badgeNumber > 0) {
+    //   //   print(np.badgeNumber);
+    //   //   return (Badge(
+    //   //     badgeContent: Text(
+    //   //       (np.badgeNumber).toString(),
+    //   //       style: TextStyle(fontSize: 8.0),
+    //   //     ),
+    //   //     child: Icon(Icons.notifications),
+    //   //   ));
+    //   // } else {
+    //   //   return (Icon(Icons.notifications));
+    //   // }
 
-      // notificationBadgeProvider.badgeNumber;
-
-      return ListView(
-        children: <Widget>[
-          const DrawerHeader(
-            child: Center(
-              child: Text('Contact Tracing'),
-            ),
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Home'),
-            const Icon(Icons.home),
-            LiveGeolocatorPage.route,
-            currentRoute,
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Mobile'),
-            const Icon(Icons.devices),
-            MobilePage.route,
-            currentRoute,
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Notifications'),
-            notifBadge(),
-            NotificationsPage.route,
-            currentRoute,
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Profile'),
-            const Icon(Icons.person),
-            ProfilePage.route,
-            currentRoute,
-          ),
-          _buildMenuItem(
-            context,
-            const Text('Setting'),
-            const Icon(Icons.settings),
-            SettingPage.route,
-            currentRoute,
-          ),
-        ],
-      );
-    }
+    //   return Consumer<NotificationBadgeProvider>(
+    //     builder: (context, np, child) {
+    //       print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+    //       print(np.badgeNumber);
+    //       print(BadgeServices.number);
+    //       if (np.badgeNumber > 0) {
+    //         print(np.badgeNumber);
+    //         return (Badge(
+    //           badgeContent: Text(
+    //             (np.badgeNumber).toString(),
+    //             style: TextStyle(fontSize: 8.0),
+    //           ),
+    //           child: Icon(Icons.notifications),
+    //         ));
+    //       } else {
+    //         return (Icon(Icons.notifications));
+    //       }
+    //     },
+    //   );
+    // }
 
     // Drawer buildDrawer(BuildContext context, String currentRoute) {
     return Drawer(
       child: (GlobalVariables.emailProp == '')
-          ? withLogin(
-              context,
-              currentRoute,
+          ? ListView(
+              children: <Widget>[
+                const DrawerHeader(
+                  child: Center(
+                    child: Text('Contact Tracing'),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Login/Register'),
+                  const Icon(Icons.group),
+                  LoginPage.route,
+                  currentRoute,
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Setting'),
+                  const Icon(Icons.settings),
+                  SettingPage.route,
+                  currentRoute,
+                ),
+              ],
             )
-          : withoutLogin(
-              context,
-              currentRoute,
+          : ListView(
+              children: <Widget>[
+                const DrawerHeader(
+                  child: Center(
+                    child: Text('Contact Tracing'),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Home'),
+                  const Icon(Icons.home),
+                  LiveGeolocatorPage.route,
+                  currentRoute,
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Mobile'),
+                  const Icon(Icons.devices),
+                  MobilePage.route,
+                  currentRoute,
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Notifications'),
+                  Consumer<NotificationBadgeProvider>(
+                    builder: (context, np, child) {
+                      print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+                      print(np.badgeNumber);
+                      print(BadgeServices.number);
+                      if (np.badgeNumber > 0) {
+                        print(np.badgeNumber);
+                        return (Badge(
+                          badgeContent: Text(
+                            (np.badgeNumber).toString(),
+                            style: TextStyle(fontSize: 8.0),
+                          ),
+                          child: Icon(Icons.notifications),
+                        ));
+                      } else {
+                        return (Icon(Icons.notifications));
+                      }
+                    },
+                  ),
+                  NotificationsPage.route,
+                  currentRoute,
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Profile'),
+                  const Icon(Icons.person),
+                  ProfilePage.route,
+                  currentRoute,
+                ),
+                _buildMenuItem(
+                  context,
+                  const Text('Setting'),
+                  const Icon(Icons.settings),
+                  SettingPage.route,
+                  currentRoute,
+                ),
+              ],
             ),
     );
   }
