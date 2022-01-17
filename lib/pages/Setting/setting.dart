@@ -1,9 +1,12 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:provider/provider.dart';
