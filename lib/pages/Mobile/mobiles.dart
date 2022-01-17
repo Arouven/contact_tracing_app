@@ -42,6 +42,7 @@ class _MobilePageState extends State<MobilePage> {
   var _verificationId = '';
 
   late var _subscription;
+  late var _firebaseListener;
   bool _internetConnection = true;
 
   /// display dialog
@@ -606,6 +607,26 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
+    if (path != "") {
+      print('listening for changes from firebase');
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+      Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+      _firebaseListener = stream.listen((DatabaseEvent event) async {
+        try {
+          //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+          print('change detected updating badges');
+          await BadgeServices.updateBadge();
+          print(BadgeServices.number);
+          Provider.of<NotificationBadgeProvider>(context, listen: false)
+              .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+        } catch (e) {
+          print(e);
+        }
+      });
+    }
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -676,12 +697,14 @@ class _MobilePageState extends State<MobilePage> {
   @override
   void deactivate() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.deactivate();
   }
 
   @override
   void dispose() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.dispose();
   }
 }

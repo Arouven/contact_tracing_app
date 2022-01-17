@@ -173,7 +173,7 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     await generatePath();
 
-    _listenToDbUpdateBadge();
+    ///   _listenToDbUpdateBadge();
 
     _listenToDbNotif();
     // var isRunning = await FlutterBackgroundService().isServiceRunning();
@@ -276,31 +276,6 @@ void _listenToDbNotif() {
   }
 }
 
-void _listenToDbUpdateBadge() {
-  if (path != "") {
-    print('listening for changes from firebase');
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// Get the Stream
-    Stream<DatabaseEvent> stream = ref.onValue;
-
-// Subscribe to the stream!
-    stream.listen((DatabaseEvent event) async {
-      try {
-        //DataSnapshot snapshot = event.snapshot; // DataSnapshot
-        print('change detected updating badges');
-        await BadgeServices.updateBadge();
-        print(BadgeServices.number);
-        final notificationBadgeProvider = NotificationBadgeProvider();
-        // notificationBadgeProvider()
-        notificationBadgeProvider.providerSetBadgeNumber(
-            badgeNumber: (BadgeServices.number));
-      } catch (e) {
-        print(e);
-      }
-    });
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
@@ -333,7 +308,7 @@ void main() async {
     });
     await BadgeServices.updateBadge();
 
-    _listenToDbUpdateBadge();
+    ///  _listenToDbUpdateBadge();
 
     _listenToDbNotif();
   } catch (e) {

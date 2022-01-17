@@ -27,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
 
   late var _subscription;
+  late var _firebaseListener;
   bool _internetConnection = true;
 
   String _email = '';
@@ -53,6 +54,26 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
+    if (path != "") {
+      print('listening for changes from firebase');
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+      Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+      _firebaseListener = stream.listen((DatabaseEvent event) async {
+        try {
+          //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+          print('change detected updating badges');
+          await BadgeServices.updateBadge();
+          print(BadgeServices.number);
+          Provider.of<NotificationBadgeProvider>(context, listen: false)
+              .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+        } catch (e) {
+          print(e);
+        }
+      });
+    }
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -342,12 +363,14 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void dispose() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.deactivate();
   }
 }

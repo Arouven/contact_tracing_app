@@ -94,7 +94,8 @@ class _DrawerSideState extends State<DrawerSide> {
     //   );
     // }
     Widget notificationWidget() {
-      int bn = Provider.of<NotificationBadgeProvider>(context).badgeNumber;
+      int bn = Provider.of<NotificationBadgeProvider>(context, listen: false)
+          .badgeNumber;
 
       print('>>>>>>>>>>>>>>>>>>>> REBUILD');
       print(bn);

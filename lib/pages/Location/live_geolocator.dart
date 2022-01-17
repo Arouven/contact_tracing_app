@@ -40,6 +40,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _lastUpdateFromServer = '0';
 
   late var _subscription;
+  late var _firebaseListener;
   bool _internetConnection = true;
 
   Future<void> _downloadData() async {
@@ -533,33 +534,28 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  late var _firebaseListener;
   @override
   void initState() {
-//     if (path != "") {
-//       print('listening for changes from firebase');
-//       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// // Get the Stream
-//       Stream<DatabaseEvent> stream = ref.onValue;
+    if (path != "") {
+      print('listening for changes from firebase');
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+      Stream<DatabaseEvent> stream = ref.onValue;
 
-// // Subscribe to the stream!
-//       _firebaseListener = stream.listen((DatabaseEvent event) async {
-//         try {
-//           //DataSnapshot snapshot = event.snapshot; // DataSnapshot
-//           print('change detected updating badges');
-//           await BadgeServices.updateBadge();
-//           print(BadgeServices.number);
-//           Provider.of<NotificationBadgeProvider>(context, listen: false)
-//               .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
-//           // final notificationBadgeProvider = NotificationBadgeProvider();
-//           // notificationBadgeProvider()
-//           // notificationBadgeProvider.providerSetBadgeNumber(
-//           //     badgeNumber: (BadgeServices.number));
-//         } catch (e) {
-//           print(e);
-//         }
-//       });
-//     }
+// Subscribe to the stream!
+      _firebaseListener = stream.listen((DatabaseEvent event) async {
+        try {
+          //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+          print('change detected updating badges');
+          await BadgeServices.updateBadge();
+          print(BadgeServices.number);
+          Provider.of<NotificationBadgeProvider>(context, listen: false)
+              .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+        } catch (e) {
+          print(e);
+        }
+      });
+    }
 
     _subscription = Connectivity()
         .onConnectivityChanged
@@ -575,7 +571,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         });
       }
     });
-    super.initState();
+
     try {
       ssss().whenComplete(() {
         _mapController = MapController();
@@ -590,6 +586,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     } catch (e) {
       print(e);
     }
+    super.initState();
   }
 
   @override
@@ -631,12 +628,14 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   void dispose() {
     _markers.clear();
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.deactivate();
   }
 }

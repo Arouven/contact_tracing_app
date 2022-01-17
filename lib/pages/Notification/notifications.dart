@@ -25,6 +25,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _problemWithFirebase = false;
   List<Message> messageList = [];
   late var _subscription;
+  late var _firebaseListener;
   bool _internetConnection = true;
   late StreamSubscription _stream;
 
@@ -78,13 +79,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
           DataSnapshot snapshot = event.snapshot; // DataSnapshot
           Map message = snapshot.value as Map;
           messageList.clear();
+
           int unreadmsg = 0;
-          setState(() {
+
+          setState(() async {
             if (message != null) {
               message.forEach((key, value) {
-                // if (value['read'] == false) {
-                //   unreadmsg += 1;
-                // }
+                if (value['read'] == false) {
+                  unreadmsg += 1;
+                }
                 messageList.add(
                   new Message(
                     id: key,
@@ -96,12 +99,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 );
               });
             }
-          });
-          setState(() async {
-            // BadgeServices.number = unreadmsg;
-            // await BadgeServices.updateBadge();
-            // print(BadgeServices.number);
 
+            BadgeServices.number = unreadmsg;
+            await BadgeServices.updateBadge();
+            print(BadgeServices.number);
+            Provider.of<NotificationBadgeProvider>(context, listen: false)
+                .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
             _problemWithFirebase = true;
             _isLoading = false;
           });
@@ -220,12 +223,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
   void dispose() {
     _stream.cancel();
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
+    _firebaseListener.cancel();
     super.deactivate();
   }
 }
