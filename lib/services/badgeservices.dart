@@ -1,26 +1,24 @@
-import 'package:badges/badges.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 class BadgeServices {
   static int number = 0;
 
-  Widget notificationBadge() {
-    if (number > 0) {
-      print(number);
-      return (Badge(
-        badgeContent: Text(
-          number.toString(),
-          style: TextStyle(fontSize: 8.0),
-        ),
-        child: Icon(Icons.notifications),
-      ));
-    } else {
-      return (Icon(Icons.notifications));
-    }
-  }
+  // Widget notificationBadge() {
+  //   if (number > 0) {
+  //     print(number);
+  //     return (Badge(
+  //       badgeContent: Text(
+  //         number.toString(),
+  //         style: TextStyle(fontSize: 8.0),
+  //       ),
+  //       child: Icon(Icons.notifications),
+  //     ));
+  //   } else {
+  //     return (Icon(Icons.notifications));
+  //   }
+  // }
 
   static updateBadge() async {
     try {

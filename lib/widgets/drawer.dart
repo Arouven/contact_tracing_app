@@ -93,6 +93,47 @@ class _DrawerSideState extends State<DrawerSide> {
     //     },
     //   );
     // }
+    Widget notificationWidget() {
+      int bn = Provider.of<NotificationBadgeProvider>(context).badgeNumber;
+
+      print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+      print(bn);
+      print(BadgeServices.number);
+
+      if (bn > 0) {
+        print(BadgeServices.number);
+        return (Badge(
+          badgeContent: Text(
+            (bn).toString(),
+            style: TextStyle(fontSize: 8.0),
+          ),
+          child: Icon(Icons.notifications),
+        ));
+      } else {
+        return (Icon(Icons.notifications));
+      }
+
+      // Consumer<NotificationBadgeProvider>(
+      //               builder: (context, np, child) {
+      //                 print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+      //                 print(np.badgeNumber);
+      //                 print(BadgeServices.number);
+
+      //                 if (BadgeServices.number > 0) {
+      //                   print(BadgeServices.number);
+      //                   return (Badge(
+      //                     badgeContent: Text(
+      //                       (BadgeServices.number).toString(),
+      //                       style: TextStyle(fontSize: 8.0),
+      //                     ),
+      //                     child: Icon(Icons.notifications),
+      //                   ));
+      //                 } else {
+      //                   return (Icon(Icons.notifications));
+      //                 }
+      //               },
+      //             ),
+    }
 
     // Drawer buildDrawer(BuildContext context, String currentRoute) {
     return Drawer(
@@ -144,25 +185,7 @@ class _DrawerSideState extends State<DrawerSide> {
                 _buildMenuItem(
                   context,
                   const Text('Notifications'),
-                  Consumer<NotificationBadgeProvider>(
-                    builder: (context, np, child) {
-                      print('>>>>>>>>>>>>>>>>>>>> REBUILD');
-                      print(np.badgeNumber);
-                      print(BadgeServices.number);
-                      if (np.badgeNumber > 0) {
-                        print(np.badgeNumber);
-                        return (Badge(
-                          badgeContent: Text(
-                            (np.badgeNumber).toString(),
-                            style: TextStyle(fontSize: 8.0),
-                          ),
-                          child: Icon(Icons.notifications),
-                        ));
-                      } else {
-                        return (Icon(Icons.notifications));
-                      }
-                    },
-                  ),
+                  notificationWidget(),
                   NotificationsPage.route,
                   currentRoute,
                 ),

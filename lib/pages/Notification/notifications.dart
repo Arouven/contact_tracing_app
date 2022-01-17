@@ -176,7 +176,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
-    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

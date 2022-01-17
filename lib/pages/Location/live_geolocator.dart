@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
+import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:contact_tracing/providers/notificationbadgemanager.dart';
+import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class LiveGeolocatorPage extends StatefulWidget {
   static const String route = '/live_geolocator';
@@ -528,8 +533,34 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
+  late var _firebaseListener;
   @override
   void initState() {
+//     if (path != "") {
+//       print('listening for changes from firebase');
+//       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// // Get the Stream
+//       Stream<DatabaseEvent> stream = ref.onValue;
+
+// // Subscribe to the stream!
+//       _firebaseListener = stream.listen((DatabaseEvent event) async {
+//         try {
+//           //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+//           print('change detected updating badges');
+//           await BadgeServices.updateBadge();
+//           print(BadgeServices.number);
+//           Provider.of<NotificationBadgeProvider>(context, listen: false)
+//               .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+//           // final notificationBadgeProvider = NotificationBadgeProvider();
+//           // notificationBadgeProvider()
+//           // notificationBadgeProvider.providerSetBadgeNumber(
+//           //     badgeNumber: (BadgeServices.number));
+//         } catch (e) {
+//           print(e);
+//         }
+//       });
+//     }
+
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

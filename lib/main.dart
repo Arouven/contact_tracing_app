@@ -175,7 +175,7 @@ Future<void> startServices() async {
 
     _listenToDbUpdateBadge();
 
-    ///    _listenToDbNotif();
+    _listenToDbNotif();
     // var isRunning = await FlutterBackgroundService().isServiceRunning();
     // print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
@@ -248,33 +248,33 @@ Future pageSelector() async {
   }
 }
 
-// void _listenToDbNotif() {
-//   if (path != "") {
-//     print('listening for new child from firebase');
-//     DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// // Get the Stream
-//     Stream<DatabaseEvent> stream = ref.onChildAdded;
+void _listenToDbNotif() {
+  if (path != "") {
+    print('listening for new child from firebase');
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+    Stream<DatabaseEvent> stream = ref.onChildAdded;
 
-// // Subscribe to the stream!
-//     stream.listen((DatabaseEvent event) async {
-//       try {
-//         DataSnapshot snapshot = event.snapshot; // DataSnapshot
-//         print('abcde');
-//         //{timestamp: 1642240673, body: You may be infected practice self-isolation and perform a test, title: In Contact, read: true}
-//         if (snapshot.value != null) {
-//           final json = snapshot.value as Map;
-//           print(json['read']);
-//           await NotificationServices().showNotification(
-//             notificationTitle: json['title'],
-//             notificationBody: json['body'],
-//           );
-//         }
-//       } catch (e) {
-//         print(e);
-//       }
-//     });
-//   }
-// }
+// Subscribe to the stream!
+    stream.listen((DatabaseEvent event) async {
+      try {
+        DataSnapshot snapshot = event.snapshot; // DataSnapshot
+        print('new child added to list');
+        //{timestamp: 1642240673, body: You may be infected practice self-isolation and perform a test, title: In Contact, read: true}
+        if (snapshot.value != null) {
+          final json = snapshot.value as Map;
+          print(json['read']);
+          await NotificationServices().showNotification(
+            notificationTitle: json['title'],
+            notificationBody: json['body'],
+          );
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+}
 
 void _listenToDbUpdateBadge() {
   if (path != "") {
@@ -291,6 +291,7 @@ void _listenToDbUpdateBadge() {
         await BadgeServices.updateBadge();
         print(BadgeServices.number);
         final notificationBadgeProvider = NotificationBadgeProvider();
+        // notificationBadgeProvider()
         notificationBadgeProvider.providerSetBadgeNumber(
             badgeNumber: (BadgeServices.number));
       } catch (e) {
@@ -334,7 +335,7 @@ void main() async {
 
     _listenToDbUpdateBadge();
 
-    /// _listenToDbNotif();
+    _listenToDbNotif();
   } catch (e) {
     print(e);
   }

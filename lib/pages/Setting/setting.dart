@@ -68,7 +68,6 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   void initState() {
-    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

@@ -53,7 +53,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

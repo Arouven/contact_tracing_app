@@ -606,7 +606,6 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
-    Provider.of<NotificationBadgeProvider>(context, listen: false);
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
