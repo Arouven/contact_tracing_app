@@ -296,8 +296,8 @@ class _MobilePageState extends State<MobilePage> {
         await generatePath();
         await startServices();
 
-        Provider.of<NotificationBadgeProvider>(context, listen: false);
-
+        // Provider.of<NotificationBadgeProvider>(context, listen: false);
+        _startListening();
         setState(() {
           _mymobileNumber = _mobileNumberToSetActive;
           _isLoading = false;
@@ -607,8 +607,7 @@ class _MobilePageState extends State<MobilePage> {
     }
   }
 
-  @override
-  void initState() {
+  void _startListening() {
     if (path != "") {
       print('listening for changes from firebase');
       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
@@ -629,6 +628,11 @@ class _MobilePageState extends State<MobilePage> {
         }
       });
     }
+  }
+
+  @override
+  void initState() {
+    _startListening();
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {

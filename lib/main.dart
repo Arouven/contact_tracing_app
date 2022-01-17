@@ -278,9 +278,9 @@ void _listenToDbNotif() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-  await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-  await generatePath();
+  // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+  // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+  // await generatePath();
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
   } catch (e) {
