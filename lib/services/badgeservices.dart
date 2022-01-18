@@ -1,9 +1,10 @@
 import 'package:contact_tracing/main.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 class BadgeServices {
-  static int number = 0;
+  //static int number = 0;
 
   // Widget notificationBadge() {
   //   if (number > 0) {
@@ -24,7 +25,7 @@ class BadgeServices {
     try {
       await updateNotificationBadge();
     } finally {
-      updateAppBadge();
+      await updateAppBadge();
     }
   }
 
@@ -46,19 +47,22 @@ class BadgeServices {
           if (read == false) {
             badge = badge + 1;
           }
-          // print(badge);
         });
       }
-
-      number = badge;
+      await GlobalVariables.setBadgeNumber(badgeNumber: badge);
+      // number = badge;
     }
   }
 
-  static updateAppBadge() {
-    if (number > 0) {
-      FlutterAppBadger.updateBadgeCount(number);
-    } else {
-      FlutterAppBadger.removeBadge();
-    }
+  static updateAppBadge() async {
+    ((await GlobalVariables.getBadgeNumber()) > 0)
+        ? FlutterAppBadger.updateBadgeCount(
+            await GlobalVariables.getBadgeNumber())
+        : FlutterAppBadger.removeBadge();
+    // if (number > 0) {
+    //   FlutterAppBadger.updateBadgeCount(number);
+    // } else {
+    //   FlutterAppBadger.removeBadge();
+    // }
   }
 }

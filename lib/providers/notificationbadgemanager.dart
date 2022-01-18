@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class NotificationBadgeProvider with ChangeNotifier {
-  int _badgeNumber = BadgeServices.number;
-  late StreamSubscription _stream;
+  int _badgeNumber = 0;
 
   int get badgeNumber => _badgeNumber;
 
@@ -48,19 +48,20 @@ class NotificationBadgeProvider with ChangeNotifier {
 //     }
 //   }
 
-  void providerSetBadgeNumber({required int badgeNumber}) {
+  void providerSetBadgeNumber({required int badgeNumber}) async {
     print("providerSetBadgeNumber badge $badgeNumber");
     print("providerSetBadgeNumber badge $_badgeNumber");
     _badgeNumber = badgeNumber;
     print("providerSetBadgeNumber badge $_badgeNumber");
+    // await GlobalVariables.setBadgeNumber(badgeNumber: badgeNumber);
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    _stream.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _stream.cancel();
+  //   super.dispose();
+  // }
 }
   // ChangeNotifierProvider<NotificationBadgeProvider>(
   //           create: (_) => new NotificationBadgeProvider(),

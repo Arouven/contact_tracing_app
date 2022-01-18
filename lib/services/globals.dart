@@ -201,4 +201,14 @@ class GlobalVariables {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('darkTheme');
   }
+
+  static Future setBadgeNumber({required int badgeNumber}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('badgeNumber', badgeNumber);
+  }
+
+  static Future getBadgeNumber() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('badgeNumber') ?? 0;
+  }
 }

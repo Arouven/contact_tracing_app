@@ -4,6 +4,7 @@ import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
+import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
@@ -535,8 +536,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
+  Future _updateWidget() async {
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    print(badgenumber.toString());
+    Provider.of<NotificationBadgeProvider>(context, listen: false)
+        .providerSetBadgeNumber(badgeNumber: (badgenumber));
+  }
+
   @override
   void initState() {
+    _updateWidget().whenComplete(() {});
     if (path != "") {
       print('listening for changes from firebase');
       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
@@ -545,15 +554,24 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
 // Subscribe to the stream!
       _firebaseListener = stream.listen((DatabaseEvent event) async {
+        final mobileNumber = await GlobalVariables.getMobileNumber();
+        final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+        if (fcmtoken != null) {
+          await DatabaseMySQLServices.updateMobilefmcToken(
+            mobileNumber: mobileNumber,
+            fcmtoken: fcmtoken,
+          );
+        }
         try {
           //DataSnapshot snapshot = event.snapshot; // DataSnapshot
           print('change detected updating badges');
           await BadgeServices.updateBadge();
-          print(BadgeServices.number);
+          int badgenumber = await GlobalVariables.getBadgeNumber();
+          print(badgenumber.toString());
           Provider.of<NotificationBadgeProvider>(context, listen: false)
-              .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+              .providerSetBadgeNumber(badgeNumber: (badgenumber));
         } catch (e) {
-          print(e);
+          print(e.toString());
         }
       });
     }

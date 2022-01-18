@@ -251,8 +251,16 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
+  Future _updateWidget() async {
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    print(badgenumber.toString());
+    Provider.of<NotificationBadgeProvider>(context, listen: false)
+        .providerSetBadgeNumber(badgeNumber: (badgenumber));
+  }
+
   @override
   void initState() {
+    _updateWidget().whenComplete(() {});
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -284,10 +292,16 @@ class _SettingPageState extends State<SettingPage> {
                   //DataSnapshot snapshot = event.snapshot; // DataSnapshot
                   print('change detected updating badges');
                   await BadgeServices.updateBadge();
-                  print(BadgeServices.number);
-                  Provider.of<NotificationBadgeProvider>(context, listen: false)
-                      .providerSetBadgeNumber(
-                          badgeNumber: (BadgeServices.number));
+                  GlobalVariables.getBadgeNumber().then((badgenumber) {
+                    print(badgenumber.toString());
+                    Provider.of<NotificationBadgeProvider>(context,
+                            listen: false)
+                        .providerSetBadgeNumber(badgeNumber: (badgenumber));
+                  });
+                  // print(BadgeServices.number);
+                  // Provider.of<NotificationBadgeProvider>(context, listen: false)
+                  //     .providerSetBadgeNumber(
+                  //         badgeNumber: (BadgeServices.number));
                 } catch (e) {
                   print(e);
                 }

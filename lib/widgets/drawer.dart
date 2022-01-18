@@ -94,18 +94,30 @@ class _DrawerSideState extends State<DrawerSide> {
     //   );
     // }
     Widget notificationWidget() {
-      int bn = Provider.of<NotificationBadgeProvider>(context, listen: false)
-          .badgeNumber;
+      // int bn = Provider.of<NotificationBadgeProvider>(context, listen: false)
+      //     .badgeNumber;
+      // int bn = 0;
+      // GlobalVariables.getBadgeNumber().then((value) {
+      //   print(value);
+      //   bn = value;
+      // });
+      int bn = Provider.of<NotificationBadgeProvider>(context).badgeNumber;
 
       print('>>>>>>>>>>>>>>>>>>>> REBUILD');
       print(bn);
-      print(BadgeServices.number);
+
+      // GlobalVariables.getBadgeNumber().then((value) {
+      //   print(value);
+      //   bn = value;
+      // });
+
+      // print(BadgeServices.number);
 
       if (bn > 0) {
-        print(BadgeServices.number);
+        // print(BadgeServices.number);
         return (Badge(
           badgeContent: Text(
-            (bn).toString(),
+            "$bn",
             style: TextStyle(fontSize: 8.0),
           ),
           child: Icon(Icons.notifications),

@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/models/pushnotification.dart';
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
-import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
@@ -33,6 +31,7 @@ late NotificationSettings settings;
 //late FirebaseMessaging _messaging;
 Widget? _pageSelected;
 late var _isDarkMode = null;
+late var _badgeNumber = null;
 late String path = ""; //"notification/+23057775794/"; // "";
 
 Future<void> generatePath() async {
@@ -147,7 +146,11 @@ Future<void> _messageHandler(RemoteMessage message) async {
     // Parse the message received
     //Notif.notifications.insert(0, message);
     // await BadgeServices.updateBadge();
-    BadgeServices.number = BadgeServices.number + 1;
+    //  BadgeServices.number = BadgeServices.number + 1;
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber + 1));
+    print(badgenumber.toString());
+
     BadgeServices.updateAppBadge();
     PushNotification notification = PushNotification(
       title: message.notification?.title,
@@ -280,9 +283,6 @@ void _listenToDbNotif() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-  // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-  // await generatePath();
 
   // _pageSelected = UpdateMobilePage(
   //   mobile: Mobile(
@@ -294,8 +294,10 @@ void main() async {
   // );
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
+    _badgeNumber = await GlobalVariables.getBadgeNumber();
   } catch (e) {
-    print(e);
+    print(e.toString());
+    _badgeNumber = null;
     _isDarkMode = null;
   }
   try {
@@ -309,17 +311,18 @@ void main() async {
     await GlobalVariables.setNotifier(notifier: true);
   }
   try {
-    _pageSelected = await _pageSelector();
     await _setFirebase();
     // _openAppMessage();
+    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    await generatePath();
 
+    _pageSelected = LiveGeolocatorPage(); //await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!');
     });
     await BadgeServices.updateBadge();
-
-    ///  _listenToDbUpdateBadge();
 
     _listenToDbNotif();
   } catch (e) {
@@ -346,6 +349,7 @@ class MyApp extends StatelessWidget {
           if (_isDarkMode != null) {
             themeProvider.toggleTheme(_isDarkMode);
           }
+
           return MaterialApp(
             title: 'Contact tracing',
             theme: lightMode,

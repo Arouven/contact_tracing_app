@@ -4,6 +4,7 @@ import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -80,9 +81,14 @@ class _SingleNotificationPageState extends State<SingleNotificationPage> {
         message: widget.message,
         path: path,
       );
-      setState(() {
-        BadgeServices.number = BadgeServices.number - 1;
-      });
+      int badgenumber = await GlobalVariables.getBadgeNumber();
+      await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber - 1));
+      print(badgenumber.toString());
+      Provider.of<NotificationBadgeProvider>(context, listen: false)
+          .providerSetBadgeNumber(badgeNumber: (badgenumber));
+
+      //  BadgeServices.number = BadgeServices.number - 1;
+
       BadgeServices.updateAppBadge();
     }
   }
