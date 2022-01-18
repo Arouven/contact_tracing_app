@@ -280,13 +280,13 @@ class _AddMobilePageState extends State<AddMobilePage> {
       } else {
         if (_codeSent) {
           return Container(
-            padding: EdgeInsets.all(10.0),
             child: Center(
               child: _otpPage(),
             ),
           );
         } else {
           return Container(
+            padding: EdgeInsets.all(10.0),
             child: ListView(
               children: <Widget>[
                 new Container(

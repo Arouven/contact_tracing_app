@@ -22,6 +22,7 @@ CREATE TABLE `Mobile` (
   `contactWithInfected` BOOLEAN DEFAULT FALSE,
   `confirmInfected` BOOLEAN DEFAULT FALSE,
   `dateTimeLastTest` BIGINT DEFAULT NULL,
+  `dateTimeAdded` BIGINT NOT NULL DEFAULT (UNIX_TIMESTAMP()),
   PRIMARY KEY (`mobileNumber`),
   FOREIGN KEY (`email`) REFERENCES `User`(`email`) ON DELETE CASCADE
 );

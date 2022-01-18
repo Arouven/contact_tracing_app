@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/pages/Location/filter.dart';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
@@ -40,7 +41,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   String _lastUpdateFromServer = '0';
 
   late var _subscription;
-  late var _firebaseListener;
+  late var _firebaseListener = null;
   bool _internetConnection = true;
 
   Future<void> _downloadData() async {
@@ -211,7 +212,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  Future<void> initLocationService() async {
+  Future<void> _initLocationService() async {
     bool serviceEnabled;
     bool serviceRequestResult;
     try {
@@ -239,7 +240,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
-          await initLocationService();
+          await _initLocationService();
           return;
         }
       }
@@ -519,7 +520,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     return position;
   }
 
-  Future<void> ssss() async {
+  Future<void> _getLocationPermission() async {
     await Geolocator.requestPermission();
     try {
       Position? position = await initPrefs();
@@ -573,14 +574,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     });
 
     try {
-      ssss().whenComplete(() {
+      _getLocationPermission().whenComplete(() {
         _mapController = MapController();
-        _setFilters();
-        initLocationService().whenComplete(() {
-          setState(() {});
-        });
-        _generateMarkers().whenComplete(() {
-          setState(() {});
+        checkMobileNumber(context: context).whenComplete(() {
+          _setFilters();
+          _initLocationService().whenComplete(() {
+            setState(() {});
+          });
+          _generateMarkers().whenComplete(() {
+            setState(() {});
+          });
         });
       });
     } catch (e) {
@@ -628,14 +631,18 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   void dispose() {
     _markers.clear();
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.deactivate();
   }
 }

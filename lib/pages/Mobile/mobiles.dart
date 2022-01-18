@@ -20,6 +20,18 @@ import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
 
+Future checkMobileNumber({required var context}) async {
+  var mn = await GlobalVariables.getMobileNumber();
+  if (mn == null) {
+    await DialogBox.showErrorDialog(
+      context: context,
+      title: 'Mobile Not Active',
+      body:
+          'Please set an active mobile to help the application to keep track of your locations.',
+    );
+  }
+}
+
 class MobilePage extends StatefulWidget {
   static const String route = '/mobiles';
 
@@ -44,7 +56,7 @@ class _MobilePageState extends State<MobilePage> {
   var _verificationId = '';
 
   late var _subscription;
-  late var _firebaseListener;
+  late var _firebaseListener = null;
   bool _internetConnection = true;
 
   /// display dialog
@@ -578,13 +590,15 @@ class _MobilePageState extends State<MobilePage> {
           _mymobileNumber = mobileNumber;
         });
       } else {
-        setState(() {
+        setState(() async {
           _mymobileNumber = '';
+          await checkMobileNumber(context: context);
         });
       }
     } catch (e) {
-      setState(() {
+      setState(() async {
         _mymobileNumber = '';
+        await checkMobileNumber(context: context);
       });
     }
 
@@ -703,14 +717,18 @@ class _MobilePageState extends State<MobilePage> {
   @override
   void deactivate() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.deactivate();
   }
 
   @override
   void dispose() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.dispose();
   }
 }

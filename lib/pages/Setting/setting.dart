@@ -1,5 +1,6 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
@@ -32,6 +33,7 @@ class _SettingPageState extends State<SettingPage> {
   late var _firebaseListener = null;
   // late var _firebaseListener;
   bool _internetConnection = true;
+  late var _mobileNumber = null;
 
   Future _checkServices() async {
     var action = await GlobalVariables.getForegroundServices();
@@ -59,6 +61,10 @@ class _SettingPageState extends State<SettingPage> {
     return await GlobalVariables.getEmail();
   }
 
+  Future _getActiveMobile() async {
+    return await GlobalVariables.getMobileNumber();
+  }
+
   // Future _getDarkMode() async {
   //   try {
   //     if (await GlobalVariables.getDarkTheme() == true) {
@@ -70,60 +76,6 @@ class _SettingPageState extends State<SettingPage> {
   //     _isDarkMode = false;
   //   }
   // }
-
-  @override
-  void initState() {
-    _subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      print(result);
-      if (result == ConnectivityResult.none) {
-        setState(() {
-          _internetConnection = false;
-        });
-      } else {
-        setState(() {
-          _internetConnection = true;
-        });
-      }
-    });
-    _checkServices().whenComplete(() {
-      //  _getDarkMode().whenComplete(() {
-      _getNotifier().then((notifier) {
-        _getusermail().then((usermail) {
-          if ((usermail != null) && (path != "")) {
-            print('listening for changes from firebase');
-            DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// Get the Stream
-            Stream<DatabaseEvent> stream = ref.onValue;
-
-// Subscribe to the stream!
-            _firebaseListener = stream.listen((DatabaseEvent event) async {
-              try {
-                //DataSnapshot snapshot = event.snapshot; // DataSnapshot
-                print('change detected updating badges');
-                await BadgeServices.updateBadge();
-                print(BadgeServices.number);
-                Provider.of<NotificationBadgeProvider>(context, listen: false)
-                    .providerSetBadgeNumber(
-                        badgeNumber: (BadgeServices.number));
-              } catch (e) {
-                print(e);
-              }
-            });
-          }
-          setState(() {
-            _notifier = notifier;
-            _usermail = usermail;
-            _isLoading = false;
-          });
-        });
-      });
-      //  });
-    });
-
-    super.initState();
-  }
 
   _body() {
     if (_internetConnection == false) {
@@ -141,7 +93,7 @@ class _SettingPageState extends State<SettingPage> {
   _listOfSettings() {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final provider = Provider.of<ThemeProvider>(context, listen: false);
-    if (GlobalVariables.emailProp == '') {
+    if ((GlobalVariables.emailProp == '') || (_mobileNumber == null)) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -297,6 +249,64 @@ class _SettingPageState extends State<SettingPage> {
         ],
       );
     }
+  }
+
+  @override
+  void initState() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print(result);
+      if (result == ConnectivityResult.none) {
+        setState(() {
+          _internetConnection = false;
+        });
+      } else {
+        setState(() {
+          _internetConnection = true;
+        });
+      }
+    });
+    _checkServices().whenComplete(() {
+      //  _getDarkMode().whenComplete(() {
+      _getNotifier().then((notifier) {
+        _getusermail().then((usermail) {
+          _getActiveMobile().then((mobileNumber) async {
+            if ((usermail != null) && (path != "")) {
+              print('listening for changes from firebase');
+              DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+              Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+              _firebaseListener = stream.listen((DatabaseEvent event) async {
+                try {
+                  //DataSnapshot snapshot = event.snapshot; // DataSnapshot
+                  print('change detected updating badges');
+                  await BadgeServices.updateBadge();
+                  print(BadgeServices.number);
+                  Provider.of<NotificationBadgeProvider>(context, listen: false)
+                      .providerSetBadgeNumber(
+                          badgeNumber: (BadgeServices.number));
+                } catch (e) {
+                  print(e);
+                }
+              });
+            }
+            setState(() {
+              _notifier = notifier;
+              _usermail = usermail;
+              _mobileNumber = mobileNumber;
+              _isLoading = false;
+            });
+            await checkMobileNumber(context: context);
+          });
+        });
+      });
+      //  });
+    });
+
+    super.initState();
   }
 
   @override

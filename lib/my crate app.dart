@@ -2,5 +2,5 @@
 
 //todo app
 
-//mobile page popbutton
-//notification denied
+//appbadge
+//update mobile

@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
 
   late var _subscription;
-  late var _firebaseListener;
+  late var _firebaseListener = null;
   bool _internetConnection = true;
 
   String _email = '';
@@ -90,8 +90,9 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     });
-    _getData().whenComplete(() => setState(() {
+    _getData().whenComplete(() => setState(() async {
           _isLoading = false;
+          await checkMobileNumber(context: context);
         }));
     super.initState();
   }
@@ -365,14 +366,18 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void dispose() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.deactivate();
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:contact_tracing/models/mobile.dart';
 import 'package:contact_tracing/models/pushnotification.dart';
 import 'package:contact_tracing/pages/Location/live_geolocator.dart';
 import 'package:contact_tracing/pages/Login/login.dart';
 import 'package:contact_tracing/pages/Mobile/mobiles.dart';
+import 'package:contact_tracing/pages/Mobile/updateMobile.dart';
 import 'package:contact_tracing/pages/Notification/notifications.dart';
 import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
@@ -228,7 +230,7 @@ Future logout(context) async {
       (route) => false);
 }
 
-Future pageSelector() async {
+Future _pageSelector() async {
   try {
     final email = await GlobalVariables.getEmail();
     final mobileNumber = await GlobalVariables.getMobileNumber();
@@ -281,6 +283,15 @@ void main() async {
   // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
   // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
   // await generatePath();
+
+  // _pageSelected = UpdateMobilePage(
+  //   mobile: Mobile(
+  //     mobileNumber: '+23057775794',
+  //     mobileName: 'my mobile',
+  //     email: 'apoolian@umail.utm.ac.mu',
+  //     fcmtoken: 'dummy token',
+  //   ),
+  // );
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
   } catch (e) {
@@ -298,7 +309,7 @@ void main() async {
     await GlobalVariables.setNotifier(notifier: true);
   }
   try {
-    _pageSelected = await pageSelector();
+    _pageSelected = await _pageSelector();
     await _setFirebase();
     // _openAppMessage();
 
@@ -416,163 +427,3 @@ var lightMode = ThemeData.light().copyWith(
     ),
   ),
 );
-// final darkMode = ThemeData(
-//   primarySwatch: Colors.grey,
-//   primaryColor: Colors.black,
-//   brightness: Brightness.dark,
-//   backgroundColor: const Color(0xFF212121),
-//   accentColor: Colors.white,
-//   accentIconTheme: IconThemeData(color: Colors.black),
-//   dividerColor: Colors.black12,
-//   floatingActionButtonTheme: FloatingActionButtonThemeData(
-//     foregroundColor: Colors.black,
-//     backgroundColor: Colors.grey,
-//   ),
-// );
-
-// final lightMode = ThemeData(primarySwatch: lightBlueTheme);
-// final lightMode = ThemeData(
-//   primarySwatch: Colors.lightBlue,
-//   primaryColor: Colors.blue,
-//   brightness: Brightness.light,
-//   backgroundColor: const Color(0xFFE5E5E5),
-//   accentColor: Colors.black,
-//   accentIconTheme: IconThemeData(color: Colors.white),
-//   dividerColor: Colors.white54,
-//   floatingActionButtonTheme: FloatingActionButtonThemeData(
-//     foregroundColor: Colors.white,
-//     backgroundColor: Colors.blue[900],
-//   ),
-// );
-
-// const MaterialColor lightBlueTheme = MaterialColor(
-//   0xFF395afa,
-//   <int, Color>{
-//     50: Color(0xFFE7EBFE),
-//     100: Color(0xFFC4CEFE),
-//     200: Color(0xFF9CADFD),
-//     300: Color(0xFF748CFC),
-//     400: Color(0xFF5773FB),
-//     500: Color(0xFF395afa),
-//     600: Color(0xFF3352F9),
-//     700: Color(0xFF2C48F9),
-//     800: Color(0xFF243FF8),
-//     900: Color(0xFF172EF6),
-//   },
-// );
-////////////////////////////////////////////////////
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:flutter/material.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-// class PushNotification {
-//   PushNotification({
-//     this.title,
-//     this.body,
-//   });
-//   String? title;
-//   String? body;
-// }
-
-// /// Initialize the [FlutterLocalNotificationsPlugin] package.
-// late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-// late AndroidNotificationChannel channel;
-// late NotificationSettings settings;
-// late FirebaseMessaging _messaging;
-
-// Future<void> setFirebase() async {
-//   channel = const AndroidNotificationChannel(
-//     'high_importance_channel', // id
-//     'High Importance Notifications', // title
-//     description:
-//         'This channel is used for important notifications.', // description
-//     importance: Importance.high,
-//   );
-//   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-//   await flutterLocalNotificationsPlugin
-//       .resolvePlatformSpecificImplementation<
-//           AndroidFlutterLocalNotificationsPlugin>()
-//       ?.createNotificationChannel(channel);
-//   await Firebase.initializeApp();
-//   _messaging = FirebaseMessaging.instance;
-
-//   // 3. On iOS, this helps to take the user permissions
-//   settings = await _messaging.requestPermission(
-//     alert: true,
-//     badge: true,
-//     provisional: false,
-//     sound: true,
-//   );
-// }
-
-// void openAppMessage() {
-//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//     print('User granted permission');
-//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//       // Parse the message received
-//       sendMsg(message);
-//     });
-//   } else {
-//     print('User declined or has not accepted permission');
-//   }
-// }
-
-// Future<void> _messageHandler(RemoteMessage message) async {
-//   print('background message ${message.notification!.body}');
-//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//     print('User granted permission');
-//     // Parse the message received
-//     sendMsg(message);
-//   } else {
-//     print('User declined or has not accepted permission');
-//   }
-// }
-
-// void sendMsg(RemoteMessage message) {
-//   PushNotification notification = PushNotification(
-//     title: message.notification?.title,
-//     body: message.notification?.body,
-//   );
-
-//   flutterLocalNotificationsPlugin.show(
-//     notification.hashCode,
-//     notification.title,
-//     notification.body,
-//     NotificationDetails(
-//       android: AndroidNotificationDetails(
-//         'id',
-//         'channel.name',
-//         channelDescription: 'channel.description',
-//         // TODO add a proper drawable resource to android, for now using
-//         //      one that already exists in example app.
-//         icon: '@mipmap/ic_launcher',
-//       ),
-//     ),
-//   );
-// }
-
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await setFirebase();
-//   openAppMessage();
-//   FirebaseMessaging.onBackgroundMessage(_messageHandler);
-//   FirebaseMessaging.onMessageOpenedApp.listen((message) {
-//     print('Message clicked!');
-//   });
-//   runApp(MyHomePage());
-// }
-
-// class MyHomePage extends StatefulWidget {
-//   @override
-//   GeeksForGeeksState createState() => GeeksForGeeksState();
-// }
-
-// class GeeksForGeeksState extends State<MyHomePage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Center(child: Text('Hello World')),
-//     );
-//   }
-// }

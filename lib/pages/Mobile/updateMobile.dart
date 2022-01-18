@@ -48,7 +48,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
 
   String _verificationId = '';
   String _phoneNumber = '';
-  bool _codeSent = false;
+  bool _codeSent = true;
 
   late var _subscription;
   bool _internetConnection = true;
@@ -148,6 +148,7 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
       )),
       new Container(
         child: InternationalPhoneNumberInput(
+          isEnabled: false,
           inputDecoration: new InputDecoration(
             labelText: 'Mobile Number',
             errorText: _invalidPhoneNumber ? 'Number Can\'t Be Empty' : null,
@@ -173,6 +174,10 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
             selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
           ),
           ignoreBlank: false,
+          textStyle: TextStyle(
+            backgroundColor: Colors.transparent,
+            color: Colors.grey,
+          ),
           autoValidateMode: AutovalidateMode.disabled,
           // selectorTextStyle: TextStyle(color: Colors.black),
           initialValue: number,
@@ -252,13 +257,14 @@ class _UpdateMobilePageState extends State<UpdateMobilePage> {
       } else {
         if (_codeSent) {
           return Container(
-            padding: EdgeInsets.all(10.0),
+            // padding: EdgeInsets.all(10.0),
             child: Center(
               child: _otpPage(),
             ),
           );
         } else {
           return Container(
+            padding: EdgeInsets.all(10.0),
             child: ListView(
               children: <Widget>[
                 new Container(
