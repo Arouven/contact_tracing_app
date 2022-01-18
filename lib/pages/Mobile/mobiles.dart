@@ -633,19 +633,33 @@ class _MobilePageState extends State<MobilePage> {
         try {
           //DataSnapshot snapshot = event.snapshot; // DataSnapshot
           print('change detected updating badges');
+          // await BadgeServices.updateBadge();
+
           await BadgeServices.updateBadge();
-          print(BadgeServices.number);
+          int badgenumber = await GlobalVariables.getBadgeNumber();
           Provider.of<NotificationBadgeProvider>(context, listen: false)
-              .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+              .providerSetBadgeNumber(badgeNumber: (badgenumber));
+          print(badgenumber.toString());
+          // print(BadgeServices.number);
+          // Provider.of<NotificationBadgeProvider>(context, listen: false)
+          //     .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
         } catch (e) {
-          print(e);
+          print(e.toString());
         }
       });
     }
   }
 
+  Future _updateWidget() async {
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    print(badgenumber.toString());
+    Provider.of<NotificationBadgeProvider>(context, listen: false)
+        .providerSetBadgeNumber(badgeNumber: (badgenumber));
+  }
+
   @override
   void initState() {
+    _updateWidget().whenComplete(() {});
     _startListening();
     _subscription = Connectivity()
         .onConnectivityChanged

@@ -6,6 +6,7 @@ import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
 import 'package:flutter/material.dart';
@@ -60,64 +61,72 @@ class _NotificationsPageState extends State<NotificationsPage> {
       });
     } catch (e) {
       setState(() {
-        _problemWithFirebase = false;
+        _problemWithFirebase = true;
         _isLoading = false;
       });
-      print(e);
+      print(e.toString());
     }
   }
 
   void _updateListofMessages() {
-    if (path != "") {
-      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+    //  if (path != "") {
+    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
-      Stream<DatabaseEvent> stream = ref.onValue;
+    Stream<DatabaseEvent> stream = ref.onValue;
 
 // Subscribe to the stream!
-      _stream = stream.listen((DatabaseEvent event) {
-        try {
-          print("listening in notification page");
-          DataSnapshot snapshot = event.snapshot; // DataSnapshot
-          Map message = snapshot.value as Map;
-          messageList.clear();
+    _stream = stream.listen((DatabaseEvent event) {
+      try {
+        print("listening in notification page");
+        DataSnapshot snapshot = event.snapshot; // DataSnapshot
+        Map message = snapshot.value as Map;
+        messageList.clear();
 
-          int unreadmsg = 0;
+        int unreadmsg = 0;
 
-          setState(() async {
-            if (message != null) {
-              message.forEach((key, value) {
-                if (value['read'] == false) {
-                  unreadmsg += 1;
-                }
-                messageList.add(
-                  new Message(
-                    id: key,
-                    title: value['title'],
-                    body: value['body'],
-                    read: value['read'],
-                    timestamp: value['timestamp'],
-                  ),
-                );
-              });
-            }
-
-            BadgeServices.number = unreadmsg;
-            await BadgeServices.updateBadge();
-            print(BadgeServices.number);
-            Provider.of<NotificationBadgeProvider>(context, listen: false)
-                .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
-            _problemWithFirebase = true;
-            _isLoading = false;
-          });
-        } catch (e) {
-          setState(() {
-            _problemWithFirebase = false;
-            _isLoading = false;
-          });
-          print(e);
-        }
-      });
-    }
+        setState(() async {
+          if (message != null) {
+            message.forEach((key, value) {
+              if (value['read'] == false) {
+                unreadmsg += 1;
+              }
+              messageList.add(
+                new Message(
+                  id: key,
+                  title: value['title'],
+                  body: value['body'],
+                  read: value['read'],
+                  timestamp: value['timestamp'],
+                ),
+              );
+            });
+          }
+          int badgenumber = await GlobalVariables.getBadgeNumber();
+          await GlobalVariables.setBadgeNumber(badgeNumber: unreadmsg);
+          print(badgenumber.toString());
+          await BadgeServices.updateBadge();
+          Provider.of<NotificationBadgeProvider>(context, listen: false)
+              .providerSetBadgeNumber(badgeNumber: (badgenumber));
+          _problemWithFirebase = false;
+          _isLoading = false;
+          // BadgeServices.number = unreadmsg;
+          // (BadgeServices.updateBadge()).whenComplete(() {
+          //   print(BadgeServices.number.toString());
+          //   Provider.of<NotificationBadgeProvider>(context, listen: false)
+          //       .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+          //   _problemWithFirebase = true;
+          //   _isLoading = false;
+          // });
+        });
+      } catch (e) {
+        setState(() {
+          _problemWithFirebase = true;
+          _isLoading = false;
+        });
+        print(e.toString());
+      }
+    });
+    // }
   }
 
   Widget _body() {
@@ -178,26 +187,38 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
+  Future _updateWidget() async {
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    print(badgenumber.toString());
+    Provider.of<NotificationBadgeProvider>(context, listen: false)
+        .providerSetBadgeNumber(badgeNumber: (badgenumber));
+  }
+
   @override
   void initState() {
-    _subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      print(result);
-      if (result == ConnectivityResult.none) {
-        setState(() {
-          _internetConnection = false;
-        });
-      } else {
-        setState(() {
-          _internetConnection = true;
-        });
-      }
-    });
-    checkMobileNumber(context: context).whenComplete(() {
+    _updateWidget().whenComplete(() {});
+    try {
+      _subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) {
+        print(result.toString());
+        if (result == ConnectivityResult.none) {
+          setState(() {
+            _internetConnection = false;
+          });
+        } else {
+          setState(() {
+            _internetConnection = true;
+          });
+        }
+      });
+      checkMobileNumber(context: context).whenComplete(() {});
       _getListofMessages().whenComplete(() => setState(() {}));
-    });
-    _updateListofMessages();
+
+      _updateListofMessages();
+    } catch (e) {
+      print(e.toString());
+    }
     super.initState();
   }
 
