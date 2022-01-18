@@ -556,14 +556,14 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
 // Subscribe to the stream!
       _firebaseListener = stream.listen((DatabaseEvent event) async {
-        final mobileNumber = await GlobalVariables.getMobileNumber();
-        final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-        if (fcmtoken != null) {
-          await DatabaseMySQLServices.updateMobilefmcToken(
-            mobileNumber: mobileNumber,
-            fcmtoken: fcmtoken,
-          );
-        }
+        // final mobileNumber = await GlobalVariables.getMobileNumber();
+        // final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+        // if (fcmtoken != null) {
+        //   await DatabaseMySQLServices.updateMobilefmcToken(
+        //     mobileNumber: mobileNumber,
+        //     fcmtoken: fcmtoken,
+        //   );
+        // }
         try {
           //DataSnapshot snapshot = event.snapshot; // DataSnapshot
           print('change detected updating badges');

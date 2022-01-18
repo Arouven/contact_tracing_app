@@ -68,6 +68,30 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
+  void _startListening() {
+    if (path != "") {
+      print('listening for changes from firebase started');
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// Get the Stream
+      Stream<DatabaseEvent> stream = ref.onValue;
+
+// Subscribe to the stream!
+      _firebaseListener = stream.listen((DatabaseEvent event) async {
+        try {
+          print('change detected updating badges in ');
+          await BadgeServices.updateBadge();
+          int badgenumber = await GlobalVariables.getBadgeNumber();
+          print(badgenumber.toString());
+          print('change detected updating badges');
+          Provider.of<NotificationBadgeProvider>(context, listen: false)
+              .providerSetBadgeNumber(badgeNumber: (badgenumber));
+        } catch (e) {
+          print(e.toString());
+        }
+      });
+    }
+  }
+
   void _updateListofMessages() {
     if (path != "") {
       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
@@ -77,49 +101,28 @@ class _NotificationsPageState extends State<NotificationsPage> {
 // Subscribe to the stream!
       _firebaseListener = stream.listen((DatabaseEvent event) async {
         try {
-          print("listening in notification page");
           DataSnapshot snapshot = event.snapshot; // DataSnapshot
           Map message = snapshot.value as Map;
           messageList.clear();
-
-          // int unreadmsg = 0;
-
           setState(() {
             if (message != null) {
               message.forEach((key, value) {
-                // if (value['read'] == false) {
-                //   unreadmsg += 1;
-                // }
                 messageList.add(
                   new Message(
                     id: key,
-                    title: value['title'],
-                    body: value['body'],
-                    read: value['read'],
-                    timestamp: value['timestamp'],
+                    title: value['title'] as String,
+                    body: value['body'] as String,
+                    read: value['read'] as bool,
+                    timestamp: value['timestamp'] as int,
                   ),
                 );
               });
             }
-          });
-          print('change detected updating badges in notification page');
-          await BadgeServices.updateBadge();
-          int badgenumber = await GlobalVariables.getBadgeNumber();
-          print(badgenumber.toString());
-          Provider.of<NotificationBadgeProvider>(context, listen: false)
-              .providerSetBadgeNumber(badgeNumber: (badgenumber));
-          setState(() {
+            print('updated list builder');
             _problemWithFirebase = false;
             _isLoading = false;
-            // BadgeServices.number = unreadmsg;
-            // (BadgeServices.updateBadge()).whenComplete(() {
-            //   print(BadgeServices.number.toString());
-            //   Provider.of<NotificationBadgeProvider>(context, listen: false)
-            //       .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
-            //   _problemWithFirebase = true;
-            //   _isLoading = false;
-            // });
           });
+          //  });
         } catch (e) {
           setState(() {
             _problemWithFirebase = true;
@@ -135,54 +138,70 @@ class _NotificationsPageState extends State<NotificationsPage> {
     if (_internetConnection == false) {
       return Aesthetic.displayNoConnection();
     } else if (_problemWithFirebase == true) {
-      return Aesthetic.displayProblemFirebase();
+      return Scrollbar(
+        child: RefreshIndicator(
+            onRefresh: () async {
+              await Future.delayed(
+                  Duration(seconds: 2)); //to allow circular loading
+              await _getListofMessages();
+            },
+            child: Aesthetic.displayProblemFirebase()),
+      );
     } else {
       if (_isLoading != false) {
         return Aesthetic.displayCircle();
       } else {
         return Scrollbar(
-          child: ListView.builder(
-            itemCount: messageList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                leading: Icon(Icons.email),
-                title: Text(
-                  messageList[index].title,
-                  style: (messageList[index].read != false)
-                      ? null
-                      : TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                ),
-                trailing: (messageList[index].read != false)
-                    ? null
-                    : Icon(
-                        Icons.brightness_1,
-                        size: 9.0,
-                        color: Colors.red,
-                      ),
-                onTap: () async {
-                  var msg = messageList[index];
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => SingleNotificationPage(
-                        message: msg,
-                      ),
-                    ),
-                  );
-                  setState(() {
-                    msg.read = true;
-                  });
-                  // Navigator.of(context).pushReplacement(
-                  //   MaterialPageRoute(
-                  //     builder: (BuildContext context) => SingleNotificationPage(
-                  //       message: messageList[index],
-                  //     ),
-                  //   ),
-                  // );
-                },
-              );
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await Future.delayed(
+                  Duration(seconds: 2)); //to allow circular loading
+              await _getListofMessages();
             },
+            child: ListView.builder(
+              itemCount: messageList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Icon(Icons.email),
+                  title: Text(
+                    messageList[index].title,
+                    style: (messageList[index].read != false)
+                        ? null
+                        : TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                  ),
+                  trailing: (messageList[index].read != false)
+                      ? null
+                      : Icon(
+                          Icons.brightness_1,
+                          size: 9.0,
+                          color: Colors.red,
+                        ),
+                  onTap: () async {
+                    var msg = messageList[index];
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            SingleNotificationPage(
+                          message: msg,
+                        ),
+                      ),
+                    );
+                    setState(() {
+                      msg.read = true;
+                    });
+                    // Navigator.of(context).pushReplacement(
+                    //   MaterialPageRoute(
+                    //     builder: (BuildContext context) => SingleNotificationPage(
+                    //       message: messageList[index],
+                    //     ),
+                    //   ),
+                    // );
+                  },
+                );
+              },
+            ),
           ),
         );
       }
@@ -215,9 +234,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
         }
       });
       checkMobileNumber(context: context).whenComplete(() {});
-      _getListofMessages().whenComplete(() => setState(() {}));
+      _getListofMessages().whenComplete(() {
+        _startListening();
+        _updateListofMessages();
+      });
 
-      _updateListofMessages();
+      //  _updateListofMessages();
     } catch (e) {
       print(e.toString());
     }

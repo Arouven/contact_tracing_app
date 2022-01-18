@@ -120,7 +120,7 @@ Future<void> _setFirebase() async {
   // 3. On iOS, this helps to take the user permissions
   settings = await FirebaseMessaging.instance.requestPermission(
     alert: true,
-    badge: false,
+    badge: true,
     provisional: false,
     sound: true,
   );
@@ -210,12 +210,13 @@ Future<void> updateFirebaseNotification({
 }) async {
   String time = (new DateTime.now().millisecondsSinceEpoch).toString();
   time = time.substring(0, time.length - 3);
+  int timestamp = int.parse(time);
   if (path != "") {
     DatabaseReference ref = FirebaseDatabase.instance.ref(path);
     final data = <String, dynamic>{
       "body": notificationBody,
       "read": false,
-      "timestamp": time,
+      "timestamp": timestamp,
       "title": notificationTitle,
     };
     await ref.push().set(data);
@@ -269,10 +270,12 @@ void _listenToDbNotif() {
         if (snapshot.value != null) {
           final json = snapshot.value as Map;
           print(json['read']);
-          await NotificationServices().showNotification(
-            notificationTitle: json['title'],
-            notificationBody: json['body'],
-          );
+          if (json['read'] == false) {
+            await NotificationServices().showNotification(
+              notificationTitle: json['title'],
+              notificationBody: json['body'],
+            );
+          }
         }
       } catch (e) {
         print(e);
@@ -313,11 +316,12 @@ void main() async {
   try {
     await _setFirebase();
     // _openAppMessage();
-    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    await generatePath();
+    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    // await generatePath();
 
-    _pageSelected = LiveGeolocatorPage(); //await _pageSelector();
+    _pageSelected =
+        await _pageSelector(); // NotificationsPage(); //await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!');
