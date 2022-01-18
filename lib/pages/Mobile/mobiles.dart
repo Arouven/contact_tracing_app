@@ -631,18 +631,12 @@ class _MobilePageState extends State<MobilePage> {
 // Subscribe to the stream!
       _firebaseListener = stream.listen((DatabaseEvent event) async {
         try {
-          //DataSnapshot snapshot = event.snapshot; // DataSnapshot
           print('change detected updating badges');
-          // await BadgeServices.updateBadge();
-
           await BadgeServices.updateBadge();
           int badgenumber = await GlobalVariables.getBadgeNumber();
+          print(badgenumber.toString());
           Provider.of<NotificationBadgeProvider>(context, listen: false)
               .providerSetBadgeNumber(badgeNumber: (badgenumber));
-          print(badgenumber.toString());
-          // print(BadgeServices.number);
-          // Provider.of<NotificationBadgeProvider>(context, listen: false)
-          //     .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
         } catch (e) {
           print(e.toString());
         }
@@ -659,7 +653,12 @@ class _MobilePageState extends State<MobilePage> {
 
   @override
   void initState() {
-    _updateWidget().whenComplete(() {});
+    _updateWidget().whenComplete(() {
+      print('widget update');
+      print(path);
+      _startListening();
+      print(path);
+    });
     _startListening();
     _subscription = Connectivity()
         .onConnectivityChanged
@@ -731,18 +730,18 @@ class _MobilePageState extends State<MobilePage> {
   @override
   void deactivate() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.deactivate();
   }
 
   @override
   void dispose() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.dispose();
   }
 }

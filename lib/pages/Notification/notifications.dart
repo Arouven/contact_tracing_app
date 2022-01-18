@@ -29,7 +29,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   late var _subscription;
   late var _firebaseListener = null;
   bool _internetConnection = true;
-  late StreamSubscription _stream;
+  // late StreamSubscription _stream;
 
   Future _getListofMessages() async {
     try {
@@ -69,64 +69,66 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   void _updateListofMessages() {
-    //  if (path != "") {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+    if (path != "") {
+      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
-    Stream<DatabaseEvent> stream = ref.onValue;
+      Stream<DatabaseEvent> stream = ref.onValue;
 
 // Subscribe to the stream!
-    _stream = stream.listen((DatabaseEvent event) {
-      try {
-        print("listening in notification page");
-        DataSnapshot snapshot = event.snapshot; // DataSnapshot
-        Map message = snapshot.value as Map;
-        messageList.clear();
+      _firebaseListener = stream.listen((DatabaseEvent event) async {
+        try {
+          print("listening in notification page");
+          DataSnapshot snapshot = event.snapshot; // DataSnapshot
+          Map message = snapshot.value as Map;
+          messageList.clear();
 
-        int unreadmsg = 0;
+          // int unreadmsg = 0;
 
-        setState(() async {
-          if (message != null) {
-            message.forEach((key, value) {
-              if (value['read'] == false) {
-                unreadmsg += 1;
-              }
-              messageList.add(
-                new Message(
-                  id: key,
-                  title: value['title'],
-                  body: value['body'],
-                  read: value['read'],
-                  timestamp: value['timestamp'],
-                ),
-              );
-            });
-          }
-          int badgenumber = await GlobalVariables.getBadgeNumber();
-          await GlobalVariables.setBadgeNumber(badgeNumber: unreadmsg);
-          print(badgenumber.toString());
+          setState(() {
+            if (message != null) {
+              message.forEach((key, value) {
+                // if (value['read'] == false) {
+                //   unreadmsg += 1;
+                // }
+                messageList.add(
+                  new Message(
+                    id: key,
+                    title: value['title'],
+                    body: value['body'],
+                    read: value['read'],
+                    timestamp: value['timestamp'],
+                  ),
+                );
+              });
+            }
+          });
+          print('change detected updating badges in notification page');
           await BadgeServices.updateBadge();
+          int badgenumber = await GlobalVariables.getBadgeNumber();
+          print(badgenumber.toString());
           Provider.of<NotificationBadgeProvider>(context, listen: false)
               .providerSetBadgeNumber(badgeNumber: (badgenumber));
-          _problemWithFirebase = false;
-          _isLoading = false;
-          // BadgeServices.number = unreadmsg;
-          // (BadgeServices.updateBadge()).whenComplete(() {
-          //   print(BadgeServices.number.toString());
-          //   Provider.of<NotificationBadgeProvider>(context, listen: false)
-          //       .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
-          //   _problemWithFirebase = true;
-          //   _isLoading = false;
-          // });
-        });
-      } catch (e) {
-        setState(() {
-          _problemWithFirebase = true;
-          _isLoading = false;
-        });
-        print(e.toString());
-      }
-    });
-    // }
+          setState(() {
+            _problemWithFirebase = false;
+            _isLoading = false;
+            // BadgeServices.number = unreadmsg;
+            // (BadgeServices.updateBadge()).whenComplete(() {
+            //   print(BadgeServices.number.toString());
+            //   Provider.of<NotificationBadgeProvider>(context, listen: false)
+            //       .providerSetBadgeNumber(badgeNumber: (BadgeServices.number));
+            //   _problemWithFirebase = true;
+            //   _isLoading = false;
+            // });
+          });
+        } catch (e) {
+          setState(() {
+            _problemWithFirebase = true;
+            _isLoading = false;
+          });
+          print(e.toString());
+        }
+      });
+    }
   }
 
   Widget _body() {
@@ -245,20 +247,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void dispose() {
-    _stream.cancel();
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.deactivate();
   }
 }

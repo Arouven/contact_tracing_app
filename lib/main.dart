@@ -120,7 +120,7 @@ Future<void> _setFirebase() async {
   // 3. On iOS, this helps to take the user permissions
   settings = await FirebaseMessaging.instance.requestPermission(
     alert: true,
-    badge: true,
+    badge: false,
     provisional: false,
     sound: true,
   );
@@ -151,7 +151,7 @@ Future<void> _messageHandler(RemoteMessage message) async {
     await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber + 1));
     print(badgenumber.toString());
 
-    BadgeServices.updateAppBadge();
+    await BadgeServices.updateAppBadge();
     PushNotification notification = PushNotification(
       title: message.notification?.title,
       body: message.notification?.body,

@@ -34,7 +34,7 @@ class LiveGeolocatorPage extends StatefulWidget {
 
 class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   Position? _currentLocation;
-  late MapController _mapController;
+  MapController? _mapController = MapController();
   bool _isLoading = true;
   bool _showReload = false;
   List<Marker> _markers = [];
@@ -224,19 +224,20 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         Position cp = await Geolocator.getCurrentPosition(
             desiredAccuracy: geolocatorAccuracy);
 
-        // if (mounted) {
-        if (_currentLocation != null) {
-          setState(() {
-            print('my late');
-            print(cp.toString());
-            _currentLocation = cp;
-          });
-          if (_mapController != null) {
-            _mapController.move(
-                LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
-                _mapController.zoom);
+        if (mounted) {
+          if (_currentLocation != null) {
+            setState(() {
+              print('my late');
+              print(cp.toString());
+              _currentLocation = cp;
+            });
+            if (_mapController != null) {
+              _mapController!.move(
+                  LatLng(
+                      _currentLocation!.latitude, _currentLocation!.longitude),
+                  _mapController!.zoom);
+            }
           }
-          //}
         }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
@@ -414,9 +415,10 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                   ),
                 ),
               ),
-              Flexible(
-                child: FlutterMap(
-                  mapController: _mapController,
+              new Flexible(
+                child: new FlutterMap(
+                  mapController:
+                      (_mapController != null) ? _mapController : null,
                   options: MapOptions(
                     center:
                         LatLng(currentLatLng.latitude, currentLatLng.longitude),
@@ -587,13 +589,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       } else {
         setState(() {
           _internetConnection = true;
+          _mapController = null;
         });
       }
     });
 
     try {
       _getLocationPermission().whenComplete(() {
-        _mapController = MapController();
+        if (_mapController == null) {
+          _mapController = MapController();
+        }
         checkMobileNumber(context: context).whenComplete(() {
           _setFilters();
           _initLocationService().whenComplete(() {
@@ -649,18 +654,18 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   void dispose() {
     _markers.clear();
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.deactivate();
   }
 }

@@ -289,19 +289,12 @@ class _SettingPageState extends State<SettingPage> {
 // Subscribe to the stream!
               _firebaseListener = stream.listen((DatabaseEvent event) async {
                 try {
-                  //DataSnapshot snapshot = event.snapshot; // DataSnapshot
                   print('change detected updating badges');
                   await BadgeServices.updateBadge();
-                  GlobalVariables.getBadgeNumber().then((badgenumber) {
-                    print(badgenumber.toString());
-                    Provider.of<NotificationBadgeProvider>(context,
-                            listen: false)
-                        .providerSetBadgeNumber(badgeNumber: (badgenumber));
-                  });
-                  // print(BadgeServices.number);
-                  // Provider.of<NotificationBadgeProvider>(context, listen: false)
-                  //     .providerSetBadgeNumber(
-                  //         badgeNumber: (BadgeServices.number));
+                  int badgenumber = await GlobalVariables.getBadgeNumber();
+                  print(badgenumber.toString());
+                  Provider.of<NotificationBadgeProvider>(context, listen: false)
+                      .providerSetBadgeNumber(badgeNumber: (badgenumber));
                 } catch (e) {
                   print(e);
                 }
@@ -347,18 +340,18 @@ class _SettingPageState extends State<SettingPage> {
   @override
   void dispose() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    if (_firebaseListener != null) {
-      _firebaseListener.cancel();
-    }
+    // if (_firebaseListener != null) {
+    //   _firebaseListener.cancel();
+    // }
     super.deactivate();
   }
 }
