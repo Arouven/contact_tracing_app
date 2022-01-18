@@ -27,7 +27,7 @@ Writefile _wf = new Writefile();
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLNP;
 late AndroidNotificationChannel channel;
-late NotificationSettings settings;
+//late NotificationSettings settings;
 //late FirebaseMessaging _messaging;
 Widget? _pageSelected;
 late var _isDarkMode = null;
@@ -118,12 +118,12 @@ Future<void> _setFirebase() async {
   // _messaging =FirebaseMessaging.instance ;
 
   // 3. On iOS, this helps to take the user permissions
-  settings = await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    badge: true,
-    provisional: false,
-    sound: true,
-  );
+  // settings = await FirebaseMessaging.instance.requestPermission(
+  //   alert: true,
+  //   badge: true,
+  //   provisional: false,
+  //   sound: true,
+  // );
 }
 
 // void _openAppMessage() {
@@ -141,32 +141,32 @@ Future<void> _setFirebase() async {
 
 Future<void> _messageHandler(RemoteMessage message) async {
   print('background message ${message.notification!.body}');
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print('User granted permission');
-    // Parse the message received
-    //Notif.notifications.insert(0, message);
-    // await BadgeServices.updateBadge();
-    //  BadgeServices.number = BadgeServices.number + 1;
-    int badgenumber = await GlobalVariables.getBadgeNumber();
-    await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber + 1));
-    print(badgenumber.toString());
+  // if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  //   print('User granted permission');
+  // Parse the message received
+  //Notif.notifications.insert(0, message);
+  // await BadgeServices.updateBadge();
+  //  BadgeServices.number = BadgeServices.number + 1;
+  int badgenumber = await GlobalVariables.getBadgeNumber();
+  await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber + 1));
+  print(badgenumber.toString());
 
-    await BadgeServices.updateAppBadge();
-    PushNotification notification = PushNotification(
-      title: message.notification?.title,
-      body: message.notification?.body,
-    );
-    NotificationDetails notificationDetails =
-        await NotificationServices().getPlatform();
-    flutterLNP.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      notificationDetails,
-    );
-  } else {
-    print('User declined or has not accepted permission');
-  }
+  await BadgeServices.updateAppBadge();
+  PushNotification notification = PushNotification(
+    title: message.notification?.title,
+    body: message.notification?.body,
+  );
+  NotificationDetails notificationDetails =
+      await NotificationServices().getPlatform();
+  flutterLNP.show(
+    notification.hashCode,
+    notification.title,
+    notification.body,
+    notificationDetails,
+  );
+  // } else {
+  //   print('User declined or has not accepted permission');
+  // }
 }
 
 Future<void> startServices() async {
