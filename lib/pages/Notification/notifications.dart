@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:contact_tracing/main.dart';
 import 'package:contact_tracing/models/message.dart';
+import 'package:contact_tracing/pages/Mobile/mobiles.dart';
 import 'package:contact_tracing/pages/Notification/singlenotification.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
@@ -25,7 +26,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _problemWithFirebase = false;
   List<Message> messageList = [];
   late var _subscription;
-  late var _firebaseListener;
+  late var _firebaseListener = null;
   bool _internetConnection = true;
   late StreamSubscription _stream;
 
@@ -193,7 +194,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
         });
       }
     });
-    _getListofMessages().whenComplete(() => setState(() {}));
+    checkMobileNumber(context: context).whenComplete(() {
+      _getListofMessages().whenComplete(() => setState(() {}));
+    });
     _updateListofMessages();
     super.initState();
   }
@@ -223,14 +226,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
   void dispose() {
     _stream.cancel();
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.dispose();
   }
 
   @override
   void deactivate() {
     _subscription.cancel();
-    _firebaseListener.cancel();
+    if (_firebaseListener != null) {
+      _firebaseListener.cancel();
+    }
     super.deactivate();
   }
 }
