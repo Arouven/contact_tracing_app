@@ -240,7 +240,7 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
                                                     <small class="form-text text-muted">Distance that someone will be treated as contact with an infected.</small>
                                                 </div>
                                             </div>
-                                            <div class="row form-group">
+                                            <!-- <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="daysOfTestValidity" class=" form-control-label">Test Validity (days)</label>
                                                 </div>
@@ -248,7 +248,7 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
                                                     <input type="text" id="daysOfTestValidity" name="daysOfTestValidity" placeholder="7" class="form-control">
                                                     <small class="form-text text-muted">Past these days, the test will be invalid.</small>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <div class="row form-group">
                                                 <div class="col col-md-3">
                                                     <label for="daysFromContact" class=" form-control-label">Incubation Time (days)</label>

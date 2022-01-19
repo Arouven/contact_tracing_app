@@ -96,11 +96,13 @@ void onStart() {
           print("file uploaded and counter set to 0");
           counter = 0;
         }
+        //  if ((await GlobalVariables.getNotifier()) != false) {
         service.setNotificationInfo(
           title: "Contact tracing",
           content:
               "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
         );
+        // }
         counter = counter + 1;
       }
     },

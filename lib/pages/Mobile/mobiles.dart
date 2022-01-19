@@ -598,7 +598,7 @@ class _MobilePageState extends State<MobilePage> {
     } catch (e) {
       setState(() async {
         _mymobileNumber = '';
-        await checkMobileNumber(context: context);
+        // await checkMobileNumber(context: context);
       });
     }
 

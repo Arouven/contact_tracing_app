@@ -217,7 +217,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
-    _updateWidget().whenComplete(() {});
+    _updateWidget().whenComplete(() async {
+      await generatePath();
+    });
     try {
       _subscription = Connectivity()
           .onConnectivityChanged

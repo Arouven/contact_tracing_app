@@ -2,4 +2,4 @@
 
 //todo app
 
-//appbadge
+//loop in liveloc

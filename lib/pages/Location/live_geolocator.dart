@@ -58,6 +58,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _useExistingData({String bodyResponse = ''}) async {
+    print("in _useExistingData()");
     String myMobileNumber = await GlobalVariables.getMobileNumber();
     if (bodyResponse == '') {
       bodyResponse = await GlobalVariables.getLocations();
@@ -68,14 +69,17 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       if (await GlobalVariables.getShowCleanUsers() == true) {
         await _populateMarkers(data["cleanUsers"], myMobileNumber,
             Colors.green[400], Colors.green.shade900);
+        print('show cleanusers');
       }
       if (await GlobalVariables.getShowContactWithInfected() == true) {
         await _populateMarkers(data["contactWithInfected"], myMobileNumber,
             Colors.yellow[400], Colors.yellow.shade900);
+        print('show contact with infected');
       }
       if (await GlobalVariables.getShowConfirmInfected() == true) {
         await _populateMarkers(data["confirmInfected"], myMobileNumber,
             Colors.red[400], Colors.red.shade900);
+        print('show infected');
       }
 
       if (await GlobalVariables.getShowTestingCenters() == true) {
@@ -114,10 +118,12 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _generateMarkers() async {
+    print("_generateMarkers");
     String bodyResponse = await GlobalVariables.getLocations();
     if (widget.downloadUpdatedLocations ||
         bodyResponse == null ||
         bodyResponse == '') {
+      print('hey kaV');
       await _downloadData();
     } else {
       await _useExistingData();
@@ -129,6 +135,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _populateCentresMarkers(places, colour) async {
+    print(" _populateCentresMarkers(places, colour)");
     if (places != null) {
       // print(places);
       for (var place in places) {
@@ -164,16 +171,16 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   Future<void> _populateMarkers(
       mobiles, myMobileNumber, colour, myMarkerColour) async {
+    print('_populateMarkers(mobiles, myMobileNumber, colour, myMarkerColour)');
     if (mobiles != null) {
       //print(mobiles);
       for (var mobile in mobiles) {
         try {
           // print(mobile['mobileNumber'].toString());
-          int firstInt = int.parse(mobile['mobileNumber'].toString());
-          int secondInt = (myMobileNumber != null)
-              ? int.parse(myMobileNumber.toString())
-              : 0;
-          print(myMobileNumber.toString());
+          String firstInt = (mobile['mobileNumber'].toString());
+          String secondInt =
+              (myMobileNumber != null) ? (myMobileNumber.toString()) : '0';
+          // print(myMobileNumber.toString());
           if (firstInt != secondInt) {
             Marker marker = new Marker(
               width: 25,
@@ -214,6 +221,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
   }
 
   Future<void> _initLocationService() async {
+    print('_initLocationService()');
     bool serviceEnabled;
     bool serviceRequestResult;
     try {
@@ -224,20 +232,19 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         Position cp = await Geolocator.getCurrentPosition(
             desiredAccuracy: geolocatorAccuracy);
 
-        if (mounted) {
-          if (_currentLocation != null) {
-            setState(() {
-              print('my late');
-              print(cp.toString());
-              _currentLocation = cp;
-            });
-            if (_mapController != null) {
-              _mapController!.move(
-                  LatLng(
-                      _currentLocation!.latitude, _currentLocation!.longitude),
-                  _mapController!.zoom);
-            }
-          }
+        // if (mounted) {
+        if (_currentLocation != null) {
+          setState(() {
+            print('my late');
+            print(cp.toString());
+            _currentLocation = cp;
+          });
+          // if (_mapController != null) {
+          _mapController!.move(
+              LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
+              _mapController!.zoom);
+          //}
+          // }
         }
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
@@ -247,6 +254,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
         }
       }
     } on PlatformException catch (e) {
+      print('meet platform exception');
       print(e);
       if (e.code == 'PERMISSION_DENIED') {
         print(e.message);
@@ -534,6 +542,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       }
       _currentLocation = position;
     } catch (e) {
+      print('_getLocationPermission() ');
       print(e.toString());
     }
   }
@@ -547,7 +556,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
 
   @override
   void initState() {
-    _updateWidget().whenComplete(() {});
+    _updateWidget().whenComplete(() async {
+      await generatePath();
+    });
     if (path != "") {
       print('listening for changes from firebase');
       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
@@ -574,6 +585,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
               .providerSetBadgeNumber(badgeNumber: (badgenumber));
         } catch (e) {
           print(e.toString());
+          print('firebase exception');
         }
       });
     }
@@ -581,6 +593,7 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
+      print('connectivity result');
       print(result);
       if (result == ConnectivityResult.none) {
         setState(() {
