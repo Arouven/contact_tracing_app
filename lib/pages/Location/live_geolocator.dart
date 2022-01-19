@@ -123,7 +123,6 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     if (widget.downloadUpdatedLocations ||
         bodyResponse == null ||
         bodyResponse == '') {
-      print('hey kaV');
       await _downloadData();
     } else {
       await _useExistingData();
@@ -249,7 +248,23 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
       } else {
         serviceRequestResult = await Geolocator.isLocationServiceEnabled();
         if (serviceRequestResult) {
-          await _initLocationService();
+          Position cp = await Geolocator.getCurrentPosition(
+              desiredAccuracy: geolocatorAccuracy);
+
+          // if (mounted) {
+          if (_currentLocation != null) {
+            setState(() {
+              print('my late');
+              print(cp.toString());
+              _currentLocation = cp;
+            });
+            // if (_mapController != null) {
+            _mapController!.move(
+                LatLng(_currentLocation!.latitude, _currentLocation!.longitude),
+                _mapController!.zoom);
+            //}
+          }
+          print('this was my loop');
           return;
         }
       }
@@ -404,7 +419,9 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
                         onPressed: () {
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                              builder: (context) => LiveGeolocatorPage(),
+                              builder: (context) => LiveGeolocatorPage(
+                                downloadUpdatedLocations: true,
+                              ),
                             ),
                             (e) => false,
                           );
@@ -523,22 +540,19 @@ class _LiveGeolocatorPageState extends State<LiveGeolocatorPage> {
     }
   }
 
-  Future<Position?> initPrefs() async {
-    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-
-    Position? position = await Geolocator.getLastKnownPosition();
-    print(position);
-    return position;
-  }
-
   Future<void> _getLocationPermission() async {
     await Geolocator.requestPermission();
     try {
-      Position? position = await initPrefs();
-      while (position == null) {
+      print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+
+      Position? position = await Geolocator.getLastKnownPosition();
+      print('position is');
+      print(position);
+
+      if (position == null) {
         position = await Geolocator.getCurrentPosition();
         _currentLocation = position;
-        break;
+        //  break;
       }
       _currentLocation = position;
     } catch (e) {

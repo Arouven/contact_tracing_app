@@ -96,13 +96,13 @@ void onStart() {
           print("file uploaded and counter set to 0");
           counter = 0;
         }
-        //  if ((await GlobalVariables.getNotifier()) != false) {
-        service.setNotificationInfo(
-          title: "Contact tracing",
-          content:
-              "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-        );
-        // }
+        if ((await GlobalVariables.getNotifier()) != false) {
+          service.setNotificationInfo(
+            title: "Contact tracing",
+            content:
+                "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+          );
+        }
         counter = counter + 1;
       }
     },
@@ -318,9 +318,9 @@ void main() async {
   try {
     await _setFirebase();
     // _openAppMessage();
-    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    // await generatePath();
+    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    await generatePath();
 
     _pageSelected =
         await _pageSelector(); // NotificationsPage(); //await _pageSelector();
