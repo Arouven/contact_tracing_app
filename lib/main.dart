@@ -318,9 +318,9 @@ void main() async {
   try {
     await _setFirebase();
     // _openAppMessage();
-    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    await generatePath();
+    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    // await generatePath();
 
     _pageSelected =
         await _pageSelector(); // NotificationsPage(); //await _pageSelector();
