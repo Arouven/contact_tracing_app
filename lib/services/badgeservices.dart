@@ -55,10 +55,11 @@ class BadgeServices {
   }
 
   static updateAppBadge() async {
-    ((await GlobalVariables.getBadgeNumber()) > 0)
-        ? FlutterAppBadger.updateBadgeCount(
-            await GlobalVariables.getBadgeNumber())
-        : FlutterAppBadger.removeBadge();
+    if ((await GlobalVariables.getBadgeNumber()) > 0) {
+      FlutterAppBadger.updateBadgeCount(await GlobalVariables.getBadgeNumber());
+    } else {
+      FlutterAppBadger.removeBadge();
+    }
     // if (number > 0) {
     //   FlutterAppBadger.updateBadgeCount(number);
     // } else {

@@ -53,6 +53,7 @@ class NotificationBadgeProvider with ChangeNotifier {
     print("providerSetBadgeNumber badge $_badgeNumber");
     _badgeNumber = badgeNumber;
     print("providerSetBadgeNumber badge $_badgeNumber");
+    await GlobalVariables.setBadgeNumber(badgeNumber: badgeNumber);
     // await GlobalVariables.setBadgeNumber(badgeNumber: badgeNumber);
     notifyListeners();
   }

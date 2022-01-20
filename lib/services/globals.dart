@@ -189,7 +189,7 @@ class GlobalVariables {
 
   static Future getService() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('service');
+    return prefs.getBool('service') ?? false;
   }
 
   static Future setDarkTheme({required bool isDarkTheme}) async {
@@ -209,6 +209,6 @@ class GlobalVariables {
 
   static Future getBadgeNumber() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('badgeNumber') ?? 0;
+    return prefs.getInt('badgeNumber');
   }
 }

@@ -8,7 +8,9 @@ import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
+import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
+import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:contact_tracing/services/uploadClass.dart';
@@ -25,14 +27,15 @@ import 'package:provider/provider.dart';
 Writefile _wf = new Writefile();
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
-late FlutterLocalNotificationsPlugin flutterLNP;
-late AndroidNotificationChannel channel;
+//late FlutterLocalNotificationsPlugin flutterLNP;
+//late AndroidNotificationChannel channel;
 //late NotificationSettings settings;
 //late FirebaseMessaging _messaging;
 Widget? _pageSelected;
 late var _isDarkMode = null;
 late var _badgeNumber = null;
 late String path = ""; //"notification/+23057775794/"; // "";
+late var service = null;
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
@@ -47,7 +50,7 @@ void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
   // late Timer myTimer;
-  final service = FlutterBackgroundService();
+  service = FlutterBackgroundService();
   service.onDataReceived.listen((event) async {
     if (event!["action"] == "setAsForeground") {
       print("event = setAsForeground");
@@ -60,6 +63,7 @@ void onStart() {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
       await GlobalVariables.setForegroundServices(showServices: false);
+      return;
     }
 
     if (event["action"] == "stopService") {
@@ -68,7 +72,7 @@ void onStart() {
     }
   });
   // bring to foreground
-  service.setForegroundMode(true);
+  // service.setForegroundMode(true);
   Timer.periodic(
     Duration(minutes: timeToGetLocationPerMinute),
     (timer) async {
@@ -109,24 +113,19 @@ void onStart() {
   );
 }
 
-Future<void> _setFirebase() async {
-  channel = NotificationServices().androidNotificationChannel();
-  flutterLNP = FlutterLocalNotificationsPlugin();
-  await flutterLNP
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-  await Firebase.initializeApp();
-  // _messaging =FirebaseMessaging.instance ;
+// Future<void> _setFirebase() async {
 
-  // 3. On iOS, this helps to take the user permissions
-  // settings = await FirebaseMessaging.instance.requestPermission(
-  //   alert: true,
-  //   badge: true,
-  //   provisional: false,
-  //   sound: true,
-  // );
-}
+//   //await Firebase.initializeApp();
+//   // _messaging =FirebaseMessaging.instance ;
+
+//   // 3. On iOS, this helps to take the user permissions
+//   // settings = await FirebaseMessaging.instance.requestPermission(
+//   //   alert: true,
+//   //   badge: true,
+//   //   provisional: false,
+//   //   sound: true,
+//   // );
+// }
 
 // void _openAppMessage() {
 //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
@@ -142,33 +141,36 @@ Future<void> _setFirebase() async {
 // }
 
 Future<void> _messageHandler(RemoteMessage message) async {
-  print('background message ${message.notification!.body}');
-  // if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-  //   print('User granted permission');
-  // Parse the message received
-  //Notif.notifications.insert(0, message);
-  // await BadgeServices.updateBadge();
-  //  BadgeServices.number = BadgeServices.number + 1;
-  int badgenumber = await GlobalVariables.getBadgeNumber();
-  await GlobalVariables.setBadgeNumber(badgeNumber: (badgenumber + 1));
-  print(badgenumber.toString());
+  try {
+    print('background message ${message.notification!.body}');
 
-  await BadgeServices.updateAppBadge();
-  PushNotification notification = PushNotification(
-    title: message.notification?.title,
-    body: message.notification?.body,
-  );
-  NotificationDetails notificationDetails =
-      await NotificationServices().getPlatform();
-  flutterLNP.show(
-    notification.hashCode,
-    notification.title,
-    notification.body,
-    notificationDetails,
-  );
-  // } else {
-  //   print('User declined or has not accepted permission');
-  // }
+    int badgenumber = await GlobalVariables.getBadgeNumber();
+    badgenumber += 1;
+    await GlobalVariables.setBadgeNumber(badgeNumber: badgenumber);
+
+    await BadgeServices.updateAppBadge();
+    PushNotification notification = PushNotification(
+      title: message.notification?.title,
+      body: message.notification?.body,
+    );
+    NotificationDetails notificationDetails =
+        await NotificationServices().getPlatform();
+    var flutterLNP = FlutterLocalNotificationsPlugin();
+    var channel = NotificationServices().androidNotificationChannel();
+    await flutterLNP
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+    flutterLNP.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      notificationDetails,
+    );
+  } catch (e) {
+    print('error in firebase messabing');
+    print(e);
+  }
 }
 
 Future<void> startServices() async {
@@ -183,52 +185,49 @@ Future<void> startServices() async {
     ///   _listenToDbUpdateBadge();
 
     _listenToDbNotif();
-    // var isRunning = await FlutterBackgroundService().isServiceRunning();
+
+    // var isRunning = await service.isServiceRunning();
+    // print("is running using backagound returns $isRunning");
     // print('is running ' + isRunning.toString());
     //  if (isRunning == false) { //if (!(await service.isServiceRunning())) {print("cancel timer");timer.cancel();}
+    bool s = (await GlobalVariables.getService());
+    print(s);
     if ((await GlobalVariables.getService()) != true) {
+      await GlobalVariables.setService(service: true);
       //either null or false
       print('start the service');
       FlutterBackgroundService.initialize(onStart);
       final title = 'Services Started';
       final body = 'You are now connected to our app';
-      await updateFirebaseNotification(
-        notificationTitle: title,
-        notificationBody: body,
-      );
-      // await NotificationServices().showNotification(
-      //   notificationTitle: title,
-      //   notificationBody: body,
-      // );
-      await GlobalVariables.setService(service: true);
+      String time = (new DateTime.now().millisecondsSinceEpoch).toString();
+      time = time.substring(0, time.length - 3);
+      int timestamp = int.parse(time);
+      if (path != "") {
+        DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+        final data = <String, dynamic>{
+          "body": body,
+          "read": false,
+          "timestamp": timestamp,
+          "title": title,
+        };
+        await ref.push().set(data);
+        print("check your database");
+      }
+      print('in return');
+      return;
     }
     //  }
   }
 }
 
-Future<void> updateFirebaseNotification({
-  required String notificationTitle,
-  required String notificationBody,
-}) async {
-  String time = (new DateTime.now().millisecondsSinceEpoch).toString();
-  time = time.substring(0, time.length - 3);
-  int timestamp = int.parse(time);
-  if (path != "") {
-    DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-    final data = <String, dynamic>{
-      "body": notificationBody,
-      "read": false,
-      "timestamp": timestamp,
-      "title": notificationTitle,
-    };
-    await ref.push().set(data);
-    print("check your database");
-  }
-}
+// Future<void> _updateFirebaseNotification({
+//   required String notificationTitle,
+//   required String notificationBody,
+// }) async {}
 
 Future logout(context) async {
   await GlobalVariables.unsetAll();
-  FlutterBackgroundService().sendData({"action": "stopService"});
+  service.sendData({"action": "stopService"});
   Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => LoginPage(),
@@ -288,7 +287,7 @@ void _listenToDbNotif() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
   // _pageSelected = UpdateMobilePage(
   //   mobile: Mobile(
   //     mobileNumber: '+23057775794',
@@ -316,18 +315,26 @@ void main() async {
     await GlobalVariables.setNotifier(notifier: true);
   }
   try {
-    await _setFirebase();
+    //await _setFirebase();
     // _openAppMessage();
-    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    // await generatePath();
-
+    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    await generatePath();
+    final mobileNumber = await GlobalVariables.getMobileNumber();
+    final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    if (fcmtoken != null) {
+      await DatabaseMySQLServices.updateMobilefmcToken(
+        mobileNumber: mobileNumber,
+        fcmtoken: fcmtoken,
+      );
+    }
+    await startServices();
     _pageSelected =
         await _pageSelector(); // NotificationsPage(); //await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
-    });
+    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    //   print('Message clicked!');
+    // });
     await BadgeServices.updateBadge();
 
     _listenToDbNotif();
