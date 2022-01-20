@@ -35,7 +35,6 @@ Widget? _pageSelected;
 late var _isDarkMode = null;
 late var _badgeNumber = null;
 late String path = ""; //"notification/+23057775794/"; // "";
-late var service = null;
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
@@ -50,7 +49,7 @@ void onStart() {
   WidgetsFlutterBinding.ensureInitialized();
   int counter = 0;
   // late Timer myTimer;
-  service = FlutterBackgroundService();
+  final service = FlutterBackgroundService();
   service.onDataReceived.listen((event) async {
     if (event!["action"] == "setAsForeground") {
       print("event = setAsForeground");
@@ -63,7 +62,7 @@ void onStart() {
       print("event action == setAsBackground");
       service.setForegroundMode(false);
       await GlobalVariables.setForegroundServices(showServices: false);
-      return;
+      //  return;
     }
 
     if (event["action"] == "stopService") {
@@ -184,7 +183,7 @@ Future<void> startServices() async {
 
     ///   _listenToDbUpdateBadge();
 
-    _listenToDbNotif();
+    // _listenToDbNotif();
 
     // var isRunning = await service.isServiceRunning();
     // print("is running using backagound returns $isRunning");
@@ -214,7 +213,7 @@ Future<void> startServices() async {
         print("check your database");
       }
       print('in return');
-      return;
+      //return;
     }
     //  }
   }
@@ -227,7 +226,7 @@ Future<void> startServices() async {
 
 Future logout(context) async {
   await GlobalVariables.unsetAll();
-  service.sendData({"action": "stopService"});
+  FlutterBackgroundService().sendData({"action": "stopService"});
   Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => LoginPage(),

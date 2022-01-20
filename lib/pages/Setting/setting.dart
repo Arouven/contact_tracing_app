@@ -50,10 +50,11 @@ class _SettingPageState extends State<SettingPage> {
 
   Future _setServices(bool hide) async {
     // print("from service directly ${service.isServiceRunning()}");
+    final serv = FlutterBackgroundService();
     if (hide == true) {
-      FlutterBackgroundService().sendData({"action": "setAsBackground"});
+      serv.sendData({"action": "setAsBackground"});
     } else {
-      FlutterBackgroundService().sendData({"action": "setAsForeground"});
+      serv.sendData({"action": "setAsForeground"});
     }
     // FlutterBackgroundService().sendData({"action": service});
     //await GlobalVariables.setForegroundServices(showServices: !hide);
