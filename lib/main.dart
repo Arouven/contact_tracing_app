@@ -55,15 +55,15 @@ void onStart() {
       print("event = setAsForeground");
       // bring to foreground
       service.setForegroundMode(true);
-      await GlobalVariables.setForegroundServices(showServices: true);
+      //   await GlobalVariables.setForegroundServices(showServices: true);
       return;
     }
-    if (event["action"] == "setAsBackground") {
-      print("event action == setAsBackground");
-      service.setForegroundMode(false);
-      await GlobalVariables.setForegroundServices(showServices: false);
-      //  return;
-    }
+    // if (event["action"] == "setAsBackground") {
+    //   print("event action == setAsBackground");
+    //   service.setForegroundMode(false);
+    //   await GlobalVariables.setForegroundServices(showServices: false);
+    //   //  return;
+    // }
 
     if (event["action"] == "stopService") {
       print("event action == stopService");
@@ -71,7 +71,7 @@ void onStart() {
     }
   });
   // bring to foreground
-  // service.setForegroundMode(true);
+  service.setForegroundMode(true);
   Timer.periodic(
     Duration(minutes: timeToGetLocationPerMinute),
     (timer) async {
@@ -345,8 +345,9 @@ void main() async {
       );
     }
     await startServices();
+    // FlutterBackgroundService().sendData({"action": "setAsBackground"});
     ///////////
-    _pageSelected = SettingPage(); //await _pageSelector();
+    _pageSelected = NotificationsPage(); //await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
     // FirebaseMessaging.onMessageOpenedApp.listen((message) {
     //   print('Message clicked!');

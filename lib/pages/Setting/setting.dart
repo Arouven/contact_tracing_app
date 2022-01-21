@@ -35,30 +35,31 @@ class _SettingPageState extends State<SettingPage> {
   bool _internetConnection = true;
   late var _mobileNumber = null;
 
-  Future _checkServices() async {
-    var action = await GlobalVariables.getForegroundServices();
-    if (action != true) {
-      setState(() {
-        _isForground = false;
-      });
-    } else {
-      setState(() {
-        _isForground = true;
-      });
-    }
-  }
+  // Future _checkServices() async {
+  //   var action = await GlobalVariables.getForegroundServices();
+  //   print("$action");
+  //   if (action != true) {
+  //     setState(() {
+  //       _isForground = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _isForground = true;
+  //     });
+  //   }
+  // }
 
-  void _setServices(bool hide) {
-    // print("from service directly ${service.isServiceRunning()}");
-    final serv = FlutterBackgroundService();
-    if (hide == true) {
-      serv.sendData({"action": "setAsBackground"});
-    } else {
-      serv.sendData({"action": "setAsForeground"});
-    }
-    // FlutterBackgroundService().sendData({"action": service});
-    //await GlobalVariables.setForegroundServices(showServices: !hide);
-  }
+  // void _setServices(bool hide) {
+  //   // print("from service directly ${service.isServiceRunning()}");
+  //   final serv = FlutterBackgroundService();
+  //   if (hide == true) {
+  //     serv.sendData({"action": "setAsBackground"});
+  //   } else {
+  //     serv.sendData({"action": "setAsForeground"});
+  //   }
+  //   // FlutterBackgroundService().sendData({"action": service});
+  //   //await GlobalVariables.setForegroundServices(showServices: !hide);
+  // }
 
   Future _getNotifier() async {
     return await GlobalVariables.getNotifier();
@@ -165,32 +166,32 @@ class _SettingPageState extends State<SettingPage> {
               ],
             ),
           ),
-          Container(
-            height: 40.0,
-            padding: EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    'Hide Services:',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    //    style: Theme.of(context).textTheme.headline6,
-                  ),
-                ),
-                Switch(
-                  value: _isForground,
-                  onChanged: (value) {
-                    _setServices(value);
-                    setState(() {
-                      _isForground = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 40.0,
+          //   padding: EdgeInsets.all(12.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: <Widget>[
+          //       Expanded(
+          //         child: Text(
+          //           'Hide Services:',
+          //           maxLines: 1,
+          //           overflow: TextOverflow.ellipsis,
+          //           //    style: Theme.of(context).textTheme.headline6,
+          //         ),
+          //       ),
+          //       Switch(
+          //         value: _isForground,
+          //         onChanged: (value) {
+          //           _setServices(value);
+          //           setState(() {
+          //             _isForground = value;
+          //           });
+          //         },
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Container(
             height: 40.0,
             padding: EdgeInsets.all(12.0),
@@ -282,43 +283,43 @@ class _SettingPageState extends State<SettingPage> {
         });
       }
     });
-    _checkServices().whenComplete(() {
-      //  _getDarkMode().whenComplete(() {
-      _getNotifier().then((notifier) {
-        _getusermail().then((usermail) {
-          _getActiveMobile().then((mobileNumber) async {
-            if ((usermail != null) && (path != "")) {
-              print('listening for changes from firebase');
-              DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+    //_checkServices().whenComplete(() {
+    //  _getDarkMode().whenComplete(() {
+    _getNotifier().then((notifier) {
+      _getusermail().then((usermail) {
+        _getActiveMobile().then((mobileNumber) async {
+          if ((usermail != null) && (path != "")) {
+            print('listening for changes from firebase');
+            DatabaseReference ref = FirebaseDatabase.instance.ref(path);
 // Get the Stream
-              Stream<DatabaseEvent> stream = ref.onValue;
+            Stream<DatabaseEvent> stream = ref.onValue;
 
 // Subscribe to the stream!
-              _firebaseListener = stream.listen((DatabaseEvent event) async {
-                try {
-                  print('change detected updating badges');
-                  await BadgeServices.updateBadge();
-                  int badgenumber = await GlobalVariables.getBadgeNumber();
-                  print(badgenumber.toString());
-                  Provider.of<NotificationBadgeProvider>(context, listen: false)
-                      .providerSetBadgeNumber(badgeNumber: (badgenumber));
-                } catch (e) {
-                  print(e);
-                }
-              });
-            }
-            setState(() {
-              _notifier = notifier;
-              _usermail = usermail;
-              _mobileNumber = mobileNumber;
-              _isLoading = false;
+            _firebaseListener = stream.listen((DatabaseEvent event) async {
+              try {
+                print('change detected updating badges');
+                await BadgeServices.updateBadge();
+                int badgenumber = await GlobalVariables.getBadgeNumber();
+                print(badgenumber.toString());
+                Provider.of<NotificationBadgeProvider>(context, listen: false)
+                    .providerSetBadgeNumber(badgeNumber: (badgenumber));
+              } catch (e) {
+                print(e);
+              }
             });
-            await checkMobileNumber(context: context);
+          }
+          setState(() {
+            _notifier = notifier;
+            _usermail = usermail;
+            _mobileNumber = mobileNumber;
+            _isLoading = false;
           });
+          await checkMobileNumber(context: context);
         });
       });
-      //  });
     });
+    //  });
+    //  });
 
     super.initState();
   }
