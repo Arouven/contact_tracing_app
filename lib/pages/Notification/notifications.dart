@@ -184,10 +184,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     } else {
       var ref = FirebaseDatabase.instance.ref(path);
       return FirebaseAnimatedList(
-        sort: (a, b) {
-          return (b.value as Map)['timestamp']
-              .compareTo((a.value as Map)['timestamp']);
-        },
+        shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(),
+        reverse: true,
         query: ref.orderByChild('timestamp'), //orderBy('timestamp'),
         duration: Duration(seconds: 2),
         itemBuilder: (context, snapshot, animation, index) {
