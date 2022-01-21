@@ -500,7 +500,7 @@ class _MobilePageState extends State<MobilePage> {
                               'Set Active',
                               // style: TextStyle(color: Colors.black),
                             ),
-                            onTap: () async {
+                            onTap: () {
                               print('set active');
                               Future.delayed(Duration.zero).then((value) async {
                                 await _showSetActiveDialog(_mobiles[index]);
@@ -516,7 +516,7 @@ class _MobilePageState extends State<MobilePage> {
                               'Edit Mobile',
                               // style: TextStyle(color: Colors.black),
                             ),
-                            onTap: () async {
+                            onTap: () {
                               print('editmobile');
                               Future.delayed(Duration.zero).then((value) async {
                                 await _showEditDialog(_mobiles[index]);
@@ -590,13 +590,13 @@ class _MobilePageState extends State<MobilePage> {
           _mymobileNumber = mobileNumber;
         });
       } else {
-        setState(() async {
+        setState(() {
           _mymobileNumber = '';
-          await checkMobileNumber(context: context);
         });
+        await checkMobileNumber(context: context);
       }
     } catch (e) {
-      setState(() async {
+      setState(() {
         _mymobileNumber = '';
         // await checkMobileNumber(context: context);
       });

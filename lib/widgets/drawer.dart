@@ -101,28 +101,32 @@ class _DrawerSideState extends State<DrawerSide> {
       //   print(value);
       //   bn = value;
       // });
-      int bn = Provider.of<NotificationBadgeProvider>(context).badgeNumber;
+      try {
+        int bn = Provider.of<NotificationBadgeProvider>(context).badgeNumber;
 
-      print('>>>>>>>>>>>>>>>>>>>> REBUILD');
-      print(bn);
+        print('>>>>>>>>>>>>>>>>>>>> REBUILD');
+        print(bn);
 
-      // GlobalVariables.getBadgeNumber().then((value) {
-      //   print(value);
-      //   bn = value;
-      // });
+        // GlobalVariables.getBadgeNumber().then((value) {
+        //   print(value);
+        //   bn = value;
+        // });
 
-      // print(BadgeServices.number);
-
-      if (bn > 0) {
         // print(BadgeServices.number);
-        return (Badge(
-          badgeContent: Text(
-            "$bn",
-            style: TextStyle(fontSize: 8.0),
-          ),
-          child: Icon(Icons.notifications),
-        ));
-      } else {
+
+        if (bn > 0) {
+          // print(BadgeServices.number);
+          return (Badge(
+            badgeContent: Text(
+              "$bn",
+              style: TextStyle(fontSize: 8.0),
+            ),
+            child: Icon(Icons.notifications),
+          ));
+        } else {
+          return (Icon(Icons.notifications));
+        }
+      } catch (e) {
         return (Icon(Icons.notifications));
       }
 

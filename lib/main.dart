@@ -8,9 +8,7 @@ import 'package:contact_tracing/pages/Profile/profile.dart';
 import 'package:contact_tracing/pages/Setting/setting.dart';
 import 'package:contact_tracing/providers/notificationbadgemanager.dart';
 import 'package:contact_tracing/providers/thememanager.dart';
-import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/badgeservices.dart';
-import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
 import 'package:contact_tracing/services/uploadClass.dart';
@@ -197,9 +195,9 @@ Future<void> startServices() async {
     print('email and mobile number not null');
     await generatePath();
 
-    ///   _listenToDbUpdateBadge();
+    //  _listenToDbUpdateBadge();
 
-    // _listenToDbNotif();
+    _listenToDbNotif();
 
     // var isRunning = await service.isServiceRunning();
     // print("is running using backagound returns $isRunning");
@@ -333,21 +331,20 @@ void main() async {
     //////////
     //await _setFirebase();
     // _openAppMessage();
-    await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    await generatePath();
-    final mobileNumber = await GlobalVariables.getMobileNumber();
-    final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    if (fcmtoken != null) {
-      await DatabaseMySQLServices.updateMobilefmcToken(
-        mobileNumber: mobileNumber,
-        fcmtoken: fcmtoken,
-      );
-    }
-    await startServices();
-    // FlutterBackgroundService().sendData({"action": "setAsBackground"});
+    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
+    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
+    // await generatePath();
+    // final mobileNumber = await GlobalVariables.getMobileNumber();
+    // final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+    // if (fcmtoken != null) {
+    //   await DatabaseMySQLServices.updateMobilefmcToken(
+    //     mobileNumber: mobileNumber,
+    //     fcmtoken: fcmtoken,
+    //   );
+    // }
+    // await startServices();
     ///////////
-    _pageSelected = NotificationsPage(); //await _pageSelector();
+    _pageSelected = await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
     // FirebaseMessaging.onMessageOpenedApp.listen((message) {
     //   print('Message clicked!');
