@@ -48,7 +48,7 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
-  Future _setServices(bool hide) async {
+  void _setServices(bool hide) {
     // print("from service directly ${service.isServiceRunning()}");
     final serv = FlutterBackgroundService();
     if (hide == true) {
@@ -181,8 +181,8 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 Switch(
                   value: _isForground,
-                  onChanged: (value) async {
-                    await _setServices(value);
+                  onChanged: (value) {
+                    _setServices(value);
                     setState(() {
                       _isForground = value;
                     });

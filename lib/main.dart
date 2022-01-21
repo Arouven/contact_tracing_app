@@ -152,20 +152,36 @@ Future<void> _messageHandler(RemoteMessage message) async {
       title: message.notification?.title,
       body: message.notification?.body,
     );
-    NotificationDetails notificationDetails =
-        await NotificationServices().getPlatform();
+    // NotificationDetails notificationDetails =
+    //     await NotificationServices().getPlatform();
     var flutterLNP = FlutterLocalNotificationsPlugin();
-    var channel = NotificationServices().androidNotificationChannel();
+    var channel = const AndroidNotificationChannel(
+      'contacttracing', 'your channel name',
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    ); // NotificationServices().androidNotificationChannel();
     await flutterLNP
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
-    flutterLNP.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      notificationDetails,
-    );
+    // await flutterLNP.show(
+    //   notification.hashCode,
+    //   notification.title,
+    //   notification.body,
+    //   NotificationDetails(
+    //     android: AndroidNotificationDetails(
+    //       channel.id,
+    //       channel.name,
+
+    //       // TODO add a proper drawable resource to android, for now using
+    //       //      one that already exists in example app.
+    //       icon: 'launch_background', // '@mipmap/ic_launcher';
+    //     ),
+    //   ),
+    //   // notificationDetails,
+    // );
+    // return;
   } catch (e) {
     print('error in firebase messabing');
     print(e);
@@ -314,6 +330,7 @@ void main() async {
     await GlobalVariables.setNotifier(notifier: true);
   }
   try {
+    //////////
     //await _setFirebase();
     // _openAppMessage();
     await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
@@ -328,8 +345,8 @@ void main() async {
       );
     }
     await startServices();
-    _pageSelected =
-        await _pageSelector(); // NotificationsPage(); //await _pageSelector();
+    ///////////
+    _pageSelected = SettingPage(); //await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
     // FirebaseMessaging.onMessageOpenedApp.listen((message) {
     //   print('Message clicked!');
