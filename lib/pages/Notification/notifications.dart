@@ -184,14 +184,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
     } else {
       var ref = FirebaseDatabase.instance.ref(path);
       return FirebaseAnimatedList(
-        query: ref.orderByChild('timestamp'),
+        sort: (a, b) {
+          return (b.value as Map)['timestamp']
+              .compareTo((a.value as Map)['timestamp']);
+        },
+        query: ref.orderByChild('timestamp'), //orderBy('timestamp'),
         duration: Duration(seconds: 2),
         itemBuilder: (context, snapshot, animation, index) {
-          // if (snapshot.value != null) {
-          //   _problemWithFirebase = false;
-          //   _isLoading = false;
-          // }
-          final nextMessage = Message.fromRTDB(snapshot);
+          var nextMessage;
+          if (snapshot.value == null) {
+            ref.orderByChild('timestamp').once().then((event) {
+              nextMessage = (Message.fromRTDB(event.snapshot));
+            });
+
+            //   _problemWithFirebase = false;
+            //   _isLoading = false;
+          } else {
+            nextMessage = (Message.fromRTDB(snapshot));
+          }
+
           // Map message = snapshot.value as Map;
           // messageList.clear();
           // setState(() {
