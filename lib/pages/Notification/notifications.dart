@@ -9,6 +9,7 @@ import 'package:contact_tracing/services/badgeservices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/widgets/commonWidgets.dart';
 import 'package:contact_tracing/widgets/drawer.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:provider/provider.dart';
@@ -23,50 +24,50 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  bool _isLoading = true;
-  bool _problemWithFirebase = false;
-  List<Message> messageList = [];
+  //bool _isLoading = true;
+  //bool _problemWithFirebase = false;
+  //List<Message> messageList = [];
   late var _subscription;
   late var _firebaseListener = null;
   bool _internetConnection = true;
   // late StreamSubscription _stream;
 
-  Future _getListofMessages() async {
-    try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-      // Get the data once
-      DatabaseEvent event = await ref.once();
+//   Future _getListofMessages() async {
+//     try {
+//       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+//       // Get the data once
+//       DatabaseEvent event = await ref.once();
 
-// Print the data of the snapshot
-      print(event.snapshot.value); // { "name": "John" }
-      DataSnapshot snapshot = event.snapshot; // DataSnapshot
-      Map message = snapshot.value as Map;
-      messageList.clear();
-      setState(() {
-        if (message != null) {
-          message.forEach((key, value) {
-            messageList.add(
-              new Message(
-                id: key,
-                title: value['title'],
-                body: value['body'],
-                read: value['read'],
-                timestamp: value['timestamp'],
-              ),
-            );
-          });
-        }
-        _problemWithFirebase = false;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _problemWithFirebase = true;
-        _isLoading = false;
-      });
-      print(e.toString());
-    }
-  }
+// // Print the data of the snapshot
+//       print(event.snapshot.value); // { "name": "John" }
+//       DataSnapshot snapshot = event.snapshot; // DataSnapshot
+//       Map message = snapshot.value as Map;
+//       messageList.clear();
+//       setState(() {
+//         if (message != null) {
+//           message.forEach((key, value) {
+//             messageList.add(
+//               new Message(
+//                 id: key,
+//                 title: value['title'],
+//                 body: value['body'],
+//                 read: value['read'],
+//                 timestamp: value['timestamp'],
+//               ),
+//             );
+//           });
+//         }
+//         _problemWithFirebase = false;
+//         _isLoading = false;
+//       });
+//     } catch (e) {
+//       setState(() {
+//         _problemWithFirebase = true;
+//         _isLoading = false;
+//       });
+//       print(e.toString());
+//     }
+//   }
 
   void _startListening() {
     if (path != "") {
@@ -92,119 +93,169 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  void _updateListofMessages() {
-    if (path != "") {
-      DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-// Get the Stream
-      Stream<DatabaseEvent> stream = ref.onValue;
+//   void _updateListofMessages() {
+//     if (path != "") {
+//       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
+// // Get the Stream
+//       Stream<DatabaseEvent> stream = ref.onValue;
 
-// Subscribe to the stream!
-      _firebaseListener = stream.listen((DatabaseEvent event) async {
-        try {
-          DataSnapshot snapshot = event.snapshot; // DataSnapshot
-          Map message = snapshot.value as Map;
-          messageList.clear();
-          setState(() {
-            if (message != null) {
-              message.forEach((key, value) {
-                messageList.add(
-                  new Message(
-                    id: key,
-                    title: value['title'] as String,
-                    body: value['body'] as String,
-                    read: value['read'] as bool,
-                    timestamp: value['timestamp'] as int,
-                  ),
-                );
-              });
-            }
-            print('updated list builder');
-            _problemWithFirebase = false;
-            _isLoading = false;
-          });
-          //  });
-        } catch (e) {
-          setState(() {
-            _problemWithFirebase = true;
-            _isLoading = false;
-          });
-          print(e.toString());
-        }
-      });
-    }
-  }
+// // Subscribe to the stream!
+//       _firebaseListener = stream.listen((DatabaseEvent event) async {
+//         try {
+//           DataSnapshot snapshot = event.snapshot; // DataSnapshot
+//           Map message = snapshot.value as Map;
+//           messageList.clear();
+//           setState(() {
+//             if (message != null) {
+//               message.forEach((key, value) {
+//                 messageList.add(
+//                   new Message(
+//                     id: key,
+//                     title: value['title'] as String,
+//                     body: value['body'] as String,
+//                     read: value['read'] as bool,
+//                     timestamp: value['timestamp'] as int,
+//                   ),
+//                 );
+//               });
+//             }
+//             print('updated list builder');
+//             _problemWithFirebase = false;
+//             _isLoading = false;
+//           });
+//           //  });
+//         } catch (e) {
+//           setState(() {
+//             _problemWithFirebase = true;
+//             _isLoading = false;
+//           });
+//           print(e.toString());
+//         }
+//       });
+//     }
+//   }
+
+  //  ListView.builder(
+  //   itemCount: messageList.length,
+  //   itemBuilder: (BuildContext context, int index) {
+  //     return ListTile(
+  //       leading: Icon(Icons.email),
+  //       title: Text(
+  //         messageList[index].title,
+  //         style: (messageList[index].read != false)
+  //             ? null
+  //             : TextStyle(
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //       ),
+  //       trailing: (messageList[index].read != false)
+  //           ? null
+  //           : Icon(
+  //               Icons.brightness_1,
+  //               size: 9.0,
+  //               color: Colors.red,
+  //             ),
+  //       onTap: () async {
+  //         var msg = messageList[index];
+  //         await Navigator.of(context).push(
+  //           MaterialPageRoute(
+  //             builder: (BuildContext context) =>
+  //                 SingleNotificationPage(
+  //               message: msg,
+  //             ),
+  //           ),
+  //         );
+  //         setState(() {
+  //           msg.read = true;
+  //         });
+  //       },
+  //     );
+  //   },
+  // ),
 
   Widget _body() {
     if (_internetConnection == false) {
       return Aesthetic.displayNoConnection();
-    } else if (_problemWithFirebase == true) {
-      return Scrollbar(
-        child: RefreshIndicator(
-            onRefresh: () async {
-              await Future.delayed(
-                  Duration(seconds: 2)); //to allow circular loading
-              await _getListofMessages();
-            },
-            child: Aesthetic.displayProblemFirebase()),
-      );
+      // } else if (_problemWithFirebase == true) {
+      //   return Aesthetic.displayProblemFirebase();
+      // } else {
+      //   if (_isLoading != false) {
+      //     return Aesthetic.displayCircle();
     } else {
-      if (_isLoading != false) {
-        return Aesthetic.displayCircle();
-      } else {
-        return Scrollbar(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              await Future.delayed(
-                  Duration(seconds: 2)); //to allow circular loading
-              await _getListofMessages();
-            },
-            child: ListView.builder(
-              itemCount: messageList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: Icon(Icons.email),
-                  title: Text(
-                    messageList[index].title,
-                    style: (messageList[index].read != false)
-                        ? null
-                        : TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                  ),
-                  trailing: (messageList[index].read != false)
-                      ? null
-                      : Icon(
-                          Icons.brightness_1,
-                          size: 9.0,
-                          color: Colors.red,
-                        ),
-                  onTap: () async {
-                    var msg = messageList[index];
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            SingleNotificationPage(
-                          message: msg,
-                        ),
+      var ref = FirebaseDatabase.instance.ref(path);
+      return FirebaseAnimatedList(
+        query: ref.orderByChild('timestamp'),
+        duration: Duration(seconds: 2),
+        itemBuilder: (context, snapshot, animation, index) {
+          // if (snapshot.value != null) {
+          //   _problemWithFirebase = false;
+          //   _isLoading = false;
+          // }
+          final nextMessage = Message.fromRTDB(snapshot);
+          // Map message = snapshot.value as Map;
+          // messageList.clear();
+          // setState(() {
+          //   if (message != null) {
+          //     message.forEach((key, value) {
+          //       messageList.add(
+          //         new Message(
+          //           id: key,
+          //           title: value['title'] as String,
+          //           body: value['body'] as String,
+          //           read: value['read'] as bool,
+          //           timestamp: value['timestamp'] as int,
+          //         ),
+          //       );
+          //     });
+          //   }
+          //   print('updated list builder');
+
+          // });
+
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset(1, 0),
+              end: Offset(0, 0),
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.bounceInOut,
+              reverseCurve: Curves.bounceIn,
+            )),
+            child: ListTile(
+              leading: Icon(Icons.email),
+              title: Text(
+                nextMessage.title,
+                style: (nextMessage.read != false)
+                    ? null
+                    : TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                    setState(() {
-                      msg.read = true;
-                    });
-                    // Navigator.of(context).pushReplacement(
-                    //   MaterialPageRoute(
-                    //     builder: (BuildContext context) => SingleNotificationPage(
-                    //       message: messageList[index],
-                    //     ),
-                    //   ),
-                    // );
-                  },
+              ),
+              trailing: (nextMessage.read != false)
+                  ? null
+                  : Icon(
+                      Icons.brightness_1,
+                      size: 9.0,
+                      color: Colors.red,
+                    ),
+              onTap: () async {
+                var msg = nextMessage;
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => SingleNotificationPage(
+                      message: msg,
+                    ),
+                  ),
                 );
+                setState(() {
+                  msg.read = true;
+                });
               },
             ),
-          ),
-        );
-      }
+          );
+        },
+      );
+      //}
     }
   }
 
@@ -236,12 +287,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
         }
       });
       checkMobileNumber(context: context).whenComplete(() {});
-      _getListofMessages().whenComplete(() {
-        _startListening();
-        _updateListofMessages();
-      });
-
-      //  _updateListofMessages();
+      // _getListofMessages().whenComplete(() {
+      _startListening();
+      // _updateListofMessages();
+      //  });
     } catch (e) {
       print(e.toString());
     }
@@ -250,9 +299,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    //var moblies = ApiNotification.getNotifications();
     return Container(
-      // color: Colors.white,
       child: SafeArea(
         top: true,
         bottom: true,
