@@ -56,7 +56,7 @@ class updateDatabase
                     $humandDtetimePossibleContact = date('Y-m-d H:i:s', $datetimePossibleContact);
                     print "$mobileNumberPossibleContact will be marked as contact, infected by $mobileNumberInfected because distance between them is $distanceMetres meters at $humandDtetimePossibleContact ($datetimePossibleContact).<br>";
                     //send message to mobile
-                    //new NotifyFirebase($mobileNumberPossibleContact);
+                    new NotifyFirebase($mobileNumberPossibleContact);
                     print "message sent to $mobileNumberPossibleContact <br>";
                     $this->markAsContact($mobileNumberPossibleContact);
                 } else {

@@ -24,23 +24,16 @@ import 'package:provider/provider.dart';
 
 Writefile _wf = new Writefile();
 
-/// Initialize the [FlutterLocalNotificationsPlugin] package.
-//late FlutterLocalNotificationsPlugin flutterLNP;
-//late AndroidNotificationChannel channel;
-//late NotificationSettings settings;
-//late FirebaseMessaging _messaging;
 Widget? _pageSelected;
 late var _isDarkMode = null;
 late var _badgeNumber = null;
-late String path = ""; //"notification/+23057775794/"; // "";
+late String path = "";
 
 Future<void> generatePath() async {
   final phoneNumber = await GlobalVariables.getMobileNumber();
   if (phoneNumber != null) {
     path = "notification/$phoneNumber/";
   }
-  //
-  //path = "notification/+23057775794/";
 }
 
 void onStart() {
@@ -53,15 +46,8 @@ void onStart() {
       print("event = setAsForeground");
       // bring to foreground
       service.setForegroundMode(true);
-      //   await GlobalVariables.setForegroundServices(showServices: true);
       return;
     }
-    // if (event["action"] == "setAsBackground") {
-    //   print("event action == setAsBackground");
-    //   service.setForegroundMode(false);
-    //   await GlobalVariables.setForegroundServices(showServices: false);
-    //   //  return;
-    // }
 
     if (event["action"] == "stopService") {
       print("event action == stopService");
@@ -92,50 +78,25 @@ void onStart() {
           '${position.longitude.toString()}',
           '${position.accuracy.toString()}',
         );
-        if (counter > (timeToUploadPerMinute) * 60) {
+        print(counter.toString());
+        print(timeToUploadPerMinute.toString());
+        if (counter > (timeToUploadPerMinute * 60)) {
           await UploadFile.uploadToServer();
           print("file uploaded and counter set to 0");
           counter = 0;
         }
-        if ((await GlobalVariables.getNotifier()) != false) {
-          service.setNotificationInfo(
-            title: "Contact tracing",
-            content:
-                "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
-          );
-        }
+
+        service.setNotificationInfo(
+          title: "Contact tracing",
+          content:
+              "Updated at ${DateTime.now()} \nLatitude: ${position.latitude.toString()} \nLongitude: ${position.longitude.toString()}",
+        );
+
         counter = counter + 1;
       }
     },
   );
 }
-
-// Future<void> _setFirebase() async {
-
-//   //await Firebase.initializeApp();
-//   // _messaging =FirebaseMessaging.instance ;
-
-//   // 3. On iOS, this helps to take the user permissions
-//   // settings = await FirebaseMessaging.instance.requestPermission(
-//   //   alert: true,
-//   //   badge: true,
-//   //   provisional: false,
-//   //   sound: true,
-//   // );
-// }
-
-// void _openAppMessage() {
-//   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//     print('User granted permission');
-//     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//       // Parse the message received
-
-//       _sendMsg(message);
-//     });
-//   } else {
-//     print('User declined or has not accepted permission');
-//   }
-// }
 
 Future<void> _messageHandler(RemoteMessage message) async {
   try {
@@ -150,36 +111,17 @@ Future<void> _messageHandler(RemoteMessage message) async {
       title: message.notification?.title,
       body: message.notification?.body,
     );
-    // NotificationDetails notificationDetails =
-    //     await NotificationServices().getPlatform();
     var flutterLNP = FlutterLocalNotificationsPlugin();
     var channel = const AndroidNotificationChannel(
       'contacttracing', 'your channel name',
       description:
           'This channel is used for important notifications.', // description
       importance: Importance.high,
-    ); // NotificationServices().androidNotificationChannel();
+    );
     await flutterLNP
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
-    // await flutterLNP.show(
-    //   notification.hashCode,
-    //   notification.title,
-    //   notification.body,
-    //   NotificationDetails(
-    //     android: AndroidNotificationDetails(
-    //       channel.id,
-    //       channel.name,
-
-    //       // TODO add a proper drawable resource to android, for now using
-    //       //      one that already exists in example app.
-    //       icon: 'launch_background', // '@mipmap/ic_launcher';
-    //     ),
-    //   ),
-    //   // notificationDetails,
-    // );
-    // return;
   } catch (e) {
     print('error in firebase messabing');
     print(e);
@@ -301,14 +243,6 @@ void _listenToDbNotif() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // _pageSelected = UpdateMobilePage(
-  //   mobile: Mobile(
-  //     mobileNumber: '+23057775794',
-  //     mobileName: 'my mobile',
-  //     email: 'apoolian@umail.utm.ac.mu',
-  //     fcmtoken: 'dummy token',
-  //   ),
-  // );
   try {
     _isDarkMode = await GlobalVariables.getDarkTheme();
     _badgeNumber = await GlobalVariables.getBadgeNumber();
@@ -328,29 +262,9 @@ void main() async {
     await GlobalVariables.setNotifier(notifier: true);
   }
   try {
-    //////////
-    //await _setFirebase();
-    // _openAppMessage();
-    // await GlobalVariables.setEmail(email: 'apoolian@umail.utm.ac.mu');
-    // await GlobalVariables.setMobileNumber(mobileNumber: '+23057775794');
-    // await generatePath();
-    // final mobileNumber = await GlobalVariables.getMobileNumber();
-    // final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-    // if (fcmtoken != null) {
-    //   await DatabaseMySQLServices.updateMobilefmcToken(
-    //     mobileNumber: mobileNumber,
-    //     fcmtoken: fcmtoken,
-    //   );
-    // }
-    // await startServices();
-    ///////////
     _pageSelected = await _pageSelector();
     FirebaseMessaging.onBackgroundMessage(_messageHandler);
-    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    //   print('Message clicked!');
-    // });
     await BadgeServices.updateBadge();
-
     _listenToDbNotif();
   } catch (e) {
     print(e);

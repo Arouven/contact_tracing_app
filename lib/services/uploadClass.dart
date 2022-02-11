@@ -3,6 +3,7 @@ import 'package:contact_tracing/services/auth.dart';
 import 'package:contact_tracing/services/databaseServices.dart';
 import 'package:contact_tracing/services/globals.dart';
 import 'package:contact_tracing/services/notification.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:ftpconnect/ftpconnect.dart';
 
 class UploadFile {
@@ -32,19 +33,25 @@ class UploadFile {
         await ftpConnect.uploadFile(renamedFile);
         await renamedFile.delete();
         print('$fileName file deleted');
-        final mobileNumber = await GlobalVariables.getMobileNumber();
-        final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
-        if (fcmtoken != null) {
-          await DatabaseMySQLServices.updateMobilefmcToken(
-            mobileNumber: mobileNumber,
-            fcmtoken: fcmtoken,
-          );
-        }
-        final bool notify = await GlobalVariables.getNotifier();
-        if (notify == true) {
+
+        print('no error in token');
+        if (((await GlobalVariables.getNotifier()) == true) ||
+            ((await GlobalVariables.getNotifier()) == null)) {
+          print('uploaded');
+
           await NotificationServices().showNotification(
             notificationTitle: 'File Uploaded',
             notificationBody: '$fileName was uploaded',
+          );
+        }
+        await Firebase.initializeApp();
+        final mobileNumber = await GlobalVariables.getMobileNumber();
+        final fcmtoken = await FirebaseAuthenticate().getfirebasefcmtoken();
+        if (fcmtoken != null) {
+          print('updating db token');
+          await DatabaseMySQLServices.updateMobilefmcToken(
+            mobileNumber: mobileNumber,
+            fcmtoken: fcmtoken,
           );
         }
       } else {

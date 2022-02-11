@@ -32,43 +32,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _internetConnection = true;
   // late StreamSubscription _stream;
 
-//   Future _getListofMessages() async {
-//     try {
-//       DatabaseReference ref = FirebaseDatabase.instance.ref(path);
-//       // Get the data once
-//       DatabaseEvent event = await ref.once();
-
-// // Print the data of the snapshot
-//       print(event.snapshot.value); // { "name": "John" }
-//       DataSnapshot snapshot = event.snapshot; // DataSnapshot
-//       Map message = snapshot.value as Map;
-//       messageList.clear();
-//       setState(() {
-//         if (message != null) {
-//           message.forEach((key, value) {
-//             messageList.add(
-//               new Message(
-//                 id: key,
-//                 title: value['title'],
-//                 body: value['body'],
-//                 read: value['read'],
-//                 timestamp: value['timestamp'],
-//               ),
-//             );
-//           });
-//         }
-//         _problemWithFirebase = false;
-//         _isLoading = false;
-//       });
-//     } catch (e) {
-//       setState(() {
-//         _problemWithFirebase = true;
-//         _isLoading = false;
-//       });
-//       print(e.toString());
-//     }
-//   }
-
   void _startListening() {
     if (path != "") {
       print('listening for changes from firebase started');

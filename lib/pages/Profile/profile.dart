@@ -98,10 +98,11 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     });
-    _getData().whenComplete(() => setState(() async {
+    _getData().whenComplete(() => setState(() {
           _isLoading = false;
-          await checkMobileNumber(context: context);
+          checkMobileNumber(context: context).whenComplete(() => null);
         }));
+
     super.initState();
   }
 
