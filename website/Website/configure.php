@@ -6,24 +6,24 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/Website/php_scripts/verifySession.php
 <?php
 $db = new database();
 $conn = $db->getConnection();
-if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_POST['daysOfTestValidity']) && !empty($_POST['daysFromContact'])) {
+if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_POST['daysFromContact'])) {
     //if ($_SERVER['REQUEST_METHOD'] == "POST") {
     print 'in if';
     $contactDistance = "";
     if (isset($_POST['contactDistance'])) {
         $contactDistance = mysqli_real_escape_string($conn, $_POST['contactDistance']);
     }
-    $daysOfTestValidity = "";
-    if (isset($_POST['daysOfTestValidity'])) {
-        $daysOfTestValidity = mysqli_real_escape_string($conn, $_POST['daysOfTestValidity']);
-    }
+    // $daysOfTestValidity = "";
+    // if (isset($_POST['daysOfTestValidity'])) {
+    //     $daysOfTestValidity = mysqli_real_escape_string($conn, $_POST['daysOfTestValidity']);
+    // }
     $daysFromContact = "";
     if (isset($_POST['daysFromContact'])) {
         $daysFromContact = mysqli_real_escape_string($conn, $_POST['daysFromContact']);
     }
-    $executequery = "UPDATE AdminParamters SET contactDistance = ?, daysOfTestValidity = ?, daysFromContact = ?;";
-    $executeparamType = "iii";
-    $executeparamArray = array($contactDistance, $daysOfTestValidity, $daysFromContact);
+    $executequery = "UPDATE AdminParamters SET contactDistance = ?, daysFromContact = ?;";
+    $executeparamType = "ii";
+    $executeparamArray = array($contactDistance, $daysFromContact);
     $db->execute($executequery, $executeparamType, $executeparamArray);
     //print 'executed';
 }
@@ -191,13 +191,12 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
             <div class="main-content">
                 <?php
 
-                $data = $db->select("SELECT contactDistance, daysOfTestValidity, daysFromContact FROM AdminParamters;");
+                $data = $db->select("SELECT contactDistance, daysFromContact FROM AdminParamters;");
                 if (isset($data) && $data != null) { //if there is something in the result
 
                     //$(window).on("load", function() {
                     //  $json =  json_encode($data[0]);
                     $contactDistance = $data[0]['contactDistance'];
-                    $daysOfTestValidity = $data[0]['daysOfTestValidity'];
                     $daysFromContact = $data[0]['daysFromContact'];
 
                     print ' 
@@ -205,7 +204,6 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
                     <script>
                         $(document).ready(function() {
                             $("#contactDistance").val(' . $contactDistance . ');
-                            $("#daysOfTestValidity").val(' . $daysOfTestValidity . ');
                             $("#daysFromContact").val(' . $daysFromContact . ');
                         });
                     </script>';
@@ -221,7 +219,7 @@ if (isset($_REQUEST['update']) && !empty($_POST['contactDistance']) && !empty($_
                                         <strong>Admin Form</strong> Configurations
                                     </div>
                                     <div class="card-body card-block">
-                                        <form action="form.php" method="post" class="form-horizontal">
+                                        <form action="configure.php" method="post" class="form-horizontal">
                                             <!-- enctype="multipart/form-data" -->
                                             <!-- <div class="row form-group">
                                                 <div class="col col-md-3">
